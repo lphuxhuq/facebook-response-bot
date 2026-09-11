@@ -21,6 +21,10 @@ WORKDIR /app
 # Copy toàn bộ mã nguồn vào container
 COPY . .
 
+# Ép git luôn luôn dùng https:// thay vì ssh:// khi cài đặt gói github
+RUN git config --global url."https://github.com/".insteadOf "git@github.com:" && \
+    git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+
 # Cài đặt dependencies (bỏ qua audit để tránh lỗi)
 RUN npm install --legacy-peer-deps
 
