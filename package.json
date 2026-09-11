@@ -26,7 +26,7 @@
         "crypto": "",
         "eval": "",
         "extract-zip": "",
-        "fca-horizon-remake": "git+https://github.com/KhangGia1810/fca-horizon-remake.git",
+        "fca-horizon-remake": "https://github.com/KhangGia1810/fca-horizon-remake.git",
         "figlet": "",
         "fs-extra": "",
         "gifencoder": "^2.0.1",
