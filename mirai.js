@@ -359,6 +359,7 @@ function onBot({ models: botModel }) {
         function listenerCallback(error, message) {
             if (error) return logger(global.getText('mirai', 'handleListenError', JSON.stringify(error)), 'error');
             if (['presence', 'typ', 'read_receipt'].some(data => data == message.type)) return;
+            console.log('[TIN NHAN DEN]:', message.type, message.body || '(non-text)');
             if (global.config.DeveloperMode == !![]) console.log(message);
             return listener(message);
         };
