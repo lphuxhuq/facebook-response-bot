@@ -1,7 +1,7 @@
 FROM node:16-bullseye-slim
 
 # Cài đặt các gói phụ thuộc C++ cho canvas và sqlite3
-RUN apt-get update && apt-get install -y \
+RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install -y --no-install-recommends \
     build-essential \
     libcairo2-dev \
     libpango1.0-dev \
@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     git \
     && rm -rf /var/lib/apt/lists/*
+
 
 WORKDIR /app
 
