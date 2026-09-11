@@ -23,23 +23,32 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 		const { commands } = global.client;
 		let dataAfter = data[num-=1];
 		if (handleReply.type == "cmd_info") {
-			let command_config = commands.get(dataAfter).config;
-			msg += ` 『  ${command_config.commandCategory.toUpperCase()}   』   \n`;
-			msg += `\nTên lệnh: ${dataAfter}`;
-			msg += `\nMô tả: ${command_config.description}`;
-			msg += `\nCách sử dụng: ${(command_config.usages) ? command_config.usages : ""}`;
-			msg += `\nThời gian chờ: ${command_config.cooldowns || 5}s`;
-			msg += `\nQuyền hạn: ${(command_config.hasPermssion == 0) ? "Người dùng" : (command_config.hasPermssion == 1) ? "Quản trị viên nhóm" : "Quản trị viên bot"}`;
-      msg += `\n✎﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏`
-			msg += `\n\n» Module code by ${command_config.credits} «`;
+			const cmd = commands.get(dataAfter);
+			if (!cmd || !cmd.config) {
+				msg = `Không tìm thấy thông tin lệnh: ${dataAfter}`;
+			} else {
+				let command_config = cmd.config;
+				msg += ` 『  ${(command_config.commandCategory || "KHÁC").toUpperCase()}   』   \n`;
+				msg += `\nTên lệnh: ${dataAfter}`;
+				msg += `\nMô tả: ${command_config.description || "Không có mô tả"}`;
+				msg += `\nCách sử dụng: ${(command_config.usages) ? command_config.usages : ""}`;
+				msg += `\nThời gian chờ: ${command_config.cooldowns || 5}s`;
+				msg += `\nQuyền hạn: ${(command_config.hasPermssion == 0) ? "Người dùng" : (command_config.hasPermssion == 1) ? "Quản trị viên nhóm" : "Quản trị viên bot"}`;
+				msg += `\n✎﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏`;
+				msg += `\n\n» Module code by ${command_config.credits || "Admin"} «`;
+			}
 		} else {
 			check = true;
 			let count = 0;
-			msg += `» ${dataAfter.group.toUpperCase()} «\n`;
+			msg += `» ${(dataAfter && dataAfter.group ? dataAfter.group : "LỆNH").toUpperCase()} «\n`;
 
-			dataAfter.cmds.forEach(item => {
-				msg += `\n ${count+=1}. » ${item}: ${commands.get(item).config.description}`;
-			})
+			if (dataAfter && Array.isArray(dataAfter.cmds)) {
+				dataAfter.cmds.forEach(item => {
+					const cmd = commands.get(item);
+					const desc = (cmd && cmd.config && cmd.config.description) ? cmd.config.description : "";
+					msg += `\n ${count+=1}. » ${item}: ${desc}`;
+				});
+			}
 			msg += "\n\n╭──────╮\n    Reply \n╰──────╯ tin nhắn theo số để xem thông tin chi tiết lệnh và cách sử dụng lệnh";
 		}
 	}
@@ -58,7 +67,6 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 	}
 	var msgg = { body: msg };
 	if (imgP.length > 0) msgg.attachment = imgP;
-	try { if (handleReply && handleReply.messageID) api.unsendMessage(handleReply.messageID); } catch (_) {}
 	return api.sendMessage(msgg, event.threadID, (error, info) => {
 		if (error) console.log(error);
 		if (check) {
