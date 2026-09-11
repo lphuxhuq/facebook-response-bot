@@ -364,13 +364,12 @@ function onBot({ models: botModel }) {
             return listener(message);
         };
         global.handleListen = loginApiData.listenMqtt(listenerCallback);
+        global.client.api = loginApiData;
         try {
             await checkBan(loginApiData);
         } catch (error) {
-            return //process.exit(0);
-        };
-        if (!global.checkBan) logger(global.getText('mirai', 'warningSourceCode'), '[ GLOBAL BAN ]');
-        global.client.api = loginApiData;
+            logger('Bo qua checkBan (link gban khong kha dung)', '[ GLOBAL BAN ]');
+        }
 
         // Tu dong gui tin nhan test de xac nhan ket noi
         try {
