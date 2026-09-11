@@ -191,6 +191,7 @@ module.exports = function({ api, models }) {
 		if(!unsendData[event.threadID]) unsendData[event.threadID] = { data: false };
 		fs.writeFileSync(unsend, JSON.stringify(unsendData, null, 4));
 		if(event.type == "message_reaction" && event.senderID == api.getCurrentUserID() && unsendData[event.threadID].data) api.unsendMessage(event.messageID);
+		if (event.senderID && String(event.senderID) === String(api.getCurrentUserID())) return;
 		switch (event.type) {
 			case "message":
 			case "message_reply":

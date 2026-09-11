@@ -1,14 +1,35 @@
 module.exports = function ({ api, models, Users, Threads, Currencies }) {
     return function ({ event }) {
+        if (!event) return;
+        if (event.senderID && String(event.senderID) === String(api.getCurrentUserID())) return;
         const { handleReply, commands } = global.client;
         const { messageID, threadID, messageReply } = event;
         if (!handleReply || handleReply.length === 0) return;
 
         let indexOfHandle = -1;
-        if (messageReply && messageReply.messageID) {
-            indexOfHandle = handleReply.findIndex(e => e.messageID == messageReply.messageID);
+        if (messageReply) {
+            // 1. Khớp chính xác theo messageID nếu có
+            if (messageReply.messageID) {
+                indexOfHandle = handleReply.findIndex(e => e.messageID && String(e.messageID) === String(messageReply.messageID));
+            }
+            // 2. Khớp theo nội dung tin nhắn được quote (rất chính xác trên Facebook Messenger)
+            if (indexOfHandle < 0 && messageReply.body) {
+                const quoteLower = messageReply.body.toLowerCase();
+                for (let i = handleReply.length - 1; i >= 0; i--) {
+                    const item = handleReply[i];
+                    if (item.threadID != threadID) continue;
+                    if (item.quoteKey && quoteLower.includes(item.quoteKey.toLowerCase())) {
+                        indexOfHandle = i;
+                        break;
+                    }
+                    if (item.groupName && quoteLower.includes(item.groupName.toLowerCase())) {
+                        indexOfHandle = i;
+                        break;
+                    }
+                }
+            }
         }
-        // Fallback: nếu không khớp messageID trực tiếp hoặc người dùng không quote, lấy reply gần nhất của nhóm
+        // 3. Fallback nếu không quote hoặc quote không tìm thấy: lấy reply mới nhất của nhóm
         if (indexOfHandle < 0) {
             for (let i = handleReply.length - 1; i >= 0; i--) {
                 if (handleReply[i].threadID == threadID) {

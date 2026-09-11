@@ -37,6 +37,8 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 				msg += `\n✎﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏`;
 				msg += `\n\n» Module code by ${command_config.credits || "Admin"} «`;
 			}
+			const idx = global.client.handleReply.indexOf(handleReply);
+			if (idx !== -1) global.client.handleReply.splice(idx, 1);
 		} else {
 			check = true;
 			let count = 0;
@@ -70,12 +72,15 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 	return api.sendMessage(msgg, event.threadID, (error, info) => {
 		if (error) console.log(error);
 		if (check) {
+			const targetGroup = data[num];
 			global.client.handleReply.push({
 				type: "cmd_info",
 				name: this.config.name,
+				groupName: targetGroup ? targetGroup.group : "",
+				quoteKey: targetGroup ? targetGroup.group : "",
 				threadID: event.threadID,
 				messageID: info ? info.messageID : null,
-				content: (data[num] && data[num].cmds) ? data[num].cmds : []
+				content: (targetGroup && targetGroup.cmds) ? targetGroup.cmds : []
 			});
 		}
 	}, event.messageID);
@@ -172,8 +177,11 @@ module.exports.run = async function({ api, event, args }) {
 	if (imgP.length > 0) msgg.attachment = imgP;
 	return api.sendMessage(msgg, threadID, async (error, info) => {
 		if (check) {
+			global.client.handleReply = global.client.handleReply.filter(item => !(item.threadID == threadID && item.name == this.config.name));
 			global.client.handleReply.push({
 				name: this.config.name,
+				type: "category_list",
+				quoteKey: "danh sách lệnh hiện có",
 				bonus: bonus,
 				threadID: threadID,
 				messageID: info ? info.messageID : null,
