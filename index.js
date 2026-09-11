@@ -42,8 +42,9 @@ function startBot(message) {
         shell: true
     });
 
+    global.countRestart = global.countRestart || 0;
     child.on("close", (codeExit) => {
-        if (codeExit != 0 || global.countRestart && global.countRestart < 5) {
+        if (codeExit != 0 || global.countRestart < 20) {
             startBot("Restarting...");
             global.countRestart += 1;
             return;

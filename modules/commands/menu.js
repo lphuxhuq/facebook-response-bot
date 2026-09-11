@@ -37,8 +37,6 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 				msg += `\n✎﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏`;
 				msg += `\n\n» Module code by ${command_config.credits || "Admin"} «`;
 			}
-			const idx = global.client.handleReply.indexOf(handleReply);
-			if (idx !== -1) global.client.handleReply.splice(idx, 1);
 		} else {
 			check = true;
 			let count = 0;
@@ -72,7 +70,7 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 	return api.sendMessage(msgg, event.threadID, (error, info) => {
 		if (error) console.log(error);
 		if (check) {
-			const targetGroup = data[num];
+			const targetGroup = dataAfter;
 			global.client.handleReply.push({
 				type: "cmd_info",
 				name: this.config.name,

@@ -11,6 +11,13 @@ const axios = require("axios");
 const listPackage = JSON.parse(readFileSync('./package.json')).dependencies;
 const listbuiltinModules = require("module").builtinModules;
 
+process.on('unhandledRejection', (reason) => {
+    console.error('[UNHANDLED REJECTION]:', (reason && reason.message) || reason);
+});
+process.on('uncaughtException', (err) => {
+    console.error('[UNCAUGHT EXCEPTION]:', (err && err.message) || err);
+});
+
 global.client = new Object({
     commands: new Map(),
     events: new Map(),
@@ -440,15 +447,6 @@ function onBot({ models: botModel }) {
                 console.log('[TEST ERROR]:', testErr.message);
             }
         }, 5000);
-
-        // Heartbeat giữ kết nối MQTT luôn duy trì 24/7 (tránh bị Facebook hoặc hạ tầng mạng ngắt khi rảnh)
-        setInterval(() => {
-            try {
-                if (loginApiData && typeof loginApiData.sendTypingIndicator === 'function') {
-                    loginApiData.sendTypingIndicator("1671415294995657", () => {});
-                }
-            } catch (_) {}
-        }, 60000);
         //     // global.handleListen.stopListening(),
         //     global.checkBan = ![],
         //     setTimeout(function () {

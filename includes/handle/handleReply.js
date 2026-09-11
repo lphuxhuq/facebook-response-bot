@@ -18,13 +18,18 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                 for (let i = handleReply.length - 1; i >= 0; i--) {
                     const item = handleReply[i];
                     if (item.threadID != threadID) continue;
-                    if (item.quoteKey && quoteLower.includes(item.quoteKey.toLowerCase())) {
+                    // Nếu quote tin nhắn danh sách chuyên mục tổng (Menu chính):
+                    if (item.type === "category_list" && (quoteLower.includes("danh sách lệnh hiện có") || quoteLower.includes("theo phân loại"))) {
                         indexOfHandle = i;
                         break;
                     }
-                    if (item.groupName && quoteLower.includes(item.groupName.toLowerCase())) {
-                        indexOfHandle = i;
-                        break;
+                    // Nếu quote tin nhắn danh sách lệnh của một nhóm cụ thể (vd: » CÔNG CỤ «):
+                    if (item.type === "cmd_info" && item.groupName) {
+                        const groupTag = `» ${item.groupName.toLowerCase()} «`;
+                        if (quoteLower.includes(groupTag) || quoteLower.includes(item.groupName.toLowerCase())) {
+                            indexOfHandle = i;
+                            break;
+                        }
                     }
                 }
             }
