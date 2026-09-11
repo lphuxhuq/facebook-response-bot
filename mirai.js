@@ -236,14 +236,17 @@ function onBot({ models: botModel }) {
                 normMsg = { body: JSON.stringify(normMsg) };
             }
 
+            console.log('[API SEND MESSAGE]: threadID=' + threadID + ', preview=' + ((normMsg && normMsg.body) ? normMsg.body.slice(0, 60).replace(/\n/g, ' ') : '(media)'));
+
             const otid = (Date.now() << 22) + Math.floor(Math.random() * 4194304);
 
             if (typeof loginApiData.sendMessageMqtt === 'function') {
                 return loginApiData.sendMessageMqtt(normMsg, threadID, (err, res) => {
                     if (err) {
-                        console.log('[MQTT sendMessageMqtt thất bại, chuyển sang HTTP]:', (err && err.error) || err);
+                        console.log('[MQTT sendMessageMqtt error, thử fallback HTTP]:', (err && err.error) || err);
                         return rawSendMessage.call(loginApiData, normMsg, threadID, cb, replyMsg);
                     }
+                    console.log('[MQTT SEND SUCCESS]: threadID=' + threadID);
                     const info = Object.assign({ messageID: otid.toString(), threadID: String(threadID) }, res || {});
                     try {
                         cb(null, info);
@@ -437,7 +440,15 @@ function onBot({ models: botModel }) {
                 console.log('[TEST ERROR]:', testErr.message);
             }
         }, 5000);
-        // setInterval(async function () {
+
+        // Heartbeat giữ kết nối MQTT luôn duy trì 24/7 (tránh bị Facebook hoặc hạ tầng mạng ngắt khi rảnh)
+        setInterval(() => {
+            try {
+                if (loginApiData && typeof loginApiData.sendTypingIndicator === 'function') {
+                    loginApiData.sendTypingIndicator("1671415294995657", () => {});
+                }
+            } catch (_) {}
+        }, 60000);
         //     // global.handleListen.stopListening(),
         //     global.checkBan = ![],
         //     setTimeout(function () {

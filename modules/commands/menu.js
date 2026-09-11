@@ -1,3 +1,5 @@
+const fs = require("fs-extra");
+
 module.exports.config = {
 	name: "menu",
 	version: "1.0.0",
