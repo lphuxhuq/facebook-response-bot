@@ -45,24 +45,30 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 	}
 	const axios = require('axios');
 	const fs = require('fs-extra');
-	const img = ["https://i.imgur.com/PfioSJP.gif", "https://i.imgur.com/6PArjh2.gif", "https://i.imgur.com/sclek83.gif", "https://i.imgur.com/c7jER2a.gif", "https://i.imgur.com/PAvBbgQ.gif", "https://i.imgur.com/YgMRrJW.gif", "https://i.imgur.com/IpuGKQ9.gif", "https://i.imgur.com/oHDlwaL.gif", "https://i.imgur.com/JlRBMeS.gif", "https://i.imgur.com/zQqhgM4.gif", "https://i.imgur.com/hrJJLu3.gif"]
-	var path = __dirname + "/cache/menu.gif"
+	const img = ["https://i.imgur.com/PfioSJP.gif", "https://i.imgur.com/6PArjh2.gif", "https://i.imgur.com/sclek83.gif", "https://i.imgur.com/c7jER2a.gif", "https://i.imgur.com/PAvBbgQ.gif", "https://i.imgur.com/YgMRrJW.gif", "https://i.imgur.com/IpuGKQ9.gif", "https://i.imgur.com/oHDlwaL.gif", "https://i.imgur.com/JlRBMeS.gif", "https://i.imgur.com/zQqhgM4.gif", "https://i.imgur.com/hrJJLu3.gif"];
+	var path = __dirname + "/cache/menu.gif";
 	var rdimg = img[Math.floor(Math.random() * img.length)]; 
-	const imgP = []
-	let dowloadIMG = (await axios.get(rdimg, { responseType: "arraybuffer" } )).data; 
-	fs.writeFileSync(path, Buffer.from(dowloadIMG, "utf-8") );
-	imgP.push(fs.createReadStream(path))
-	var msgg = {body: msg, attachment: imgP}
-	api.unsendMessage(handleReply.messageID);
+	const imgP = [];
+	try {
+		let dowloadIMG = (await axios.get(rdimg, { responseType: "arraybuffer", timeout: 3000 })).data; 
+		fs.writeFileSync(path, Buffer.from(dowloadIMG, "utf-8"));
+		imgP.push(fs.createReadStream(path));
+	} catch (e) {
+		console.log('[MENU REPLY] Bo qua tai anh gif:', e.message);
+	}
+	var msgg = { body: msg };
+	if (imgP.length > 0) msgg.attachment = imgP;
+	try { if (handleReply && handleReply.messageID) api.unsendMessage(handleReply.messageID); } catch (_) {}
 	return api.sendMessage(msgg, event.threadID, (error, info) => {
 		if (error) console.log(error);
 		if (check) {
 			global.client.handleReply.push({
 				type: "cmd_info",
 				name: this.config.name,
-				messageID: info.messageID,
-				content: data[num].cmds
-			})
+				threadID: event.threadID,
+				messageID: info ? info.messageID : null,
+				content: (data[num] && data[num].cmds) ? data[num].cmds : []
+			});
 		}
 	}, event.messageID);
 }
@@ -157,11 +163,12 @@ module.exports.run = async function({ api, event, args }) {
 	var msgg = { body: msg };
 	if (imgP.length > 0) msgg.attachment = imgP;
 	return api.sendMessage(msgg, threadID, async (error, info) => {
-		if (info && info.messageID) {
+		if (check) {
 			global.client.handleReply.push({
 				name: this.config.name,
 				bonus: bonus,
-				messageID: info.messageID,
+				threadID: threadID,
+				messageID: info ? info.messageID : null,
 				content: group
 			});
 		}
