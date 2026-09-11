@@ -26,7 +26,7 @@ module.exports.handleEvent = async ({
 	if (typeof thread["hi"] !== "undefined" && thread["hi"] == false) return;
 	if (senderID == api.getCurrentUserID()) return;
 
-	var arr = ["hi", "hello", "lô", "hí lô", "chào", "hăi", "hí", "hai", "2"];
+	var arr = ["hi", "hello", "lô", "hí lô", "chào", "hăi", "hí", "hai"];
 	const lowerBody = body.trim().toLowerCase();
 	if (arr.some(i => lowerBody === i)) {
 		let name = "";
