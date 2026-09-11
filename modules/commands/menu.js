@@ -17,11 +17,12 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 	let msg = "";
 	let data = handleReply.content;
 	let check = false;
+	let dataAfter = null;
 	if (isNaN(num)) msg = "Hãy nhập 1 con số mà bạn muốn";
 	else if (num > data.length || num <= 0) msg = "Số bạn chọn không nằm trong danh sách, vui lòng thử lại";
 	else {
 		const { commands } = global.client;
-		let dataAfter = data[num-=1];
+		dataAfter = data[num - 1];
 		if (handleReply.type == "cmd_info") {
 			const cmd = commands.get(dataAfter);
 			if (!cmd || !cmd.config) {
@@ -69,8 +70,10 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 	if (imgP.length > 0) msgg.attachment = imgP;
 	return api.sendMessage(msgg, event.threadID, (error, info) => {
 		if (error) console.log(error);
-		if (check) {
+		if (check && dataAfter) {
 			const targetGroup = dataAfter;
+			// Làm mới cmd_info của thread này với nhóm lệnh vừa chọn
+			global.client.handleReply = global.client.handleReply.filter(item => !(item.threadID == event.threadID && item.name == this.config.name && item.type == "cmd_info"));
 			global.client.handleReply.push({
 				type: "cmd_info",
 				name: this.config.name,

@@ -24,14 +24,26 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                     const item = handleReply[i];
                     if (item.threadID != threadID) continue;
                     // Nếu quote tin nhắn danh sách chuyên mục tổng (Menu chính):
-                    if (item.type === "category_list" && (quoteLower.includes("danh sách lệnh hiện có") || quoteLower.includes("theo phân loại"))) {
+                    if (item.type === "category_list" && (
+                        quoteLower.includes("danh sách lệnh hiện có") || 
+                        quoteLower.includes("theo phân loại") ||
+                        quoteLower.includes("để xem các lệnh theo phân loại")
+                    )) {
                         indexOfHandle = i;
                         break;
                     }
-                    // Nếu quote tin nhắn danh sách lệnh của một nhóm cụ thể (vd: » CÔNG CỤ «):
-                    if (item.type === "cmd_info" && item.groupName) {
-                        const groupTag = `» ${item.groupName.toLowerCase()} «`;
-                        if (quoteLower.includes(groupTag) || quoteLower.includes(item.groupName.toLowerCase())) {
+                    // Nếu quote tin nhắn danh sách lệnh của nhóm hoặc chi tiết lệnh:
+                    if (item.type === "cmd_info") {
+                        const gName = item.groupName ? item.groupName.toLowerCase() : "";
+                        const isGroupQuote = gName && (
+                            quoteLower.includes(`» ${gName} «`) || 
+                            quoteLower.includes(gName) ||
+                            quoteLower.includes("thông tin chi tiết lệnh") ||
+                            quoteLower.includes("tên lệnh:")
+                        );
+                        // Hoặc quote chứa một trong các tên lệnh thuộc nhóm này
+                        const hasCmdMatch = Array.isArray(item.content) && item.content.some(cmdName => quoteLower.includes(`» ${cmdName.toLowerCase()}:`));
+                        if (isGroupQuote || hasCmdMatch) {
                             indexOfHandle = i;
                             break;
                         }
