@@ -3,8 +3,13 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
         if (!event) return;
         if (event.senderID && String(event.senderID) === String(api.getCurrentUserID())) return;
         const { handleReply, commands } = global.client;
-        const { messageID, threadID, messageReply } = event;
+        const { messageID, threadID, messageReply, body } = event;
         if (!handleReply || handleReply.length === 0) return;
+
+        // Chỉ xử lý reply nếu người dùng quote tin nhắn hoặc gõ trực tiếp một con số lựa chọn
+        const isQuoting = Boolean(messageReply && (messageReply.messageID || messageReply.body));
+        const isPureNumber = Boolean(body && /^\s*\d+\s*$/.test(body));
+        if (!isQuoting && !isPureNumber) return;
 
         let indexOfHandle = -1;
         if (messageReply) {
