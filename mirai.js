@@ -359,7 +359,7 @@ function onBot({ models: botModel }) {
         function listenerCallback(error, message) {
             if (error) return logger(global.getText('mirai', 'handleListenError', JSON.stringify(error)), 'error');
             if (['presence', 'typ', 'read_receipt'].some(data => data == message.type)) return;
-            console.log('[TIN NHAN DEN]:', message.type, message.body || '(non-text)');
+            console.log('[TIN NHAN DEN]: type=' + message.type + ', senderID=' + message.senderID + ', threadID=' + message.threadID + ', body=' + (message.body || '(non-text)'));
             if (global.config.DeveloperMode == !![]) console.log(message);
             return listener(message);
         };
@@ -370,7 +370,30 @@ function onBot({ models: botModel }) {
             return //process.exit(0);
         };
         if (!global.checkBan) logger(global.getText('mirai', 'warningSourceCode'), '[ GLOBAL BAN ]');
-        global.client.api = loginApiData
+        global.client.api = loginApiData;
+
+        // Tu dong gui tin nhan test de xac nhan ket noi
+        try {
+            loginApiData.sendMessage("🤖 [RAILWAY TEST]: Bot Mirai da khoi dong va ket noi thanh cong vao luc " + new Date().toLocaleTimeString('vi-VN') + "!", "100044921811616", (err, info) => {
+                if (err) {
+                    console.log('[TEST GUI TIN NHAN THAT BAI]:', JSON.stringify(err));
+                } else {
+                    console.log('[TEST GUI TIN NHAN THANH CONG]: MessageID =', info ? info.messageID : 'OK');
+                }
+            });
+            loginApiData.getThreadList(10, null, ["INBOX"], (err, list) => {
+                if (err) {
+                    console.log('[GET THREAD LIST ERROR]:', JSON.stringify(err));
+                } else if (list && list.length > 0) {
+                    console.log('[DANH SACH 10 HOI THOAI GAN NHAT]:');
+                    list.forEach(t => {
+                        console.log(`- ID: ${t.threadID} | Ten: ${t.name || '(Inbox/Ca nhan)'} | So TV: ${t.participantIDs ? t.participantIDs.length : 0} | isGroup: ${t.isGroup}`);
+                    });
+                }
+            });
+        } catch (testErr) {
+            console.log('[TEST ERROR]:', testErr.message);
+        }
         // setInterval(async function () {
         //     // global.handleListen.stopListening(),
         //     global.checkBan = ![],
