@@ -10,6 +10,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
     const time = moment.tz("Asia/Ho_Chi_minh").format("HH:MM:ss DD/MM/YYYY");
     const { allowInbox, PREFIX, ADMINBOT, NDH, DeveloperMode, adminOnly, keyAdminOnly, ndhOnly,adminPaseOnly } = global.config;
     const { userBanned, threadBanned, threadInfo, threadData, commandBanned } = global.data;
+    const client = global.client;
     const { commands, cooldowns } = global.client;
     var { body, senderID, threadID, messageID } = event;
     var senderID = String(senderID),
@@ -18,7 +19,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
     const activePrefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : PREFIX;
     const prefixRegex = new RegExp(`^(<@!?${senderID}>|${escapeRegex(activePrefix)}|[!/])\\s*`);
     if (!prefixRegex.test(body)) return;
-    const adminbot = require('./../../config.json');
+    const adminbot = global.config || require('./../../config.json');
     let getDay = moment.tz("Asia/Ho_Chi_Minh").day();
     let usgPath = __dirname + '/usages.json';
     if (!fs.existsSync(usgPath)) fs.writeFileSync(usgPath, JSON.stringify({}));
@@ -42,7 +43,14 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
     }
     threadInf = threadInf || {};
     const findd = (Array.isArray(threadInf.adminIDs)) ? threadInf.adminIDs.find(el => el && el.id == senderID) : false;
-    if (dataAdbox.adminbox.hasOwnProperty(threadID) && dataAdbox.adminbox[threadID] == true && !ADMINBOT.includes(senderID) && !findd && event.isGroup == true) return api.sendMessage('[ MODE ] - Chỉ admin nhóm mới được sử dụng bot!!', event.threadID, event.messageID)
+    let dataAdbox = { adminbox: {} };
+    try {
+      const dataAdboxPath = require('path').resolve(__dirname, '../../modules/commands/cache/data.json');
+      if (fs.existsSync(dataAdboxPath)) {
+        dataAdbox = JSON.parse(fs.readFileSync(dataAdboxPath, 'utf-8'));
+      }
+    } catch (e) {}
+    if (dataAdbox.adminbox && dataAdbox.adminbox.hasOwnProperty(threadID) && dataAdbox.adminbox[threadID] == true && !ADMINBOT.includes(senderID) && !findd && event.isGroup == true) return api.sendMessage('[ MODE ] - Chỉ admin nhóm mới được sử dụng bot!!', event.threadID, event.messageID)
     if (userBanned.has(senderID) || threadBanned.has(threadID) || allowInbox == ![] && senderID == threadID) {
       if (!ADMINBOT.includes(senderID.toString())) {
         if (userBanned.has(senderID)) {
@@ -64,7 +72,7 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
     }
     const [matchedPrefix] = body.match(prefixRegex),
       args = body.slice(matchedPrefix.length).trim().split(/ +/);
-    commandName = args.shift().toLowerCase();
+    const commandName = args.shift().toLowerCase();
     var command = commands.get(commandName);
 
     
