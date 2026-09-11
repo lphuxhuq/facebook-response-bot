@@ -31,5 +31,5 @@ module.exports.run = async ({ api, event }) => {
 	const fs = require("fs")
 
 	const timeStart = Date.now();
-	return api.sendMessage("", event.threadID, () => api.sendMessage(`Uptime: ${hours}:${minutes}:${seconds}\n\n» Users: ${global.data.allUserID.length}\n» Threads: ${global.data.allThreadID.length}\n» CPU Used: ${pidusage.cpu.toFixed(1)}%\n» RAM Used: ${byte2mb(pidusage.memory)}\n» Ping: ${Date.now() - timeStart}ms`, event.threadID, event.messageID));
+	return api.sendMessage(`🤖 [BOT UPTIME]\n⏱ Thời gian hoạt động: ${hours}:${minutes}:${seconds}\n» Người dùng: ${global.data.allUserID.length}\n» Nhóm: ${global.data.allThreadID.length}\n» CPU: ${pidusage.cpu.toFixed(1)}%\n» RAM: ${byte2mb(pidusage.memory)}\n» Ping: ${Date.now() - timeStart}ms`, event.threadID, event.messageID);
 }

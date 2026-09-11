@@ -195,11 +195,10 @@ module.exports = function({ api, models }) {
 			case "message":
 			case "message_reply":
 			case "message_unsend":
-				handleCreateDatabase({ event });
-				handleCommand({ event });
-				handleReply({ event });
-				handleCommandEvent({ event });
-
+				Promise.resolve(handleCreateDatabase({ event })).catch(e => console.error('[HANDLE CREATE DB ERROR]:', e));
+				Promise.resolve(handleCommand({ event })).catch(e => console.error('[HANDLE COMMAND ERROR]:', e));
+				Promise.resolve(handleReply({ event })).catch(e => console.error('[HANDLE REPLY ERROR]:', e));
+				Promise.resolve(handleCommandEvent({ event })).catch(e => console.error('[HANDLE CMD EVENT ERROR]:', e));
 				break;
 			case "event":
 				handleEvent({ event });

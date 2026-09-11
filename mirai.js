@@ -428,5 +428,7 @@ function onBot({ models: botModel }) {
         onBot(botData);
     } catch (error) { logger(global.getText('mirai', 'successConnectDatabase', JSON.stringify(error)), '[ DATABASE ]'); }
 })();
-process.on('unhandledRejection', (err, p) => {});
+process.on('unhandledRejection', (err, p) => {
+    console.error('[UNHANDLED REJECTION]:', err);
+});
 //THIZ BOT WAS MADE BY ME(CATALIZCS) AND MY BROTHER SPERMLORD - DO NOT STEAL MY CODE (つ ͡ ° ͜ʖ ͡° )つ ✄ ╰⋃╯

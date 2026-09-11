@@ -14,7 +14,8 @@ module.exports.handleEvent = async ({ event, api, Users, Threads }) => {
   const thread = global.data.threadData.get(event.threadID) || {};
   if (typeof thread["console"] !== "undefined" && thread["console"] == true) return;
   if (event.senderID == global.data.botID) return;
-  var nameBox = global.data.threadInfo.get(event.threadID).threadName || "Tên không tồn tại";
+  const tInfo = global.data.threadInfo.get(event.threadID);
+  var nameBox = (tInfo && tInfo.threadName) ? tInfo.threadName : "Tên không tồn tại";
   var nameUser = await Users.getNameUser(event.senderID);
   var body = event.body || "Ảnh, video hoặc nhãn dán 💌";
   var color = ["\x1b[33m", "\x1b[34m", "\x1b[35m", '\x1b[36m','\x1b[31m','\x1b[1m'];

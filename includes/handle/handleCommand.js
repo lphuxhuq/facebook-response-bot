@@ -15,7 +15,8 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
     var senderID = String(senderID),
       threadID = String(threadID);
     const threadSetting = threadData.get(threadID) || {}
-    const prefixRegex = new RegExp(`^(<@!?${senderID}>|${escapeRegex((threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : PREFIX)})\\s*`);
+    const activePrefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : PREFIX;
+    const prefixRegex = new RegExp(`^(<@!?${senderID}>|${escapeRegex(activePrefix)}|[!/])\\s*`);
     if (!prefixRegex.test(body)) return;
     const adminbot = require('./../../config.json');
     let getDay = moment.tz("Asia/Ho_Chi_Minh").day();
@@ -35,9 +36,12 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
     if (!NDH.includes(senderID) && !ADMINBOT.includes(senderID) && adminbot.ndhOnly == true) {
       if (!NDH.includes(senderID) && !ADMINBOT.includes(senderID) && adminbot.ndhOnly == true) return api.sendMessage('[ MODE ] - Chỉ người hỗ trợ bot mới có thể sử dụng bot', threadID, messageID)
     }
-    const dataAdbox = require('./../../modules/commands/cache/data.json');
-    var threadInf = (threadInfo.get(threadID) || await Threads.getInfo(threadID));
-    const findd = threadInf.adminIDs.find(el => el.id == senderID);
+    var threadInf = threadInfo.get(threadID);
+    if (!threadInf && event.isGroup) {
+      try { threadInf = await Threads.getInfo(threadID); } catch(e) {}
+    }
+    threadInf = threadInf || {};
+    const findd = (Array.isArray(threadInf.adminIDs)) ? threadInf.adminIDs.find(el => el && el.id == senderID) : false;
     if (dataAdbox.adminbox.hasOwnProperty(threadID) && dataAdbox.adminbox[threadID] == true && !ADMINBOT.includes(senderID) && !findd && event.isGroup == true) return api.sendMessage('[ MODE ] - Chỉ admin nhóm mới được sử dụng bot!!', event.threadID, event.messageID)
     if (userBanned.has(senderID) || threadBanned.has(threadID) || allowInbox == ![] && senderID == threadID) {
       if (!ADMINBOT.includes(senderID.toString())) {
@@ -105,8 +109,8 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
         logger(global.getText("handleCommand", "cantGetInfoThread", "error"));
       }
     var permssion = 0;
-    var threadInfoo = (threadInfo.get(threadID) || await Threads.getInfo(threadID));
-    const find = threadInfoo.adminIDs.find(el => el.id == senderID);
+    var threadInfoo = threadInfo.get(threadID) || threadInf || {};
+    const find = (Array.isArray(threadInfoo.adminIDs)) ? threadInfoo.adminIDs.find(el => el && el.id == senderID) : false;
     if (NDH.includes(senderID.toString())) permssion = 2;
     if (ADMINBOT.includes(senderID.toString())) permssion = 3;
     else if (!ADMINBOT.includes(senderID) && !NDH.includes(senderID) && find) permssion = 1;

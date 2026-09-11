@@ -71,15 +71,18 @@ module.exports.run = async function({ api, event, args }) {
 	const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
 	const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX;
 	const axios = require('axios');
-	const fs = require('fs-extra');
-	const imgP = []
-	const img = ["https://i.imgur.com/PfioSJP.gif", "https://i.imgur.com/6PArjh2.gif", "https://i.imgur.com/sclek83.gif", "https://i.imgur.com/c7jER2a.gif", "https://i.imgur.com/PAvBbgQ.gif", "https://i.imgur.com/YgMRrJW.gif", "https://i.imgur.com/IpuGKQ9.gif", "https://i.imgur.com/oHDlwaL.gif", "https://i.imgur.com/JlRBMeS.gif", "https://i.imgur.com/zQqhgM4.gif", "https://i.imgur.com/hrJJLu3.gif"]
-	var path = __dirname + "/cache/menu.gif"
-	var rdimg = img[Math.floor(Math.random() * img.length)]; 
-
-   	let dowloadIMG = (await axios.get(rdimg, { responseType: "arraybuffer" } )).data; 
-        fs.writeFileSync(path, Buffer.from(dowloadIMG, "utf-8") );
-        imgP.push(fs.createReadStream(path))
+	const imgP = [];
+	try {
+		fs.ensureDirSync(__dirname + "/cache");
+		const img = ["https://i.imgur.com/PfioSJP.gif", "https://i.imgur.com/6PArjh2.gif", "https://i.imgur.com/sclek83.gif", "https://i.imgur.com/c7jER2a.gif", "https://i.imgur.com/PAvBbgQ.gif", "https://i.imgur.com/YgMRrJW.gif", "https://i.imgur.com/IpuGKQ9.gif", "https://i.imgur.com/oHDlwaL.gif", "https://i.imgur.com/JlRBMeS.gif", "https://i.imgur.com/zQqhgM4.gif", "https://i.imgur.com/hrJJLu3.gif"];
+		var path = __dirname + "/cache/menu.gif";
+		var rdimg = img[Math.floor(Math.random() * img.length)]; 
+		let dowloadIMG = (await axios.get(rdimg, { responseType: "arraybuffer", timeout: 3000 })).data; 
+		fs.writeFileSync(path, Buffer.from(dowloadIMG, "utf-8"));
+		imgP.push(fs.createReadStream(path));
+	} catch (e) {
+		console.log('[MENU] Bo qua tai anh gif:', e.message);
+	}
 	const command = commands.values();
 	var group = [], msg = "» Danh sách lệnh hiện có «\n";
 	let check = true, page_num_input = "";
@@ -149,13 +152,16 @@ module.exports.run = async function({ api, event, args }) {
     msg += `\nBạn có thể dùng ${prefix}menu all để xem tất cả lệnh`
 		msg += `\n╭──────╮\n       Reply \n╰──────╯ tin nhắn theo số để xem các lệnh theo phân loại\nAdmin : Nguyễn Đạt`;
 	}
-	var msgg = {body: msg, attachment: imgP}
+	var msgg = { body: msg };
+	if (imgP.length > 0) msgg.attachment = imgP;
 	return api.sendMessage(msgg, threadID, async (error, info) => {
-		global.client.handleReply.push({
-			name: this.config.name,
-			bonus: bonus,
-			messageID: info.messageID,
-			content: group
-		})
-	});
+		if (info && info.messageID) {
+			global.client.handleReply.push({
+				name: this.config.name,
+				bonus: bonus,
+				messageID: info.messageID,
+				content: group
+			});
+		}
+	}, messageID);
 }
