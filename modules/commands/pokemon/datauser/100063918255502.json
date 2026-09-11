@@ -1,0 +1,143 @@
+{
+  "name": "Nguyễn Đạt",
+  "ID": "100063918255502",
+  "pet": [
+    {
+      "name": "Mew",
+      "type": "Psychic",
+      "HP": "150.0",
+      "Attack": "150.0",
+      "Defense": "150.0",
+      "Speed": "150.0",
+      "skill": [
+        "Synchronize"
+      ],
+      "coins": 20000,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/151.png"
+    },
+    {
+      "name": "Toxapex",
+      "type": "Poison",
+      "HP": "20.0",
+      "Attack": "25.2",
+      "Defense": "60.8",
+      "Speed": "14.0",
+      "skill": [
+        "Merciless",
+        "Limber",
+        "Regenerator"
+      ],
+      "coins": 0,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/748.png"
+    },
+    {
+      "name": "Graveler",
+      "type": "Rock",
+      "HP": "55.0",
+      "Attack": "95.0",
+      "Defense": "115.0",
+      "Speed": "35.0",
+      "skill": [
+        "Rock Head",
+        "Sturdy",
+        "Sand Veil"
+      ],
+      "coins": 10000,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/075.png"
+    },
+    {
+      "name": "Bidoof",
+      "type": "Normal",
+      "HP": "88.5",
+      "Attack": "67.5",
+      "Defense": "60.0",
+      "Speed": "46.5",
+      "skill": [
+        "Simple",
+        "Unaware",
+        "Moody"
+      ],
+      "coins": 20000,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/399.png"
+    },
+    {
+      "name": "Chimchar",
+      "type": "Fire",
+      "HP": "44.0",
+      "Attack": "58.0",
+      "Defense": "44.0",
+      "Speed": "61.0",
+      "skill": [
+        "Blaze",
+        "Iron Fist"
+      ],
+      "coins": 10000,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/390.png"
+    },
+    {
+      "name": "Butterfree",
+      "type": "Bug",
+      "HP": "90.0",
+      "Attack": "67.5",
+      "Defense": "75.0",
+      "Speed": "105.0",
+      "skill": [
+        "Compound Eyes",
+        "Tinted Lens"
+      ],
+      "coins": 20000,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/012.png"
+    },
+    {
+      "name": "Farfetch'd",
+      "type": "Normal",
+      "HP": "52.0",
+      "Attack": "90.0",
+      "Defense": "55.0",
+      "Speed": "60.0",
+      "skill": [
+        "Keen Eye",
+        "Inner Focus",
+        "Defiant"
+      ],
+      "coins": 10000,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/083.png"
+    },
+    {
+      "name": "Shuckle",
+      "type": "Bug",
+      "HP": "20.0",
+      "Attack": "10.0",
+      "Defense": "230.0",
+      "Speed": "5.0",
+      "skill": [
+        "Sturdy",
+        "Gluttony",
+        "Contrary"
+      ],
+      "coins": 10000,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/213.png"
+    },
+    {
+      "name": "Azurill",
+      "type": "Normal",
+      "HP": "75.0",
+      "Attack": "30.0",
+      "Defense": "60.0",
+      "Speed": "30.0",
+      "skill": [
+        "Thick Fat",
+        "Huge Power",
+        "Sap Sipper"
+      ],
+      "coins": 20000,
+      "images": "https://raw.githubusercontent.com/Purukitto/pokemon-data.json/master/images/pokedex/hires/298.png"
+    }
+  ],
+  "foods": [],
+  "solo": {
+    "win": 0,
+    "lose": 0,
+    "draw": 0
+  }
+}
