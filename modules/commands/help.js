@@ -20,17 +20,18 @@ module.exports.run = function({ api, event, args }) {
   const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : (global.config.PREFIX || "!");
 
   if (args[0] == "all") {
-    var group = {}, msg = "";
+    const group = {};
+    let allMsg = "";
     for (const [name, commandConfig] of commands) {
       const category = (commandConfig.config && commandConfig.config.commandCategory) ? commandConfig.config.commandCategory : "Khác";
       if (!group[category]) group[category] = [];
       group[category].push(name);
     }
     for (const cat in group) {
-      msg += `🌸 ${cat.toUpperCase()} 🌸\n${group[cat].join(' • ')}\n\n`;
+      allMsg += `🌸 ${cat.toUpperCase()} 🌸\n${group[cat].join(' • ')}\n\n`;
     }
     return api.sendMessage(
-      `❤️ 𝐃𝐀𝐍𝐇 𝐒𝐀́𝐂𝐇 𝐓𝐎̂̉𝐍𝐆 𝐋𝐄̣̂𝐍𝐇 💜\n\n` + msg +
+      `❤️ 𝐃𝐀𝐍𝐇 𝐒𝐀́𝐂𝐇 𝐓𝐎̂̉𝐍𝐆 𝐋𝐄̣̂𝐍𝐇 💜\n\n` + allMsg +
       `≻───── •❤️‍🔥• ─────≺\n` +
       `💓 Hiện tại có ${commands.size} lệnh có thể sử dụng!\n` +
       `🌟 Dùng: "${prefix}help + tên lệnh" để xem chi tiết cách dùng\n` +

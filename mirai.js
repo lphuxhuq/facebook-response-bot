@@ -215,7 +215,47 @@ function onBot({ models: botModel }) {
     loginData['appState'] = appState;
     login(loginData, async(loginError, loginApiData) => {
         if (loginError) return logger(JSON.stringify(loginError), `ERROR`);
-        loginApiData.setOptions(global.config.FCAOption)
+        loginApiData.setOptions(global.config.FCAOption);
+
+        // Ghi đè api.sendMessage để tự động định tuyến qua MQTT sendMessageMqtt (tránh lỗi 404 HTTP endpoint /messaging/send/ của Facebook)
+        const rawSendMessage = loginApiData.sendMessage;
+        loginApiData.sendMessage = function (msg, threadID, callback, replyToMessage) {
+            let cb = callback;
+            let replyMsg = replyToMessage;
+            if (typeof callback === 'string' || typeof callback === 'number') {
+                replyMsg = callback;
+                cb = () => {};
+            } else if (typeof callback !== 'function') {
+                cb = () => {};
+            }
+
+            let normMsg = msg;
+            if (typeof normMsg === 'string' || typeof normMsg === 'number') {
+                normMsg = { body: String(normMsg) };
+            } else if (normMsg && typeof normMsg === 'object' && normMsg.body == null && !normMsg.attachment && !normMsg.sticker) {
+                normMsg = { body: JSON.stringify(normMsg) };
+            }
+
+            const otid = (Date.now() << 22) + Math.floor(Math.random() * 4194304);
+
+            if (typeof loginApiData.sendMessageMqtt === 'function') {
+                return loginApiData.sendMessageMqtt(normMsg, threadID, (err, res) => {
+                    if (err) {
+                        console.log('[MQTT sendMessageMqtt thất bại, chuyển sang HTTP]:', (err && err.error) || err);
+                        return rawSendMessage.call(loginApiData, normMsg, threadID, cb, replyMsg);
+                    }
+                    const info = Object.assign({ messageID: otid.toString(), threadID: String(threadID) }, res || {});
+                    try {
+                        cb(null, info);
+                    } catch (cbErr) {
+                        console.error('[sendMessage callback error]:', cbErr);
+                    }
+                }, replyMsg);
+            }
+
+            return rawSendMessage.call(loginApiData, normMsg, threadID, cb, replyMsg);
+        };
+
         writeFileSync(appStateFile, JSON.stringify(loginApiData.getAppState(), null, '\x09'))
         global.config.version = '1.2.14'
         global.client.timeStart = new Date().getTime(),
@@ -371,28 +411,32 @@ function onBot({ models: botModel }) {
             logger('Bo qua checkBan (link gban khong kha dung)', '[ GLOBAL BAN ]');
         }
 
-        // Tu dong gui tin nhan test de xac nhan ket noi
-        try {
-            loginApiData.sendMessage("🤖 [RAILWAY TEST]: Bot Mirai da khoi dong va ket noi thanh cong vao luc " + new Date().toLocaleTimeString('vi-VN') + "!", "100044921811616", (err, info) => {
-                if (err) {
-                    console.log('[TEST GUI TIN NHAN THAT BAI]:', JSON.stringify(err));
-                } else {
-                    console.log('[TEST GUI TIN NHAN THANH CONG]: MessageID =', info ? info.messageID : 'OK');
-                }
-            });
-            loginApiData.getThreadList(10, null, ["INBOX"], (err, list) => {
-                if (err) {
-                    console.log('[GET THREAD LIST ERROR]:', JSON.stringify(err));
-                } else if (list && list.length > 0) {
-                    console.log('[DANH SACH 10 HOI THOAI GAN NHAT]:');
-                    list.forEach(t => {
-                        console.log(`- ID: ${t.threadID} | Ten: ${t.name || '(Inbox/Ca nhan)'} | So TV: ${t.participantIDs ? t.participantIDs.length : 0} | isGroup: ${t.isGroup}`);
-                    });
-                }
-            });
-        } catch (testErr) {
-            console.log('[TEST ERROR]:', testErr.message);
-        }
+        // Tự động gửi tin nhắn test sau khi MQTT kết nối ổn định (5 giây)
+        setTimeout(() => {
+            try {
+                const timeStr = new Date().toLocaleTimeString('vi-VN');
+                const testMsg = `🤖 [RAILWAY]: Bot Mirai đã sẵn sàng hoạt động (${timeStr})! Gõ !menu hoặc /help để kiểm tra.`;
+                loginApiData.sendMessage(testMsg, "1671415294995657", (err, info) => {
+                    if (err) {
+                        console.log('[TEST GUI TIN NHAN NHOM THAT BAI]:', JSON.stringify(err));
+                    } else {
+                        console.log('[TEST GUI TIN NHAN NHOM THANH CONG]: MessageID =', info ? info.messageID : 'OK');
+                    }
+                });
+                loginApiData.getThreadList(10, null, ["INBOX"], (err, list) => {
+                    if (err) {
+                        console.log('[GET THREAD LIST ERROR]:', JSON.stringify(err));
+                    } else if (list && list.length > 0) {
+                        console.log('[DANH SACH 10 HOI THOAI GAN NHAT]:');
+                        list.forEach(t => {
+                            console.log(`- ID: ${t.threadID} | Ten: ${t.name || '(Inbox/Ca nhan)'} | So TV: ${t.participantIDs ? t.participantIDs.length : 0} | isGroup: ${t.isGroup}`);
+                        });
+                    }
+                });
+            } catch (testErr) {
+                console.log('[TEST ERROR]:', testErr.message);
+            }
+        }, 5000);
         // setInterval(async function () {
         //     // global.handleListen.stopListening(),
         //     global.checkBan = ![],

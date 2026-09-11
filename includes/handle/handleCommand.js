@@ -69,7 +69,7 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
 
     
     fs.writeFileSync(usgPath, JSON.stringify(usages, null, 4));
-    if (usages[senderID].usages <= 0 && !["daily","check","ld"].includes(commandName)) return api.sendMessage("Bạn đã hết lượt sử dụng bot trong hôm nay!\ bấm daily để nhận thêm 20 lượt dùng bot", threadID, messageID);
+    if (!ADMINBOT.includes(senderID) && usages[senderID].usages <= 0 && !["daily","check","ld"].includes(commandName)) return api.sendMessage("Bạn đã hết lượt sử dụng bot trong hôm nay!\ bấm daily để nhận thêm 20 lượt dùng bot", threadID, messageID);
     if (!command) {
       var allCommandName = [];
       const commandValues = commands['keys']();
@@ -148,7 +148,7 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
       Obj.permssion = permssion
       Obj.getText = getText2
       usages = JSON.parse(fs.readFileSync(usgPath));
-      if (!["daily","check","ld"].includes(commandName)) usages[senderID].usages -= 1;
+      if (!ADMINBOT.includes(senderID) && !["daily","check","ld"].includes(commandName)) usages[senderID].usages -= 1;
       fs.writeFileSync(usgPath, JSON.stringify(usages, null, 4));
       command.run(Obj);
       timestamps.set(senderID, dateNow);
