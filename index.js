@@ -44,11 +44,23 @@ function startBot(message) {
 
     global.countRestart = global.countRestart || 0;
     child.on("close", (codeExit) => {
-        if (codeExit != 0 || global.countRestart < 20) {
-            startBot("Restarting...");
-            global.countRestart += 1;
+        if (codeExit === 0) {
+            logger("Bot đã dừng hoạt động theo yêu cầu (exit code 0).", "[ Stopping ]");
             return;
-        } else return;
+        }
+        if (codeExit === 1) {
+            // Lệnh restart chủ động từ admin bot
+            global.countRestart = 0;
+            startBot("Restarting bot...");
+            return;
+        }
+        if (global.countRestart < 10) {
+            global.countRestart += 1;
+            logger(`Bot crash bất thường (code: ${codeExit}). Đang khởi động lại (${global.countRestart}/10)...`, "[ Crash Recovery ]");
+            setTimeout(() => startBot(), 2000);
+            return;
+        }
+        logger("Bot đã crash liên tục quá 10 lần. Dừng để kiểm tra lỗi.", "[ Stopped ]");
     });
 
     child.on("error", function (error) {

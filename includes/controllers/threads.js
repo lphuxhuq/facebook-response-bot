@@ -44,14 +44,13 @@ module.exports = function ({ models, api }) {
 			(await Threads.findOne({ where: { threadID } })).update(options);
 			return true;
 		} catch (error) { 
-			try{
-				await this.createData(threadID, options);
-
-			} catch (error) {
-				console.error(error);
-				throw new Error(error);
+			try {
+				await createData(threadID, options);
+				return true;
+			} catch (err) {
+				console.error(err);
+				throw new Error(err);
 			}
-			
 		}
 	}
 

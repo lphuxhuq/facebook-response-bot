@@ -36,18 +36,12 @@ function handleOS(ping) {
 
 }
 module.exports.onLoad = function() {
-    const { writeFileSync, existsSync } = require('fs-extra');
     const { resolve } = require("path");
-    const path = resolve(__dirname, 'cache', 'data.json');
-    if (!existsSync(path)) {
-        const obj = {
-            adminbox: {}
-        };
-        writeFileSync(path, JSON.stringify(obj, null, 4));
-    } else {
-        const data = require(path);
-        if (!data.hasOwnProperty('adminbox')) data.adminbox = {};
-        writeFileSync(path, JSON.stringify(data, null, 4));
+    const stores = require("../../includes/stores.js");
+    const botDataStore = stores.use("botData", resolve(__dirname, 'cache', 'data.json'));
+    if (!botDataStore.data.hasOwnProperty('adminbox')) {
+        botDataStore.data.adminbox = {};
+        botDataStore.touch();
     }
 }
  console.log(chalk.bold.hex("# 00FF00").bold("--SUCCESFULLY LOADED THE BOT COMMAND--"));
@@ -300,10 +294,11 @@ return api.sendMessage("𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲 𝐫�
           
           //admin box only
         case "7": {
-        const { writeFileSync } = global.nodemodule["fs-extra"];
         const { resolve } = require("path");
-        const pathData = resolve(__dirname, 'cache', 'data.json');
-        const database = require(pathData);
+        const stores = require("../../includes/stores.js");
+        const botDataStore = stores.use("botData", resolve(__dirname, 'cache', 'data.json'));
+        const database = botDataStore.data;
+        if (!database.adminbox) database.adminbox = {};
         const { adminbox } = database;  
         if (adminbox[threadID] == true) {
             adminbox[threadID] = false;
@@ -312,7 +307,7 @@ return api.sendMessage("𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲 𝐫�
             api.sendMessage("[ 𝐌𝐎𝐃𝐄 ] » 𝐁𝐚̣̂𝐭 𝐭𝐡𝐚̀𝐧𝐡 𝐜𝐨̂𝐧𝐠 𝐦𝐨𝐝𝐞 𝐪𝐮𝐚̉𝐧 𝐭𝐫𝐢̣ 𝐯𝐢𝐞̂𝐧 𝐨𝐧𝐥𝐲 𝐜𝐡𝐢̉ 𝐪𝐮𝐚̉𝐧 𝐭𝐫𝐢̣ 𝐯𝐢𝐞̂𝐧 𝐦𝐨̛́𝐢 𝐜𝐨́ 𝐭𝐡𝐞̂̉ 𝐬𝐮̛̉ 𝐝𝐮̣𝐧𝐠 𝐛𝐨𝐭 🎀", threadID, messageID);
             adminbox[threadID] = true;
         }
-        writeFileSync(pathData, JSON.stringify(database, null, 4));
+        botDataStore.touch();
     }break;
         ////end
 

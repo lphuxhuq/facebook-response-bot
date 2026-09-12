@@ -4,6 +4,7 @@ module.exports = function({ api, models }) {
 				Threads = require("./controllers/threads")({ models, api }),
 				Currencies = require("./controllers/currencies")({ models });
 	const logger = require("../utils/log.js");
+	const stores = require("./stores.js");
 	const fs = require("fs");
 	const moment = require('moment-timezone');
 	const axios = require("axios");
@@ -93,8 +94,8 @@ module.exports = function({ api, models }) {
 		if (time[0] > getDayFromMonth(time[1]) || time[0] < 1) resolve("Ngày của bạn có vẻ không hợp lệ");
 		if (time[2] < 2022) resolve("Bạn sống ở kỷ nguyên nào thế?");
 		if (time[3] > 23 || time[3] < 0) resolve("Giờ của bạn có vẻ không hợp lệ");
-		if (time[4] > 59 || time[3] < 0) resolve("Phút của bạn có vẻ không hợp lệ");
-		if (time[5] > 59 || time[3] < 0) resolve("Giây của bạn có vẻ không hợp lệ");
+		if (time[4] > 59 || time[4] < 0) resolve("Phút của bạn có vẻ không hợp lệ");
+		if (time[5] > 59 || time[5] < 0) resolve("Giây của bạn có vẻ không hợp lệ");
 		const yr = time[2] - 1970;
 		let yearToMS = (yr) * 365 * 24 * 60 * 60 * 1000;
 		yearToMS += Math.round((yr - 2) / 4) * 24 * 60 * 60 * 1000;
@@ -119,6 +120,7 @@ module.exports = function({ api, models }) {
 		/*smol check*/
 		if (!fs.existsSync(datlichPath)) fs.writeFileSync(datlichPath, JSON.stringify({}, null, 4));
 		var data = JSON.parse(fs.readFileSync(datlichPath));
+		let datlichDirty = false;
 
 		//GET CURRENT TIME
 		var timeVN = moment().tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY_HH:mm:ss');
@@ -132,9 +134,10 @@ module.exports = function({ api, models }) {
 			if (getTimeMS < vnMS) {
 				if (vnMS - getTimeMS < tenMinutes) {
 					data[boxID][e]["TID"] = boxID;
-					temp.push(data[boxID][e]); delete data[boxID][e];
-				} else delete data[boxID][e];
-				fs.writeFileSync(datlichPath, JSON.stringify(data, null, 4));
+					temp.push(data[boxID][e]);
+				}
+				delete data[boxID][e];
+				datlichDirty = true;
 			};
 			resolve();
 		});
@@ -145,6 +148,7 @@ module.exports = function({ api, models }) {
 			}
 			resolve();
 		});
+		if (datlichDirty) fs.writeFileSync(datlichPath, JSON.stringify(data, null, 4));
 		for (const el of temp) {
 			try {
 				var all = (await Threads.getInfo(el["TID"])).participantIDs;
@@ -184,13 +188,13 @@ module.exports = function({ api, models }) {
 	//========= Send event to handle need =========//
 	/////////////////////////////////////////////////
 	
+	const unsendStore = stores.use("unsendReaction", __dirname + "/../modules/commands/cache/unsendReaction.json");
+
 	return (event) => {
-       let unsend = __dirname + "/../modules/commands/cache/unsendReaction.json";
-		if (!fs.existsSync(unsend)) fs.writeFileSync(unsend, JSON.stringify({}, null, 4));
-		let unsendData = JSON.parse(fs.readFileSync(unsend));
-		if(!unsendData[event.threadID]) unsendData[event.threadID] = { data: false };
-		fs.writeFileSync(unsend, JSON.stringify(unsendData, null, 4));
-		if(event.type == "message_reaction" && event.senderID == api.getCurrentUserID() && unsendData[event.threadID].data) api.unsendMessage(event.messageID);
+		if (event.type == "message_reaction" && event.senderID == api.getCurrentUserID()) {
+			const unsendEntry = unsendStore.data[event.threadID];
+			if (unsendEntry && unsendEntry.data) api.unsendMessage(event.messageID);
+		}
 		if (event.senderID && String(event.senderID) === String(api.getCurrentUserID())) return;
 		switch (event.type) {
 			case "message":

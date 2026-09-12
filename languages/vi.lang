@@ -84,7 +84,7 @@ handleCreateDatabase.newUser=người dùng mới: %1
 # includes/handle/handleEvent.js
 
 handleEvent.executeEvent=[ %1 ] Event được thực thi: %2 tại nhóm: %3 | Thời gian xử lý: %4ms
-handleEvent.eventError=Đã xảy ra lỗi không mong muốn trong khi thực thi event %1, lỗi: %12
+handleEvent.eventError=Đã xảy ra lỗi không mong muốn trong khi thực thi event %1, lỗi: %2
 
 # includes/handle/handleReaction.js
 

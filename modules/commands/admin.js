@@ -29,18 +29,12 @@ module.exports.languages = {
     }
 }
 module.exports.onLoad = function() {
-    const { writeFileSync, existsSync } = require('fs-extra');
     const { resolve } = require("path");
-    const path = resolve(__dirname, 'cache', 'data.json');
-    if (!existsSync(path)) {
-        const obj = {
-            adminbox: {}
-        };
-        writeFileSync(path, JSON.stringify(obj, null, 4));
-    } else {
-        const data = require(path);
-        if (!data.hasOwnProperty('adminbox')) data.adminbox = {};
-        writeFileSync(path, JSON.stringify(data, null, 4));
+    const stores = require("../../includes/stores.js");
+    const botDataStore = stores.use("botData", resolve(__dirname, 'cache', 'data.json'));
+    if (!botDataStore.data.hasOwnProperty('adminbox')) {
+        botDataStore.data.adminbox = {};
+        botDataStore.touch();
     }
 }
 module.exports.run = async  ({ api, event, args, Users, permssion, getText }) => {
@@ -154,8 +148,10 @@ let callback = function () {
         case 'boxonly': {
         
         const { resolve } = require("path");
-        const pathData = resolve(__dirname, 'cache', 'data.json');
-        const database = require(pathData);
+        const stores = require("../../includes/stores.js");
+        const botDataStore = stores.use("botData", resolve(__dirname, 'cache', 'data.json'));
+        const database = botDataStore.data;
+        if (!database.adminbox) database.adminbox = {};
         const { adminbox } = database;   
         if (adminbox[threadID] == true) {
             adminbox[threadID] = false;
@@ -164,7 +160,7 @@ let callback = function () {
             adminbox[threadID] = true;
             api.sendMessage("𝗠𝗢𝗗𝗘 - Kích hoạt thành công chế độ Quản trị viên, chỉ Quản trị viên có thể sử dụng Bot", threadID, messageID);
     }
-        writeFileSync(pathData, JSON.stringify(database, null, 4));
+        botDataStore.touch();
         break;
     }
         case 'only':

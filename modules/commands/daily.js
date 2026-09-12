@@ -1,6 +1,8 @@
 const fs = require("fs"),
       request = require("request"),
-      path = __dirname + '/../../includes/handle/usages.json',
+      stores = require('../../includes/stores.js'),
+      usagesStore = stores.use("usages", __dirname + '/../../includes/handle/usages.json'),
+      path = usagesStore.file,
        pathDaily = __dirname + "/cache/daily/";
 
 module.exports.config = {
@@ -22,37 +24,35 @@ module.exports.config = {
 
 module.exports.handleEvent = async function ({ event }) {
   
-  var pathUsages = JSON.parse(require("fs").readFileSync(__dirname + `/../../includes/handle/usages.json`));
-  let dataUsages = JSON.parse(fs.readFileSync(path));
-  const { senderID, body } = event;
+  const dataUsages = usagesStore.data;
   
   var newDate = new Date(), 
       date = newDate.getDay() + 1;
     if (date == 2) {
-  dataUsages[senderID] = {
-                   usages: pathUsages[senderID].usages,
-                   diemdanh: 0
+      const ids = Object.keys(dataUsages);
+      for (const senderID of ids) {
+        if (dataUsages[senderID] && dataUsages[senderID].diemdanh != 0) {
+          dataUsages[senderID].diemdanh = 0;
         }
-fs.writeFileSync(path, JSON.stringify(dataUsages));
+      }
+      usagesStore.touch();
     }
   },
 
 module.exports.onLoad = () => {
   
-  if (!fs.existsSync(pathDaily + "cache", "daily")) fs.mkdirSync(pathDaily, { recursive: true });
+  if (!fs.existsSync(pathDaily)) fs.mkdirSync(pathDaily, { recursive: true });
   
-  if (!fs.existsSync(pathDaily + this.config.name +".png")) request("https://i.imgur.com/7ltbAS1.gif").pipe(fs.createWriteStream(pathDaily + this.config.name +".gif"));
+  if (!fs.existsSync(pathDaily + this.config.name +".gif")) request("https://i.imgur.com/7ltbAS1.gif").pipe(fs.createWriteStream(pathDaily + this.config.name +".gif"));
   
-  if (!fs.existsSync(path)) fs.writeFileSync(path, JSON.stringify({}));
     }
          
 module.exports.run = async function({ api, event, args, Currencies }) {
   
-  if (!fs.existsSync(pathDaily)) fs.mkdir(pathDaily);
+  if (!fs.existsSync(pathDaily)) fs.mkdirSync(pathDaily, { recursive: true });
 	const listFile = fs.readdirSync(pathDaily);
   
-  var pathUsages = JSON.parse(require("fs").readFileSync(__dirname + `/../../includes/handle/usages.json`));
-  let dataUsages = JSON.parse(fs.readFileSync(path));
+  const dataUsages = usagesStore.data;
 
   const { threadID, messageID, senderID, body} = event, c = this.config.credits, { daily } = global.configModule,
         cooldownTime = daily.cooldownTime,
@@ -105,9 +105,9 @@ var newDate = new Date(),
 
   
     if (args[0] == "7day") {
-      if (dataUsages[senderID].diemdanh <= 6) {
+      if (!dataUsages[senderID] || (dataUsages[senderID].diemdanh || 0) <= 6) {
         return api.sendMessage(
-          `Bạn mới điểm danh được ${dataUsages[senderID].diemdanh} ngày thôi!!, đủ 7 ngày liên tục mới nhận được phần quà bí mật nha`,
+          `Bạn mới điểm danh được ${(dataUsages[senderID] && dataUsages[senderID].diemdanh) || 0} ngày thôi!!, đủ 7 ngày liên tục mới nhận được phần quà bí mật nha`,
           threadID);
       }
         
@@ -116,10 +116,10 @@ var newDate = new Date(),
               exp7Day = parseInt(10000),
               usages7Day = parseInt(500);
         dataUsages[senderID] = {
-                   usages: pathUsages[senderID].usages + parseInt(usages7Day),
+                   usages: (dataUsages[senderID].usages || 0) + parseInt(usages7Day),
                    diemdanh: 0
         }
-fs.writeFileSync(path, JSON.stringify(dataUsages));
+usagesStore.touch();
         
         return api.sendMessage({
      body: "Nhận quà đăng nhập 7 ngày thành công!!\n\n"
@@ -178,11 +178,13 @@ fs.writeFileSync(path, JSON.stringify(dataUsages));
 }
     
  else {
+   if (!dataUsages[senderID]) dataUsages[senderID] = { usages: 0, diemdanh: 0 };
+   const previousDiemDanh = dataUsages[senderID].diemdanh || 0;
    dataUsages[senderID] = {
-     usages: pathUsages[senderID].usages + parseInt(addUsages),
-     diemdanh: pathUsages[senderID.diemdanh + parseInt(1)]
+     usages: (dataUsages[senderID].usages || 0) + parseInt(addUsages),
+     diemdanh: previousDiemDanh + 1
    }
-fs.writeFileSync(path, JSON.stringify(dataUsages));
+usagesStore.touch();
    
    return api.sendMessage({
      body: "Điểm danh " + thu + " thành công!!\n\n"
@@ -191,7 +193,7 @@ fs.writeFileSync(path, JSON.stringify(dataUsages));
      + "     💸 " + addMoney.toLocaleString() + " Tiền mặt\n"
      + "     🧪 " + addExp.toLocaleString() + " Kinh Nghiệm\n"
      + "     💎 " + addUsages.toLocaleString() + " Lượt dùng bot\n\n\n"
-     +     1 + " + " + dataUsages[senderID].diemdanh + " = " + (dataUsages[senderID].diemdanh + 1) + " Điểm đăng nhập, (tích đủ 7 điểm thì dùng lệnh " + global.config.PREFIX +  "daily 7day " + " để nhận quà)"
+      + previousDiemDanh + " + 1 = " + dataUsages[senderID].diemdanh + " Điểm đăng nhập, (tích đủ 7 điểm thì dùng lệnh " + global.config.PREFIX +  "daily 7day " + " để nhận quà)"
      + "◆━━━━━•💜•━━━━━◆\n\n"
      + " !! GỬI VÀO BANK ĐỂ CÓ LÃI !!\n"
      + " !! ĐIỂM ĐĂNG NHẬP TỰ RESET VỀ 0 VÀO THỨ 2",

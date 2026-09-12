@@ -1,10 +1,24 @@
 module.exports = function ({ api, models, Users, Threads, Currencies }) {
+    const ENTRY_TTL = 7 * 24 * 60 * 60 * 1000; // entry hết hiệu lực sau 7 ngày
+    const NUM_WINDOW = 10 * 60 * 1000; // gõ số chỉ khớp handler vừa gửi trong 10 phút
+    const MAX_ENTRIES = 2000;
     return function ({ event }) {
         if (!event) return;
         if (event.senderID && String(event.senderID) === String(api.getCurrentUserID())) return;
         const { handleReply, commands } = global.client;
         const { messageID, threadID, messageReply, body } = event;
         if (!handleReply || handleReply.length === 0) return;
+
+        // Dọn entry cũ để tránh memory leak (các module push nhưng hầu như không splice)
+        const nowTs = Date.now();
+        for (let i = handleReply.length - 1; i >= 0; i--) {
+            const item = handleReply[i];
+            if (!item._registeredAt) item._registeredAt = nowTs;
+            if (nowTs - item._registeredAt > ENTRY_TTL) handleReply.splice(i, 1);
+        }
+        if (handleReply.length > MAX_ENTRIES) handleReply.splice(0, handleReply.length - MAX_ENTRIES);
+
+        const isRecent = (item) => (nowTs - (item._registeredAt || 0)) <= NUM_WINDOW;
 
         // Chỉ xử lý reply nếu người dùng quote tin nhắn hoặc gõ trực tiếp một con số lựa chọn
         const isQuoting = Boolean(messageReply && (messageReply.messageID || messageReply.body));
@@ -51,10 +65,11 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                 }
             }
         }
-        // 3. Fallback nếu không quote hoặc quote không tìm thấy: lấy reply mới nhất của nhóm
-        if (indexOfHandle < 0) {
+        // 3. Fallback (do MQTT trả messageID là otid nên exact-match thường fail):
+        //    chỉ khớp handler GẦN NHẤT của đúng nhóm trong 10 phút, tránh nhảy nhầm lệnh cũ
+        if (indexOfHandle < 0 && (isPureNumber || isQuoting)) {
             for (let i = handleReply.length - 1; i >= 0; i--) {
-                if (handleReply[i].threadID == threadID) {
+                if (handleReply[i].threadID == threadID && isRecent(handleReply[i])) {
                     indexOfHandle = i;
                     break;
                 }
@@ -91,7 +106,9 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
             Obj.handleReply = indexOfMessage;
             Obj.getText = getText2;
             console.log(`[HANDLE REPLY]: Executing ${indexOfMessage.name} for thread ${threadID}`);
-            handleNeedExec.handleReply(Obj);
+            if (typeof handleNeedExec.handleReply === 'function') {
+                handleNeedExec.handleReply(Obj);
+            }
             return;
         } catch (error) {
             console.error('[HANDLE REPLY ERROR]:', error);

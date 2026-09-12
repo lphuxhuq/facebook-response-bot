@@ -1,13 +1,18 @@
 module.exports = function ({ api, models, Users, Threads, Currencies }) {
   const fs = require("fs");
+  const path = require("path");
   const stringSimilarity = require('string-similarity'),
     escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
     logger = require("../../utils/log.js");
   const axios = require('axios');
   const moment = require("moment-timezone");
+  const stores = require("../stores.js");
+  const getThreadInfoCached = require("./threadInfo.js")({ api, models, Users, Threads, Currencies });
+  const usagesStore = stores.use("usages", path.join(__dirname, "usages.json"));
+  const adboxStore = stores.use("botData", path.join(__dirname, "../../modules/commands/cache/data.json"));
   return async function ({ event }) {
     const dateNow = Date.now()
-    const time = moment.tz("Asia/Ho_Chi_minh").format("HH:MM:ss DD/MM/YYYY");
+    const time = moment.tz("Asia/Ho_Chi_minh").format("HH:mm:ss DD/MM/YYYY");
     const { allowInbox, PREFIX, ADMINBOT, NDH, DeveloperMode, adminOnly, keyAdminOnly, ndhOnly,adminPaseOnly } = global.config;
     const { userBanned, threadBanned, threadInfo, threadData, commandBanned } = global.data;
     const client = global.client;
@@ -21,35 +26,25 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
     if (!prefixRegex.test(body)) return;
     const adminbot = global.config || require('./../../config.json');
     let getDay = moment.tz("Asia/Ho_Chi_Minh").day();
-    let usgPath = __dirname + '/usages.json';
-    if (!fs.existsSync(usgPath)) fs.writeFileSync(usgPath, JSON.stringify({}));
-    let usages = JSON.parse(fs.readFileSync(usgPath));
+    let usages = usagesStore.data;
     if (!(senderID in usages)) {
       usages[senderID] = {};
       usages[senderID].usages = 20;
+      usagesStore.touch();
     };
     
-if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) && adminbot.adminPaseOnly == true)return api.sendMessage("[ MODE ] - Chỉ admin mới được sử dụng bot trong chat riêng.", threadID, messageID)
+    if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) && adminbot.adminPaseOnly == true)return api.sendMessage("[ MODE ] - Chỉ admin mới được sử dụng bot trong chat riêng.", threadID, messageID)
    
     if (!ADMINBOT.includes(senderID) && adminbot.adminOnly == true) {
-      if (!ADMINBOT.includes(senderID) && adminbot.adminOnly == true) return api.sendMessage('[ MODE ] - Chỉ admin bot mới có thể sử dụng bot', threadID, messageID)
+      return api.sendMessage('[ MODE ] - Chỉ admin bot mới có thể sử dụng bot', threadID, messageID);
     }
     if (!NDH.includes(senderID) && !ADMINBOT.includes(senderID) && adminbot.ndhOnly == true) {
-      if (!NDH.includes(senderID) && !ADMINBOT.includes(senderID) && adminbot.ndhOnly == true) return api.sendMessage('[ MODE ] - Chỉ người hỗ trợ bot mới có thể sử dụng bot', threadID, messageID)
+      return api.sendMessage('[ MODE ] - Chỉ người hỗ trợ bot mới có thể sử dụng bot', threadID, messageID);
     }
-    var threadInf = threadInfo.get(threadID);
-    if (!threadInf && event.isGroup) {
-      try { threadInf = await Threads.getInfo(threadID); } catch(e) {}
-    }
+    var threadInf = event.isGroup ? await getThreadInfoCached(threadID) : (threadInfo.get(threadID) || {});
     threadInf = threadInf || {};
     const findd = (Array.isArray(threadInf.adminIDs)) ? threadInf.adminIDs.find(el => el && el.id == senderID) : false;
-    let dataAdbox = { adminbox: {} };
-    try {
-      const dataAdboxPath = require('path').resolve(__dirname, '../../modules/commands/cache/data.json');
-      if (fs.existsSync(dataAdboxPath)) {
-        dataAdbox = JSON.parse(fs.readFileSync(dataAdboxPath, 'utf-8'));
-      }
-    } catch (e) {}
+    const dataAdbox = adboxStore.data;
     if (dataAdbox.adminbox && dataAdbox.adminbox.hasOwnProperty(threadID) && dataAdbox.adminbox[threadID] == true && !ADMINBOT.includes(senderID) && !findd && event.isGroup == true) return api.sendMessage('[ MODE ] - Chỉ admin nhóm mới được sử dụng bot!!', event.threadID, event.messageID)
     if (userBanned.has(senderID) || threadBanned.has(threadID) || allowInbox == ![] && senderID == threadID) {
       if (!ADMINBOT.includes(senderID.toString())) {
@@ -76,8 +71,7 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
     var command = commands.get(commandName);
 
     
-    fs.writeFileSync(usgPath, JSON.stringify(usages, null, 4));
-    if (!ADMINBOT.includes(senderID) && usages[senderID].usages <= 0 && !["daily","check","ld"].includes(commandName)) return api.sendMessage("Bạn đã hết lượt sử dụng bot trong hôm nay!\ bấm daily để nhận thêm 20 lượt dùng bot", threadID, messageID);
+    if (!ADMINBOT.includes(senderID) && usages[senderID] && usages[senderID].usages <= 0 && !["daily","check","ld"].includes(commandName)) return api.sendMessage("Bạn đã hết lượt sử dụng bot trong hôm nay! Bấm !daily để nhận thêm 20 lượt dùng bot", threadID, messageID);
     if (!command) {
       var allCommandName = [];
       const commandValues = commands['keys']();
@@ -109,15 +103,15 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
         return api.unsendMessage(info.messageID);
       }, messageID);
     var threadInfo2;
-    if (event.isGroup == !![])
-      try {
-        threadInfo2 = (threadInfo.get(threadID) || await Threads.getInfo(threadID))
-        if (Object.keys(threadInfo2).length == 0) throw new Error();
-      } catch (err) {
+    if (event.isGroup == !![]) {
+      threadInfo2 = await getThreadInfoCached(threadID);
+      if (!threadInfo2 || Object.keys(threadInfo2).length == 0) {
+        threadInfo2 = null;
         logger(global.getText("handleCommand", "cantGetInfoThread", "error"));
       }
+    }
     var permssion = 0;
-    var threadInfoo = threadInfo.get(threadID) || threadInf || {};
+    var threadInfoo = threadInfo2 || threadInfo.get(threadID) || threadInf || {};
     const find = (Array.isArray(threadInfoo.adminIDs)) ? threadInfoo.adminIDs.find(el => el && el.id == senderID) : false;
     if (NDH.includes(senderID.toString())) permssion = 2;
     if (ADMINBOT.includes(senderID.toString())) permssion = 3;
@@ -155,9 +149,11 @@ if(!global.data.allThreadID.includes(threadID) && !ADMINBOT.includes(senderID) &
       Obj.Currencies = Currencies
       Obj.permssion = permssion
       Obj.getText = getText2
-      usages = JSON.parse(fs.readFileSync(usgPath));
-      if (!ADMINBOT.includes(senderID) && !["daily","check","ld"].includes(commandName)) usages[senderID].usages -= 1;
-      fs.writeFileSync(usgPath, JSON.stringify(usages, null, 4));
+      if (!ADMINBOT.includes(senderID) && !["daily","check","ld"].includes(commandName)) {
+        if (!usages[senderID]) usages[senderID] = { usages: 20 };
+        usages[senderID].usages -= 1;
+        usagesStore.touch();
+      }
       command.run(Obj);
       timestamps.set(senderID, dateNow);
       if (DeveloperMode == !![])

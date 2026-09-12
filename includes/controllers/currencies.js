@@ -34,8 +34,13 @@ module.exports = function ({ models }) {
 			return true;
 		} 
 		catch (error) {
-			console.error(error);
-			throw new Error(error);
+			try {
+				await createData(userID, options);
+				return true;
+			} catch (err) {
+				console.error(err);
+				throw new Error(err);
+			}
 		}
 	}
 

@@ -9,12 +9,10 @@ module.exports.config = {
   cooldowns: 5
 };
 
-const fs = require("fs");
-const path = __dirname + '/../../includes/handle/usages.json';
+const stores = require("../../includes/stores.js");
+const usagesStore = stores.use("usages", __dirname + '/../../includes/handle/usages.json');
 
-module.exports.onLoad = () => {
-  if (!fs.existsSync(path)) fs.writeFileSync(path, JSON.stringify({}));
-}
+module.exports.onLoad = () => {}
 
 module.exports.run = async ({ event, api, args }) => {
   const { threadID, messageID, senderID } = event;
@@ -28,17 +26,16 @@ module.exports.run = async ({ event, api, args }) => {
     targetID = userID;
     let nameL = event.mentions[userID].split(" ").length;
     num = parseInt(args[nameL]);
-  } else return api.sendMessgae("Lựa chọn của bạn không hợp lệ", threadID, messageID);
+  } else return api.sendMessage("Lựa chọn của bạn không hợp lệ", threadID, messageID);
 
   if (isNaN(num)) return api.sendMessage("Không phải là 1 con số", threadID, messageID);
-  let dataM = JSON.parse(fs.readFileSync(path));
+  let dataM = usagesStore.data;
   if (!(targetID in dataM)) {
-    let getDay = require("moment-timezone").tz("Asia/Ho_Chi_Minh").day();
     dataM[targetID] = {
-      day: getDay,
-      usage: num
+      usages: num,
+      diemdanh: 0
     }
   } else dataM[targetID].usages = num;
-  fs.writeFileSync(path, JSON.stringify(dataM, null, 4));
+  usagesStore.touch();
   return api.sendMessage(`Đã set cho ${((userID) ? event.mentions[userID].replace(/@/g, "") : "bản thân") + " " + num} lượt dùng bot`, threadID, messageID);
 }
