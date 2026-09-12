@@ -268,16 +268,16 @@ function onBot({ models: botModel }) {
 
             console.log('[API SEND MESSAGE]: threadID=' + threadID + ', preview=' + ((normMsg && normMsg.body) ? normMsg.body.slice(0, 60).replace(/\n/g, ' ') : '(media)'));
 
-            const otid = (Date.now() << 22) + Math.floor(Math.random() * 4194304);
+            const otid = (Date.now().toString() + Math.floor(Math.random() * 1000000).toString()).slice(0, 16);
 
             if (!normMsg.attachment && !normMsg.sticker && typeof loginApiData.sendMessageMqtt === 'function') {
                 return loginApiData.sendMessageMqtt(normMsg, threadID, (err, res) => {
                     if (err) {
                         console.log('[MQTT sendMessageMqtt error, thử fallback HTTP]:', (err && err.error) || err);
-                        return rawSendMessage.call(loginApiData, normMsg, threadID, cb, replyMsg);
+                        return rawSendMessage.call(loginApiData, normMsg, threadID, cb);
                     }
                     console.log('[MQTT SEND SUCCESS]: threadID=' + threadID);
-                    const info = Object.assign({ messageID: otid.toString(), threadID: String(threadID) }, res || {});
+                    const info = Object.assign({ messageID: otid, threadID: String(threadID) }, res || {});
                     try {
                         cb(null, info);
                     } catch (cbErr) {
@@ -286,7 +286,7 @@ function onBot({ models: botModel }) {
                 });
             }
 
-            return rawSendMessage.call(loginApiData, normMsg, threadID, cb, replyMsg);
+            return rawSendMessage.call(loginApiData, normMsg, threadID, cb);
         };
 
         writeFileSync(appStateFile, JSON.stringify(loginApiData.getAppState(), null, '\x09'))

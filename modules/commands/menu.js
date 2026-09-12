@@ -56,14 +56,7 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 			msg += "\n\n╭──────╮\n    Reply \n╰──────╯ tin nhắn theo số để xem thông tin chi tiết lệnh và cách sử dụng lệnh";
 		}
 	}
-	var msgg = { body: msg };
-	const menuGif = __dirname + "/cache/menu.gif";
-	if (fs.existsSync(menuGif)) {
-		try {
-			msgg.attachment = [fs.createReadStream(menuGif)];
-		} catch (e) {}
-	}
-	return api.sendMessage(msgg, event.threadID, (error, info) => {
+	return api.sendMessage({ body: msg }, event.threadID, (error, info) => {
 		if (error) console.log(error);
 		if (check && dataAfter) {
 			const targetGroup = dataAfter;
@@ -87,13 +80,6 @@ module.exports.run = async function({ api, event, args }) {
 	const { threadID, messageID } = event;
 	const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
 	const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX;
-	const imgP = [];
-	try {
-		const menuGif = __dirname + "/cache/menu.gif";
-		if (fs.existsSync(menuGif)) {
-			imgP.push(fs.createReadStream(menuGif));
-		}
-	} catch (e) {}
 	const command = commands.values();
 	var group = [], msg = "» Danh sách lệnh hiện có «\n";
 	let check = true, page_num_input = "";
@@ -130,8 +116,7 @@ module.exports.run = async function({ api, event, args }) {
       msg += `\nBạn có thể dùng ${prefix}help all để xem tất cả lệnh`
 			msg += "\n╭──────╮\n     Reply \n╰──────╯tin nhắn theo số để xem thông tin chi tiết lệnh và cách sử dụng lệnh";
 		}
-		var msgg = {body: msg, attachment: imgP}
-		return api.sendMessage(msgg, threadID, (error, info) => {
+		return api.sendMessage({ body: msg }, threadID, (error, info) => {
 			if (check) {
 				global.client.handleReply.push({
 					type: "cmd_info",
@@ -163,9 +148,7 @@ module.exports.run = async function({ api, event, args }) {
     msg += `\nBạn có thể dùng ${prefix}menu all để xem tất cả lệnh`
 		msg += `\n╭──────╮\n       Reply \n╰──────╯ tin nhắn theo số để xem các lệnh theo phân loại\nAdmin : Nguyễn Đạt`;
 	}
-	var msgg = { body: msg };
-	if (imgP.length > 0) msgg.attachment = imgP;
-	return api.sendMessage(msgg, threadID, async (error, info) => {
+	return api.sendMessage({ body: msg }, threadID, async (error, info) => {
 		if (check) {
 			global.client.handleReply = global.client.handleReply.filter(item => !(item.threadID == threadID && item.name == this.config.name));
 			global.client.handleReply.push({
