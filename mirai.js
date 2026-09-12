@@ -270,7 +270,7 @@ function onBot({ models: botModel }) {
 
             const otid = (Date.now() << 22) + Math.floor(Math.random() * 4194304);
 
-            if (typeof loginApiData.sendMessageMqtt === 'function') {
+            if (!normMsg.attachment && !normMsg.sticker && typeof loginApiData.sendMessageMqtt === 'function') {
                 return loginApiData.sendMessageMqtt(normMsg, threadID, (err, res) => {
                     if (err) {
                         console.log('[MQTT sendMessageMqtt error, thử fallback HTTP]:', (err && err.error) || err);
@@ -283,7 +283,7 @@ function onBot({ models: botModel }) {
                     } catch (cbErr) {
                         console.error('[sendMessage callback error]:', cbErr);
                     }
-                }, replyMsg);
+                });
             }
 
             return rawSendMessage.call(loginApiData, normMsg, threadID, cb, replyMsg);

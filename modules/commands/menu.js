@@ -56,21 +56,13 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 			msg += "\n\n╭──────╮\n    Reply \n╰──────╯ tin nhắn theo số để xem thông tin chi tiết lệnh và cách sử dụng lệnh";
 		}
 	}
-	const axios = require('axios');
-	const fs = require('fs-extra');
-	const img = ["https://i.imgur.com/PfioSJP.gif", "https://i.imgur.com/6PArjh2.gif", "https://i.imgur.com/sclek83.gif", "https://i.imgur.com/c7jER2a.gif", "https://i.imgur.com/PAvBbgQ.gif", "https://i.imgur.com/YgMRrJW.gif", "https://i.imgur.com/IpuGKQ9.gif", "https://i.imgur.com/oHDlwaL.gif", "https://i.imgur.com/JlRBMeS.gif", "https://i.imgur.com/zQqhgM4.gif", "https://i.imgur.com/hrJJLu3.gif"];
-	var path = __dirname + "/cache/menu.gif";
-	var rdimg = img[Math.floor(Math.random() * img.length)]; 
-	const imgP = [];
-	try {
-		let dowloadIMG = (await axios.get(rdimg, { responseType: "arraybuffer", timeout: 3000 })).data; 
-		fs.writeFileSync(path, Buffer.from(dowloadIMG, "utf-8"));
-		imgP.push(fs.createReadStream(path));
-	} catch (e) {
-		console.log('[MENU REPLY] Bo qua tai anh gif:', e.message);
-	}
 	var msgg = { body: msg };
-	if (imgP.length > 0) msgg.attachment = imgP;
+	const menuGif = __dirname + "/cache/menu.gif";
+	if (fs.existsSync(menuGif)) {
+		try {
+			msgg.attachment = [fs.createReadStream(menuGif)];
+		} catch (e) {}
+	}
 	return api.sendMessage(msgg, event.threadID, (error, info) => {
 		if (error) console.log(error);
 		if (check && dataAfter) {
@@ -95,19 +87,13 @@ module.exports.run = async function({ api, event, args }) {
 	const { threadID, messageID } = event;
 	const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
 	const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX;
-	const axios = require('axios');
 	const imgP = [];
 	try {
-		fs.ensureDirSync(__dirname + "/cache");
-		const img = ["https://i.imgur.com/PfioSJP.gif", "https://i.imgur.com/6PArjh2.gif", "https://i.imgur.com/sclek83.gif", "https://i.imgur.com/c7jER2a.gif", "https://i.imgur.com/PAvBbgQ.gif", "https://i.imgur.com/YgMRrJW.gif", "https://i.imgur.com/IpuGKQ9.gif", "https://i.imgur.com/oHDlwaL.gif", "https://i.imgur.com/JlRBMeS.gif", "https://i.imgur.com/zQqhgM4.gif", "https://i.imgur.com/hrJJLu3.gif"];
-		var path = __dirname + "/cache/menu.gif";
-		var rdimg = img[Math.floor(Math.random() * img.length)]; 
-		let dowloadIMG = (await axios.get(rdimg, { responseType: "arraybuffer", timeout: 3000 })).data; 
-		fs.writeFileSync(path, Buffer.from(dowloadIMG, "utf-8"));
-		imgP.push(fs.createReadStream(path));
-	} catch (e) {
-		console.log('[MENU] Bo qua tai anh gif:', e.message);
-	}
+		const menuGif = __dirname + "/cache/menu.gif";
+		if (fs.existsSync(menuGif)) {
+			imgP.push(fs.createReadStream(menuGif));
+		}
+	} catch (e) {}
 	const command = commands.values();
 	var group = [], msg = "» Danh sách lệnh hiện có «\n";
 	let check = true, page_num_input = "";
