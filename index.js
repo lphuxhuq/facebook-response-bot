@@ -25,7 +25,7 @@ const dashboard = http.createServer(function (_req, res) {
     res.end();
 });
 
-dashboard.listen(process.env.port || 0);
+dashboard.listen(process.env.PORT || process.env.port || 8080);
 
 logger("Opened server site...", "[ Starting ]");
 
@@ -61,10 +61,11 @@ function startBot(message) {
 
 
 axios.get("https://raw.githubusercontent.com/d-jukie/miraiv2/main/package.json").then((res) => {
-    logger(res['data']['name'], "[ NAME ]");
-    logger("Version: " + res['data']['version'], "[ VERSION ]");
-    logger(res['data']['description'], "[ DESCRIPTION ]");
-});
+    if (res && res.data) {
+        logger(res['data']['name'] || "Mirai", "[ NAME ]");
+        logger("Version: " + (res['data']['version'] || "1.0.0"), "[ VERSION ]");
+    }
+}).catch(() => {});
 startBot();
 /*axios.get("https://raw.githubusercontent.com/d-jukie/miraiv2_fix/main/package.json").then((res) => {
     const local = JSON.parse(readFileSync('./package.json'));

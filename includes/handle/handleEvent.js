@@ -1,6 +1,6 @@
 module.exports = function ({api ,models, Users, Threads, Currencies }) {
     const logger = require("../../utils/log.js");
-   	const moment = require("moment");
+   	const moment = require("moment-timezone");
 
     return function ({ event }) {
         const timeStart = Date.now()

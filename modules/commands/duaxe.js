@@ -1,6 +1,6 @@
 const path = require("path");
-const { mkdirSync, writeFileSync, existsSync, createReadStream, readdirSync } = require("fs-extra")
-const axios = require("axios")
+const { mkdirSync, writeFileSync, existsSync, createReadStream, readdirSync, readFileSync } = require("fs-extra");
+const axios = require("axios");
 
 module.exports.config = {
     name: "duaxe",
@@ -26,9 +26,15 @@ module.exports.onLoad = async () => {
 
 module.exports.checkPath = function (type, senderID) {
     const pathGame = path.join(__dirname, 'duaxe', 'datauser', `${senderID}.json`);
-    const pathGame_1 = require("./duaxe/datauser/" + senderID + '.json');
-    if (type == 1) return pathGame
-    if (type == 2) return pathGame_1
+    if (type == 1) return pathGame;
+    if (type == 2) {
+        if (!existsSync(pathGame)) return {};
+        try {
+            return JSON.parse(readFileSync(pathGame, 'utf-8'));
+        } catch (e) {
+            return {};
+        }
+    }
 }
 
 module.exports.image = async function(link) {

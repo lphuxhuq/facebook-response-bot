@@ -68,6 +68,7 @@ handleCommand.cantGetInfoThread=Không thể lấy thông tin của nhóm, lỗi
 handleCommand.permssionNotEnough=𝗫𝗶𝗻 𝗹𝗼̂̃𝗶 𝗻𝗵𝗲 𝘃𝗶̀ 𝗯𝗮̣𝗻 𝗹𝗮̀ 𝘁𝗵𝗮̀𝗻𝗵 𝘃𝗶𝗲̂𝗻 𝗻𝗲̂𝗻 𝗯𝗮̣𝗻 𝘁𝘂𝗼̂̉𝗶 𝗰𝗮̣̆𝗰 𝘅𝗮̀𝗶 𝗹𝗲̣̂𝗻𝗵 "%1" 😏. 𝗖𝗵𝗶̉ 𝗰𝗼́ 𝗤𝗧𝗩 𝗵𝗼𝗮̣̆𝗰 𝗔𝗱𝗺𝗶𝗻 𝗺𝗼̛́𝗶 𝗰𝗼́ 𝘁𝗵𝗲̂̉ 𝗱𝘂̀𝗻𝗴\n𝗬𝗲̂𝘂 𝗰𝗮̣̂𝘂 𝗻𝗵𝗶𝗲̂̀𝘂 𝗹𝗮̆́𝗺 💌
 handleCommand.cantSetMessageReaction=Đã có lỗi xảy ra không mong muốn tại setMessageReaction, lỗi: %1
 handleCommand.notFoundLanguage=Không tìm thấy ngôn ngữ hỗ trợ cho module %1s
+handleCommand.delayTime=Bạn đang bấm quá nhanh! Vui lòng chờ %2s để tiếp tục sử dụng lệnh %1.
 handleCommand.executeCommand=[ %1 ] Lệnh sử dụng: %2 bởi người dùng: %3 tại nhóm: %4 | Args đi kèm: %5 | Thời gian xử lý: %6ms
 handleCommand.commandError=Đã xảy ra lỗi không mong muốn trong khi thực thi lệnh %1, lỗi: %2
 

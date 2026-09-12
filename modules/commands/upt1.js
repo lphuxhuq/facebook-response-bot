@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 module.exports.config = {
-	name:"upt",
+	name:"upt1",
 	version: "1.0.0",
 	hasPermssion: 0,
 	credits: "Mirai-Team",

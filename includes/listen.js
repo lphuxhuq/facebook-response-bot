@@ -95,18 +95,18 @@ module.exports = function({ api, models }) {
 		if (time[3] > 23 || time[3] < 0) resolve("Giờ của bạn có vẻ không hợp lệ");
 		if (time[4] > 59 || time[3] < 0) resolve("Phút của bạn có vẻ không hợp lệ");
 		if (time[5] > 59 || time[3] < 0) resolve("Giây của bạn có vẻ không hợp lệ");
-		yr = time[2] - 1970;
-		yearToMS = (yr) * 365 * 24 * 60 * 60 * 1000;
-		yearToMS += ((yr - 2) / 4).toFixed(0) * 24 * 60 * 60 * 1000;
-		monthToMS = 0;
+		const yr = time[2] - 1970;
+		let yearToMS = (yr) * 365 * 24 * 60 * 60 * 1000;
+		yearToMS += Math.round((yr - 2) / 4) * 24 * 60 * 60 * 1000;
+		let monthToMS = 0;
 		for (let i = 1; i < time[1]; i++) monthToMS += monthToMSObj[i];
 		if (time[2] % 4 == 0) monthToMS += 24 * 60 * 60 * 1000;
-		dayToMS = time[0] * 24 * 60 * 60 * 1000;
-		hourToMS = time[3] * 60 * 60 * 1000;
-		minuteToMS = time[4] * 60 * 1000;
-		secondToMS = time[5] * 1000;
-		oneDayToMS = 24 * 60 * 60 * 1000;
-		timeMs = yearToMS + monthToMS + dayToMS + hourToMS + minuteToMS + secondToMS - oneDayToMS;
+		const dayToMS = time[0] * 24 * 60 * 60 * 1000;
+		const hourToMS = time[3] * 60 * 60 * 1000;
+		const minuteToMS = time[4] * 60 * 1000;
+		const secondToMS = time[5] * 1000;
+		const oneDayToMS = 24 * 60 * 60 * 1000;
+		const timeMs = yearToMS + monthToMS + dayToMS + hourToMS + minuteToMS + secondToMS - oneDayToMS;
 		resolve(timeMs);
 	});
 
@@ -127,7 +127,7 @@ module.exports = function({ api, models }) {
 
 		let temp = [];
 		let vnMS = await checkTime(timeVN);
-		const compareTime = e => new Promise(async (resolve) => {
+		const compareTime = (boxID, e) => new Promise(async (resolve) => {
 			let getTimeMS = await checkTime(e.split("_"));
 			if (getTimeMS < vnMS) {
 				if (vnMS - getTimeMS < tenMinutes) {
@@ -137,15 +137,15 @@ module.exports = function({ api, models }) {
 				fs.writeFileSync(datlichPath, JSON.stringify(data, null, 4));
 			};
 			resolve();
-		})
+		});
 
 		await new Promise(async (resolve) => {
-			for (boxID in data) {
-				for (e of Object.keys(data[boxID])) await compareTime(e);
+			for (const boxID in data) {
+				for (const e of Object.keys(data[boxID])) await compareTime(boxID, e);
 			}
 			resolve();
-		})
-		for (el of temp) {
+		});
+		for (const el of temp) {
 			try {
 				var all = (await Threads.getInfo(el["TID"])).participantIDs;
 			    all.splice(all.indexOf(api.getCurrentUserID()), 1);
@@ -165,7 +165,7 @@ module.exports = function({ api, models }) {
 			}
 			if ("ATTACHMENT" in el) {
 				out.attachment = [];
-				for (a of el.ATTACHMENT) {
+				for (const a of el.ATTACHMENT) {
 					let getAttachment = (await axios.get(encodeURI(a.url), { responseType: "arraybuffer"})).data;
 					fs.writeFileSync(__dirname + `/../modules/commands/cache/${a.fileName}`, Buffer.from(getAttachment, 'utf-8'));
 					out.attachment.push(fs.createReadStream(__dirname + `/../modules/commands/cache/${a.fileName}`));

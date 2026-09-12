@@ -21,37 +21,41 @@ module.exports = function ({ Users, Threads, Currencies }) {
                 setting2.threadInfo = dataThread
                 setting2.data = {}
                 await Threads.setData(threadID, setting2);
-                for (singleData of threadIn4.userInfo) {
-                    userName.set(String(singleData.id), singleData.name);
-                    try {
-                        global.data.allUserID.includes(String(singleData.id)) ? (await Users.setData(String(singleData.id), 
-                        {
-                            'name': singleData.name
-                        }), 
-                        global.data.allUserID.push(singleData.id)) : (await Users.createData(singleData.id, 
-                        {
-                            'name': singleData.name,
-                            'data': {}
-                        }), 
-                        global.data.allUserID.push(String(singleData.id)), 
-                        logger(global.getText('handleCreateDatabase', 'newUser', singleData.id), '[ DATABASE ]'));
-                    } catch(e) { console.log(e) };
+                if (Array.isArray(threadIn4.userInfo)) {
+                    for (const singleData of threadIn4.userInfo) {
+                        if (!singleData || !singleData.id) continue;
+                        const uId = String(singleData.id);
+                        userName.set(uId, singleData.name || "Người dùng Facebook");
+                        try {
+                            if (global.data.allUserID.includes(uId)) {
+                                await Users.setData(uId, { 'name': singleData.name });
+                            } else {
+                                await Users.createData(uId, { 'name': singleData.name, 'data': {} });
+                                global.data.allUserID.push(uId);
+                                logger(global.getText('handleCreateDatabase', 'newUser', uId), '[ DATABASE ]');
+                            }
+                        } catch(e) { console.log(e); }
+                    }
                 }
                 logger(global.getText('handleCreateDatabase', 'newThread', threadID), '[ DATABASE ]');
             }
             if (!allUserID.includes(senderID) || !userName.has(senderID)) {
-                const infoUsers = await Users.getInfo(senderID),
-                    setting3 = {};
-                setting3.name = infoUsers.name
-                await Users.createData(senderID, setting3)
-                allUserID.push(senderID) 
-                userName.set(senderID, infoUsers.name)
-                logger(global.getText('handleCreateDatabase', 'newUser', senderID), '[ DATABASE ]');
+                let uName = "Người dùng Facebook";
+                try {
+                    const infoUsers = await Users.getInfo(senderID);
+                    if (infoUsers && infoUsers.name) uName = infoUsers.name;
+                } catch (e) {}
+                if (!allUserID.includes(senderID)) {
+                    await Users.createData(senderID, { name: uName });
+                    allUserID.push(senderID);
+                    logger(global.getText('handleCreateDatabase', 'newUser', senderID), '[ DATABASE ]');
+                }
+                userName.set(senderID, uName);
             }
             if (!allCurrenciesID.includes(senderID)) {
                 const setting4 = {};
-                setting4.data = {}
-                await Currencies.createData(senderID, setting4) 
+                setting4.data = {};
+                await Currencies.createData(senderID, setting4);
                 allCurrenciesID.push(senderID);
             }
             return;

@@ -4,19 +4,19 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
         const { allowInbox } = global.config;
         const { userBanned, threadBanned } = global.data;
         const { commands, eventRegistered } = global.client;
-        var { senderID, threadID } = event;
+        var { senderID, threadID, messageID } = event;
         var senderID = String(senderID);
         var threadID = String(threadID);
-        if (userBanned.has(senderID) || threadBanned.has(threadID) || allowInbox == !![] && senderID == threadID) return;
+        if (userBanned.has(senderID) || threadBanned.has(threadID) || allowInbox == ![] && senderID == threadID) return;
         for (const eventReg of eventRegistered) {
             const cmd = commands.get(eventReg);
             var getText2;
 
-            if (cmd.languages && typeof cmd.languages == 'object') 
+            if (cmd && cmd.languages && typeof cmd.languages == 'object') 
                 getText2 = (...values) => {
                 const commandModule = cmd.languages || {};
                 if (!commandModule.hasOwnProperty(global.config.language)) 
-                    return api.sendMessage(global.getText('handleCommand','notFoundLanguage', cmd.config.name), threadID, messengeID); 
+                    return api.sendMessage(global.getText('handleCommand','notFoundLanguage', cmd.config.name), threadID, messageID); 
                 var lang = cmd.languages[global.config.language][values[0]] || '';
                 for (var i = values.length; i > 0x16c0 + -0x303 + -0x1f * 0xa3; i--) {
                     const expReg = RegExp('%' + i, 'g');

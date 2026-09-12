@@ -20,18 +20,23 @@ module.exports.run = async function({ api, event, Threads }) {
         task = "";
     switch (event.logMessageType) {
         case "log:thread-name": {
-            const oldName = (await Threads.getData(event.threadID)).name || "Tên không tồn tại",
-                    newName = event.logMessageData.name || "Tên không tồn tại";
+            const threadData = await Threads.getData(event.threadID);
+            const oldName = (threadData && threadData.name) ? threadData.name : "Tên không tồn tại";
+            const newName = (event.logMessageData && event.logMessageData.name) ? event.logMessageData.name : "Tên không tồn tại";
             task = "Người dùng thay đổi tên nhóm từ: '" + oldName + "' thành '" + newName + "'";
             await Threads.setData(event.threadID, {name: newName});
             break;
         }
         case "log:subscribe": {
-            if (event.logMessageData.addedParticipants.some(i => i.userFbId == api.getCurrentUserID())) task = "Người dùng đã thêm bot vào một nhóm mới!";
+            if (event.logMessageData && Array.isArray(event.logMessageData.addedParticipants) && event.logMessageData.addedParticipants.some(i => i.userFbId == api.getCurrentUserID())) {
+                task = "Người dùng đã thêm bot vào một nhóm mới!";
+            }
             break;
         }
         case "log:unsubscribe": {
-            if (event.logMessageData.leftParticipantFbId== api.getCurrentUserID()) task = "Người dùng đã kick bot ra khỏi nhóm!"
+            if (event.logMessageData && event.logMessageData.leftParticipantFbId == api.getCurrentUserID()) {
+                task = "Người dùng đã kick bot ra khỏi nhóm!";
+            }
             break;
         }
         default: 

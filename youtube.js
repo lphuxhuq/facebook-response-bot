@@ -105,7 +105,7 @@ module.exports.run = async function ({ api, event, args, utils }) {
           number: 1
         }), messageID);
       } catch(e) {
-        return api.sendMessage('ÄÃ£ xáº£y ra lá»—i, vui lÃ²ng thá»­ láº¡i trong giÃ¢y lÃ¡t!!\n' + e, event.threadID, event.messageID);
-    }
+        return api.sendMessage('Đã xảy ra lỗi, vui lòng thử lại trong giây lát!!\n' + e, event.threadID, event.messageID);
+      }
   }
-                      
+};

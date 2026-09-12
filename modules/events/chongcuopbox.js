@@ -8,10 +8,10 @@ module.exports.config = {
 
 module.exports.run = async function ({ event, api, Threads, Users }) {
     const { logMessageType, logMessageData, senderID } = event;
- 	let data = (await Threads.getData(event.threadID)).data
- 	if (data.guard == false) return;
-    if (data.guard == true ) {
-        switch (logMessageType) {
+    const threadData = await Threads.getData(event.threadID);
+    if (!threadData || !threadData.data || threadData.data.guard !== true) return;
+    if (!logMessageData) return;
+    switch (logMessageType) {
           case "log:thread-admins": {
             if (logMessageData.ADMIN_EVENT == "add_admin") {
               if(event.author == api.getCurrentUserID()) return
@@ -35,7 +35,6 @@ module.exports.run = async function ({ event, api, Threads, Users }) {
                 if (err) return api.sendMessage("» 𝗔𝗵𝗶𝗵𝗶 𝗻𝗴𝘂 𝗻𝗴𝗼̂́𝗰 😝", event.threadID, event.messageID);
                 return api.sendMessage(`» 𝐊𝐢́𝐜𝐡 𝐡𝐨𝐚̣𝐭 𝐦𝐨𝐝𝐞 𝐜𝐡𝐨̂́𝐧𝐠 𝐜𝐮̛𝐨̛́𝐩 𝐛𝐨𝐱 🖤`, event.threadID, event.messageID);
               }
-            }
           }
         }
       }

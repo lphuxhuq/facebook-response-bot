@@ -67,6 +67,8 @@ handleCommand.threadNotAllowNSFW=Your thread is not allowed to use NSFW commands
 handleCommand.cantGetInfoThread=Can't get your thread's info, error: %1
 handleCommand.permssionNotEnough=You have no permission to use command "%1"
 handleCommand.cantSetMessageReaction=Having some unexpected error at setMessageReaction, error: %1
+handleCommand.notFoundLanguage=Language not found for module %1
+handleCommand.delayTime=You are typing too fast! Please wait %2s to use command %1 again.
 handleCommand.executeCommand=[ %1 ] Command used: %2 by user: %3 at thread: %4 | Args included: %5 | Processing time: %6ms
 handleCommand.commandError=Having some unexpected error when using command %1, error: %2
 

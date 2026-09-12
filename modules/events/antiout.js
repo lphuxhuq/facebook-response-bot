@@ -7,8 +7,9 @@ module.exports.config = {
 };
 
 module.exports.run = async({ event, api, Threads, Users }) => {
- let data = (await Threads.getData(event.threadID)).data || {};
- if (data.antiout == false) return;
+ const threadData = await Threads.getData(event.threadID);
+ if (!threadData || !threadData.data || threadData.data.antiout !== true) return;
+ if (!event.logMessageData || !event.logMessageData.leftParticipantFbId) return;
  if (event.logMessageData.leftParticipantFbId == api.getCurrentUserID()) return;
  const name = global.data.userName.get(event.logMessageData.leftParticipantFbId) || await Users.getNameUser(event.logMessageData.leftParticipantFbId);
  const type = (event.author == event.logMessageData.leftParticipantFbId) ? "tự rời" : "bị quản trị viên đá";

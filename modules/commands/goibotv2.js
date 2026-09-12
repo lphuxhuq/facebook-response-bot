@@ -1,4 +1,4 @@
-const fs = global.nodemodule["fs-extra"];
+const fs = require("fs-extra");
 module.exports.config = {
   name: "goibot2",
   version: "1.0.1",
@@ -10,6 +10,7 @@ module.exports.config = {
   cooldowns: 5,
 };
 module.exports.handleEvent = function({ api, event }) {
+  if (!event || !event.body) return;
   var { threadID, messageID } = event;
 
 
@@ -426,9 +427,17 @@ module.exports.handleEvent = function({ api, event }) {
   };
 
   if (event.body.indexOf("bot") == 0 || (event.body.indexOf("Bot") == 0)) {
+    const answers = [
+      "Dạ bot nghe nè!",
+      "Kêu bot có việc gì thế bạn ơi?",
+      "Em đây anh/chị ơi <3",
+      "Bot đây, gọi gì thế?",
+      "Chào bạn, bot có thể giúp gì cho bạn? Gõ !menu để xem danh sách lệnh nhé!"
+    ];
+    const rand = answers[Math.floor(Math.random() * answers.length)];
     var msg = {
       body: rand
-    }
+    };
     return api.sendMessage(msg, threadID, messageID);
   };
 

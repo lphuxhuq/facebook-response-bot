@@ -67,7 +67,30 @@ global.data = new Object({
 
 global.utils = require("./utils");
 
-global.nodemodule = new Object();
+global.nodemodule = new Proxy({}, {
+    get: (target, name) => {
+        if (typeof name === 'symbol') return target[name];
+        if (!(name in target)) {
+            try {
+                target[name] = require(name);
+            } catch (e) {
+                try {
+                    target[name] = require(join(__dirname, "nodemodules", "node_modules", name));
+                } catch {
+                    target[name] = undefined;
+                }
+            }
+        }
+        return target[name];
+    },
+    set: (target, name, value) => {
+        target[name] = value;
+        return true;
+    },
+    has: (target, name) => {
+        return true;
+    }
+});
 
 global.config = new Object();
 

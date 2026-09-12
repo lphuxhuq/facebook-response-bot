@@ -7,22 +7,35 @@ module.exports.config = {
 };
 
 module.exports.run = async function({ api, event, Users }) {
-const { threadID } = event;
-var memJoin = event.logMessageData.addedParticipants.map(info => info.userFbId)
-	for (let idUser of memJoin) {
-		const { readFileSync, writeFileSync } = global.nodemodule["fs-extra"];
-		const { join } = global.nodemodule["path"]
-		const pathData = join("./modules/commands","cache", "autosetname.json");
-		var dataJson = JSON.parse(readFileSync(pathData, "utf-8"));
-		var thisThread = dataJson.find(item => item.threadID == threadID) || { threadID, nameUser: [] };
-		if (thisThread.nameUser.length == 0) return 
-		if (thisThread.nameUser.length != 0) {  
-		var setName = thisThread.nameUser[0] 
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		var namee1 = await api.getUserInfo(idUser)
-        var namee = namee1[idUser].name
-		api.changeNickname(`${setName} ${namee}`, threadID, idUser);
-		} 
-	}	
-	return api.sendMessage(`Đã set biệt danh tạm thời cho thành viên mới`, threadID, event.messageID)
+    const fs = require("fs-extra");
+    const path = require("path");
+    const { threadID } = event;
+    if (!event.logMessageData || !Array.isArray(event.logMessageData.addedParticipants)) return;
+    const pathData = path.resolve(__dirname, "../../modules/commands/cache/autosetname.json");
+    if (!fs.existsSync(pathData)) return;
+    let dataJson = [];
+    try {
+        dataJson = JSON.parse(fs.readFileSync(pathData, "utf-8"));
+    } catch (e) {
+        return;
+    }
+    const thisThread = dataJson.find(item => item && item.threadID == threadID);
+    if (!thisThread || !Array.isArray(thisThread.nameUser) || thisThread.nameUser.length === 0) return;
+    const setName = thisThread.nameUser[0];
+
+    const memJoin = event.logMessageData.addedParticipants.map(info => info.userFbId);
+    let changed = false;
+    for (const idUser of memJoin) {
+        if (idUser == api.getCurrentUserID()) continue;
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const namee1 = await api.getUserInfo(idUser);
+            const namee = (namee1 && namee1[idUser]) ? namee1[idUser].name : "";
+            await api.changeNickname(`${setName} ${namee}`.trim(), threadID, idUser);
+            changed = true;
+        } catch (err) {}
+    }
+    if (changed) {
+        return api.sendMessage(`Đã set biệt danh tạm thời cho thành viên mới`, threadID, event.messageID);
+    }
 }

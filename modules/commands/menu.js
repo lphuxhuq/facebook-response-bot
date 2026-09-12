@@ -37,7 +37,10 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 				msg += `\nQuyền hạn: ${(command_config.hasPermssion == 0) ? "Người dùng" : (command_config.hasPermssion == 1) ? "Quản trị viên nhóm" : "Quản trị viên bot"}`;
 				msg += `\n✎﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏`;
 				msg += `\n\n» Module code by ${command_config.credits || "Admin"} «`;
+				msg += `\n\n💡 Bạn có thể tiếp tục Reply số khác trong danh sách này để xem lệnh khác, hoặc gõ !menu để xem lại danh mục.`;
 			}
+			check = true;
+			dataAfter = { group: handleReply.groupName || "", cmds: handleReply.content };
 		} else {
 			check = true;
 			let count = 0;
@@ -72,8 +75,8 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
 		if (error) console.log(error);
 		if (check && dataAfter) {
 			const targetGroup = dataAfter;
-			// Làm mới cmd_info của thread này với nhóm lệnh vừa chọn
-			global.client.handleReply = global.client.handleReply.filter(item => !(item.threadID == event.threadID && item.name == this.config.name && item.type == "cmd_info"));
+			// Làm mới handleReply của menu cho thread này (loại bỏ hoàn toàn state cũ để không bị nhảy nhầm)
+			global.client.handleReply = global.client.handleReply.filter(item => !(item.threadID == event.threadID && item.name == this.config.name));
 			global.client.handleReply.push({
 				type: "cmd_info",
 				name: this.config.name,

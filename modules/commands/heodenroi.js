@@ -1,6 +1,6 @@
 const path = require("path");
-const { mkdirSync, writeFileSync, existsSync, createReadStream, readdirSync } = require("fs-extra")
-const axios = require("axios")
+const { mkdirSync, writeFileSync, existsSync, createReadStream, readdirSync, readFileSync } = require("fs-extra");
+const axios = require("axios");
 
 module.exports.config = {
     name: "heodenroi",
@@ -21,24 +21,36 @@ module.exports.onLoad = async () => {
     if (!existsSync(__dir)) mkdirSync(__dir, { recursive: true });
     setInterval(increaseTurn, 1000*60*10);
     function increaseTurn() {
-        const data = readdirSync(__dirname + `/heodenroi/datauser`);
-        if(data.length == 0) return;
+        try {
+            const data = readdirSync(__dirname + `/heodenroi/datauser`);
+            if(data.length == 0) return;
             for (let i of data) { 
-                var o = require(`./heodenroi/datauser/${i}`);
-                if(o.spin < 30) {
-                    o.spin = o.spin + 5
-                    writeFileSync(path.join(__dirname, 'heodenroi', 'datauser', `${o.ID}.json`), JSON.stringify(o, null, 4));
-                }
+                if (!i.endsWith('.json')) continue;
+                const p = path.join(__dirname, 'heodenroi', 'datauser', i);
+                try {
+                    const o = JSON.parse(readFileSync(p, 'utf-8'));
+                    if(o && o.spin < 30) {
+                        o.spin = o.spin + 5;
+                        writeFileSync(p, JSON.stringify(o, null, 4));
+                    }
+                } catch(err) {}
             }
+        } catch(e) {}
     }
-    return
+    return;
 }
 
 module.exports.checkPath = function (type, senderID) {
     const pathGame = path.join(__dirname, 'heodenroi', 'datauser', `${senderID}.json`);
-    const pathGame_1 = require("./heodenroi/datauser/" + senderID + '.json');
-    if (type == 1) return pathGame
-    if (type == 2) return pathGame_1
+    if (type == 1) return pathGame;
+    if (type == 2) {
+        if (!existsSync(pathGame)) return {};
+        try {
+            return JSON.parse(readFileSync(pathGame, 'utf-8'));
+        } catch (e) {
+            return {};
+        }
+    }
 }
 
 module.exports.image = async function(link) {
