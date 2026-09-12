@@ -15,11 +15,13 @@ module.exports.config = {
 
 module.exports.run = async function ({ api, args, event, permssion , handleReply}) {
 const request = require('request');
-const fs = require("fs-extra")
-const axios = require("axios")
+const fs = require("fs-extra");
+const axios = require("axios");
 const { threadID, messageID, senderID, body } = event;
+
+try {
 if (args[0] == "list") {
-    const list = await axios.get("https://api-dien.28nguyen-thanht.repl.co/taoanhdep/list");
+    const list = await axios.get("https://api-dien.28nguyen-thanht.repl.co/taoanhdep/list", { timeout: 4000 });
     var page = 1;
     page = parseInt(args[1]) || 1;
     page < -1 ? page = 1 : "";
@@ -45,6 +47,9 @@ api.sendMessage(`Reply tin nhắn để chọn nhân vật`,event.threadID, (err
         messageID: info.messageID
       });
   },event.messageID);
+} catch (e) {
+  return api.sendMessage("Tính năng tạo ảnh đẹp đang tạm bảo trì API máy chủ!", event.threadID, event.messageID);
+}
 }
 module.exports.handleReply = async function({ api, event, args, handleReply, client, __GLOBAL, Threads, Users, Currencies }) {
     const axios = require("axios");

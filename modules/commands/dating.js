@@ -225,8 +225,8 @@ module.exports.canvas = async function (idOne, idTwo) {
     let path = __dirname + "/cache/ghep.png";
     let pathAvata = __dirname + `/cache/avtghep2.png`;
     let pathAvataa = __dirname + `/cache/avtghep.png`;
-    let getAvatarOne = (await axios.get(`https://graph.facebook.com/${idOne}/picture?height=250&width=250&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`, { responseType: 'arraybuffer' })).data;
-    let getAvatarTwo = (await axios.get(`https://graph.facebook.com/${idTwo}/picture?height=250&width=250&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`, { responseType: 'arraybuffer' })).data;
+    let getAvatarOne = (await axios.get(`https://graph.facebook.com/${idOne}/picture?height=250&width=250&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
+    let getAvatarTwo = (await axios.get(`https://graph.facebook.com/${idTwo}/picture?height=250&width=250&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
     let bg = ( await axios.get(`https://imgur.com/c7Eppap.png`, { responseType: "arraybuffer" })).data;
     fs.writeFileSync(pathAvata, Buffer.from(getAvatarOne, 'utf-8'));
     fs.writeFileSync(pathAvataa, Buffer.from(getAvatarTwo, 'utf-8'));

@@ -13,26 +13,36 @@ module.exports.config = {
 };
 
 module.exports.run = async ({ api, event, args }) => {
-	const request = global.nodemodule["request"];
+	const axios = global.nodemodule["axios"] || require("axios");
 	var content = args.join(" ");
-	if (content.length == 0 && event.type != "message_reply") return global.utils.throwError(this.config.name, event.threadID,event.messageID);
+	if (content.length == 0 && event.type != "message_reply") return global.utils.throwError(this.config.name, event.threadID, event.messageID);
 	var translateThis = content.slice(0, content.indexOf(" ->"));
 	var lang = content.substring(content.indexOf(" -> ") + 4);
 	if (event.type == "message_reply") {
-		translateThis = event.messageReply.body
+		translateThis = event.messageReply.body;
 		if (content.indexOf("-> ") !== -1) lang = content.substring(content.indexOf("-> ") + 3);
-		else lang = global.config.language;
+		else lang = global.config.language || "vi";
 	}
 	else if (content.indexOf(" -> ") == -1) {
-		translateThis = content.slice(0, content.length)
-		lang = global.config.language;
+		translateThis = content.slice(0, content.length);
+		lang = global.config.language || "vi";
 	}
-	return request(encodeURI(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${lang}&dt=t&q=${translateThis}`), (err, response, body) => {
-		if (err) return api.sendMessage("Đã có lỗi xảy ra!", event.threadID, event.messageID);
-		var retrieve = JSON.parse(body);
-		var text = '';
+
+	try {
+		const res = await axios.get(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(lang)}&dt=t&q=${encodeURIComponent(translateThis)}`, { timeout: 4000 });
+		const retrieve = res.data;
+		let text = '';
 		retrieve[0].forEach(item => (item[0]) ? text += item[0] : '');
-		var fromLang = (retrieve[2] === retrieve[8][0][0]) ? retrieve[2] : retrieve[8][0][0]
-		api.sendMessage(`Bản dịch: ${text}\n - được dịch từ ${fromLang} sang ${lang}`, event.threadID, event.messageID);
-	});
-}
+		const fromLang = (retrieve[2] === retrieve[8][0][0]) ? retrieve[2] : retrieve[8][0][0];
+		return api.sendMessage(`Bản dịch: ${text}\n- Được dịch từ ${fromLang} sang ${lang}`, event.threadID, event.messageID);
+	} catch (e) {
+		// Fallback to MyMemory translation API
+		try {
+			const res = await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(translateThis)}&langpair=auto|${encodeURIComponent(lang)}`, { timeout: 6000 });
+			if (res.data && res.data.responseData && res.data.responseData.translatedText) {
+				return api.sendMessage(`Bản dịch: ${res.data.responseData.translatedText}\n- Dịch sang ${lang} (Nguồn: MyMemory)`, event.threadID, event.messageID);
+			}
+		} catch (err2) {}
+		return api.sendMessage("Không thể dịch văn bản vào lúc này! Vui lòng thử lại sau.", event.threadID, event.messageID);
+	}
+};

@@ -1,49 +1,57 @@
 module.exports.config = {
   name: "cadao",
-  version: "1.0.0",
+  version: "2.0.0",
   hasPermssion: 0,
-  credits: "TuanDz",
-  description: "Những câu ca dao",
+  credits: "TuanDz / Ponytail fix",
+  description: "Những câu ca dao, tục ngữ Việt Nam",
   commandCategory: "Kiến Thức Học Hỏi",
   cooldowns: 3
 };
-function byte2mb(bytes) {
-  const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  let l = 0, n = parseInt(bytes, 10) || 0;
-  while (n >= 1024 && ++l) n = n / 1024;
-  return `${n.toFixed(n < 10 && l > 0 ? 1 : 0)} ${units[l]}`;
-}
+
+const fs = require('fs');
+const path = require('path');
+const request = require('request');
+const moment = require("moment-timezone");
+
+const cadaoList = [
+  "Bầu ơi thương lấy bí cùng\nTuy rằng khác giống nhưng chung một giàn.",
+  "Nhiễu điều phủ lấy giá gương\nNgười trong một nước phải thương nhau cùng.",
+  "Công cha như núi Thái Sơn\nNghĩa mẹ như nước trong nguồn chảy ra.",
+  "Một cây làm chẳng nên non\nBa cây chụm lại nên hòn núi cao.",
+  "Ăn quả nhớ kẻ trồng cây\nĂn khoai nhớ kẻ cho dây mà trồng.",
+  "Chim khôn kêu tiếng rảnh rang\nNgười khôn nói tiếng dịu dàng dễ nghe.",
+  "Lời nói chẳng mất tiền mua\nLựa lời mà nói cho vừa lòng nhau.",
+  "Uống nước nhớ nguồn\nĂn quả nhớ kẻ trồng cây.",
+  "Gần mực thì đen, gần đèn thì rạng.",
+  "Có công mài sắt, có ngày nên kim."
+];
+
 module.exports.run = async ({ api, event }) => {
-  const axios = require('axios');
-  const fetch = global.nodemodule["node-fetch"];
-  const request = require('request');
-  const res = await axios.get(`https://apituandz1407.herokuapp.com/api/cadao.php`);
-  var poem = res.data.data;
-  const fs = require("fs");
-  const moment = require("moment-timezone");
-  var gio = moment.tz("Asia/Ho_Chi_Minh").format("HH:mm:ss || D/MM/YYYY");
-  var thu = moment.tz('Asia/Ho_Chi_Minh').format('dddd');
-  if (thu == 'Sunday') thu = '𝐂𝐡𝐮̉ 𝐍𝐡𝐚̣̂𝐭'
-  if (thu == 'Monday') thu = '𝐓𝐡𝐮̛́ 𝐇𝐚𝐢'
-  if (thu == 'Tuesday') thu = '𝐓𝐡𝐮̛́ 𝐁𝐚'
-  if (thu == 'Wednesday') thu = '𝐓𝐡𝐮̛́ 𝐓𝐮̛'
-  if (thu == "Thursday") thu = '𝐓𝐡𝐮̛́ 𝐍𝐚̆𝐦'
-  if (thu == 'Friday') thu = '𝐓𝐡𝐮̛́ 𝐒𝐚́𝐮'
-  if (thu == 'Saturday') thu = '𝐓𝐡𝐮̛́ 𝐁𝐚̉𝐲'
-  const time = process.uptime(),
-    hours = Math.floor(time / (60 * 60)),
-    minutes = Math.floor((time % (60 * 60)) / 60),
-    seconds = Math.floor(time % 60);
-  const pidusage = await global.nodemodule["pidusage"](process.pid);
-  const timeStart = Date.now();
-  axios.get('https://apituandz1407.herokuapp.com/api/gaiditbu.php').then(res => {
-    let ext = res.data.data.substring(res.data.data.lastIndexOf(".") + 1);
-    let callback = function () {
-      api.sendMessage({
-        body: `ㅤ 💌 === 𝐂𝐚 𝐃𝐚𝐨 === 💌\n\n🐼──── •❤️‍🔥• ────🐼\n\n${poem}\n\n🐷──── •❤️‍🔥• ────🐷\n 𝐍𝐠𝐮𝐲𝐞̂̃𝐧 𝐓𝐡𝐚𝐧𝐡 𝐌𝐚̀𝐢 ❤️\n\nㅤㅤㅤ🏮 ${thu} 🏮\n⏳ ${gio} ⏳`,
-        attachment: fs.createReadStream(__dirname + `/cache/anh.${ext}`)
-      }, event.threadID, () => fs.unlinkSync(__dirname + `/cache/anh.${ext}`), event.messageID);
-    };
-    request(res.data.data).pipe(fs.createWriteStream(__dirname + `/cache/anh.${ext}`)).on("close", callback);
-  })
-}
+  const poem = cadaoList[Math.floor(Math.random() * cadaoList.length)];
+  const gio = moment.tz("Asia/Ho_Chi_Minh").format("HH:mm:ss || D/MM/YYYY");
+  const days = {
+    Sunday: 'Chủ Nhật', Monday: 'Thứ Hai', Tuesday: 'Thứ Ba',
+    Wednesday: 'Thứ Tư', Thursday: 'Thứ Năm', Friday: 'Thứ Sáu', Saturday: 'Thứ Bảy'
+  };
+  const thu = days[moment.tz('Asia/Ho_Chi_Minh').format('dddd')] || 'Hôm Nay';
+
+  const mediaPath = path.join(__dirname, 'cache', 'media_links.json');
+  let links = [];
+  if (fs.existsSync(mediaPath)) {
+    try { links = JSON.parse(fs.readFileSync(mediaPath, 'utf8')); } catch (e) {}
+  }
+  const imgUrl = links.length ? links[Math.floor(Math.random() * links.length)] : "https://i.imgur.com/g6X1W3x.jpg";
+  const ext = imgUrl.split('.').pop().split('?')[0] || 'jpg';
+  const outPath = path.join(__dirname, 'cache', `cadao_${Date.now()}.${ext}`);
+
+  const callback = () => {
+    api.sendMessage({
+      body: `💌 === CA DAO VIỆT NAM === 💌\n\n${poem}\n\n🏮 ${thu} | ⏳ ${gio}`,
+      attachment: fs.createReadStream(outPath)
+    }, event.threadID, () => {
+      try { fs.unlinkSync(outPath); } catch (e) {}
+    }, event.messageID);
+  };
+
+  request(imgUrl).pipe(fs.createWriteStream(outPath)).on("close", callback);
+};

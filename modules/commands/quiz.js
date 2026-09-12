@@ -38,12 +38,11 @@ module.exports.run = async ({  api, event, args }) => {
 	let fetch = await axios(`https://opentdb.com/api.php?amount=1&encode=url3986&type=boolean&difficulty=${difficulty}`);
 	if (!fetch.data) return api.sendMessage("⚡️Không thể tìm thấy câu hỏi do server bận", event.threadID, event.messageID);
 	let decode = decodeURIComponent(fetch.data.results[0].question);
-	return request(encodeURI(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t&q=${decode}`), (err, response, body) => {
-	if (err) return api.sendMessage("⚡️Đã có lỗi xảy ra!", event.threadID, event.messageID);
-	var retrieve = JSON.parse(body);
-	var text = '';
-	retrieve[0].forEach(item => (item[0]) ? text += item[0] : '');
-	var fromLang = (retrieve[2] === retrieve[8][0][0]) ? retrieve[2] : retrieve[8][0][0]
+	let text = decode;
+	try {
+		text = await global.utils.translateText(decode, 'vi');
+	} catch (e) {}
+
 	return api.sendMessage(`⚡️Đây là câu hỏi dành cho bạn:\n- ${text}\n\n   👍: True       😢: False`, event.threadID, async (err, info) => {
 		global.client.handleReaction.push({
 			name: "quiz",
@@ -61,5 +60,4 @@ module.exports.run = async ({  api, event, args }) => {
 		}
 		else return;
 	});
-})
-}
+};

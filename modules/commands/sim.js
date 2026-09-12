@@ -13,36 +13,79 @@ module.exports.config = {
 }
 
 
-async function simsimi(a, b, c) {
-    const d = global.nodemodule.axios, g = (a) => encodeURIComponent(a);
-    try {
-        var { data: j } = await d({ url: `https://api.simsimi.net/v2/?text=${g(a)}&lc=vn`, method: "GET" });
-        return { error: !1, data: j }
-    } catch (p) {
-        return { error: !0, data: {} }
-    }
-}
-module.exports.onLoad = async function () {
-    "undefined" == typeof global && (global = {}), "undefined" == typeof global.simsimi && (global.simsimi = new Map);
+const fs = require('fs-extra');
+const path = require('path');
+
+const simReplies = {
+    "chào": ["Chào bạn nha!", "Hế lô! Hôm nay vui không?", "Chào bạn dễ thương!"],
+    "hi": ["Hi bạn nè!", "Chào người đẹp!", "Hi, có gì vui hông?"],
+    "hello": ["Hello!", "Chào bạn nha!", "Hế lô bạn!"],
+    "ngu": ["Bạn nói ai ngu cơ? Giận á!", "Hông dám ngu bằng ai kia đâu lêu lêu!"],
+    "chó": ["Gâu gâu! Ai gọi sim đấy?", "Đừng chửi bậy nha bạn iu!"],
+    "yêu": ["Sim yêu bạn nhiều lắm á!", "Moazzzz <3"],
+    "bạn là ai": ["Mình là Simsimi - bot trò chuyện vui nhộn nè!", "Sim đẹp trai cute nhất quả đất!"],
+    "đang làm gì": ["Đang ngồi chơi xơi nước đợi bạn nhắn nè!", "Đang nghĩ về bạn đó <3"]
 };
-module.exports.handleEvent = async function ({ api: b, event: a }) {
-    const { threadID: c, messageID: d, senderID: e, body: f } = a, g = (e) => b.sendMessage(e, c, d);
-    if (global.simsimi.has(c)) {
-        if (e == b.getCurrentUserID() || "" == f || d == global.simsimi.get(c)) return;
-        var { data: h, error: i } = await simsimi(f, b, a);
-        return !0 == i ? void 0 : !1 == h.success ? g(h.error) : g(h.success)
+
+function getSimLocalResponse(msg) {
+    const raw = (msg || "").trim().toLowerCase();
+    for (const [k, v] of Object.entries(simReplies)) {
+        if (raw.includes(k)) {
+            return v[Math.floor(Math.random() * v.length)];
+        }
     }
+    const randomFallbacks = [
+        "Sim nghe nè, nói chuyện tiếp đi bạn!",
+        "Ủa rồi sao nữa, kể tiếp nghe coi?",
+        "Hôm nay bạn có gì vui không kể Sim nghe với!",
+        "Nghe nè người đẹp!",
+        "Thật á? Kể nghe thêm đi!"
+    ];
+    return randomFallbacks[Math.floor(Math.random() * randomFallbacks.length)];
 }
-module.exports.run = async function ({ api: b, event: a, args: c }) {
-    const { threadID: d, messageID: e } = a, f = (c) => b.sendMessage(c, d, e);
-    if (0 == c.length) return f("B\u1EA1n ch\u01B0a nh\u1EADp tin nh\u1EAFn");
-    switch (c[0]) {
+
+async function simsimi(a) {
+    const axios = global.nodemodule.axios;
+    try {
+        const res = await axios.get(`https://api.simsimi.net/v2/?text=${encodeURIComponent(a)}&lc=vn`, { timeout: 3000 });
+        if (res.data && res.data.success) {
+            return { error: false, text: res.data.success };
+        }
+    } catch (p) {
+        // Fallback to local responder
+    }
+    return { error: false, text: getSimLocalResponse(a) };
+}
+
+module.exports.onLoad = async function () {
+    if (typeof global.simsimi === "undefined") global.simsimi = new Map();
+};
+
+module.exports.handleEvent = async function ({ api, event }) {
+    const { threadID, messageID, senderID, body } = event;
+    if (!global.simsimi.has(threadID)) return;
+    if (senderID === api.getCurrentUserID() || !body || messageID === global.simsimi.get(threadID)) return;
+
+    const res = await simsimi(body);
+    if (res.text) return api.sendMessage(res.text, threadID, messageID);
+};
+
+module.exports.run = async function ({ api, event, args }) {
+    const { threadID, messageID } = event;
+    if (args.length === 0) return api.sendMessage("Bạn chưa nhập tin nhắn! (Dùng 'sim on/off' hoặc 'sim [tin nhắn]')", threadID, messageID);
+
+    switch (args[0].toLowerCase()) {
         case "on":
-            return global.simsimi.has(d) ? f("B\u1EA1n ch\u01B0a t\u1EAFt sim.") : (global.simsimi.set(d, e), f("\u0110\xE3 b\u1EADt sim th\xE0nh c\xF4ng."));
+            if (global.simsimi.has(threadID)) return api.sendMessage("Bạn chưa tắt sim.", threadID, messageID);
+            global.simsimi.set(threadID, messageID);
+            return api.sendMessage("Đã bật sim thành công.", threadID, messageID);
         case "off":
-            return global.simsimi.has(d) ? (global.simsimi.delete(d), f("\u0110\xE3 t\u1EAFt sim th\xE0nh c\xF4ng.")) : f("B\u1EA1n ch\u01B0a b\u1EADt sim.");
-        default:
-            var { data: g, error: h } = await simsimi(c.join(" "), b, a);
-            return !0 == h ? void 0 : !1 == g.success ? f(g.error) : f(g.success);
+            if (!global.simsimi.has(threadID)) return api.sendMessage("Bạn chưa bật sim.", threadID, messageID);
+            global.simsimi.delete(threadID);
+            return api.sendMessage("Đã tắt sim thành công.", threadID, messageID);
+        default: {
+            const res = await simsimi(args.join(" "));
+            if (res.text) return api.sendMessage(res.text, threadID, messageID);
+        }
     }
 };

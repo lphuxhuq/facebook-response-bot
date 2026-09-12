@@ -37,24 +37,46 @@ module.exports.onLoad = function() {
         botDataStore.touch();
     }
 }
-module.exports.run = async  ({ api, event, args, Users, permssion, getText }) => {
-  const axios = require('axios');
-  const request = require('request');
-  const fs = require("fs");
-    const content = args.slice(1, args.length);
- axios.get('https://jrt-api.j-jrt-official.repl.co/gaisexy').then(res => {
-	let ext = res.data.data.substring(res.data.data.lastIndexOf(".") + 1);
-let callback = function () {
-    if (args.length == 0)
-      api.sendMessage({body:`Bạn có thể dùng\n» admin add => thêm người dùng làm \n» admin addndh => thêm người dùng làm ndh \n» admin list => xem danh sách các admin \n» admin remove => gỡ bỏ admin\n» admin removendh => gỡ bỏ ndh \n» admin boxonly => bật tắt chế độ chỉ quản trị viên dùng bot\n» admin only => bật tắt chế độ chỉ admin mới dùng được bot\n» admin pa => bật tắt chế độ chỉ có admin mới chat riêng được với bot\n» admin ndhonly => bật tắt chế độ chỉ có ndh mới dùng được bot \n» HDSD: ${global.config.PREFIX} admin [text]
-`,
-						attachment: fs.createReadStream(__dirname + `/cache/admin.${ext}`)
-					}, event.threadID, () => fs.unlinkSync(__dirname + `/cache/admin.${ext}`), event.messageID);
-				};
-				 request(res.data.data).pipe(fs.createWriteStream(__dirname + `/cache/admin.${ext}`)).on("close", callback);
-			})
- 
+module.exports.run = async ({ api, event, args, Users, permssion, getText }) => {
+    const fs = require("fs");
+    const path = require("path");
+    const request = require("request");
     const { threadID, messageID, mentions } = event;
+
+    if (args.length === 0) {
+        const helpMsg = `👑 BẠN CÓ THỂ DÙNG:\n` +
+            `» admin add => thêm người dùng làm admin\n` +
+            `» admin addndh => thêm người dùng làm ndh\n` +
+            `» admin list => xem danh sách các admin\n` +
+            `» admin remove => gỡ bỏ admin\n` +
+            `» admin removendh => gỡ bỏ ndh\n` +
+            `» admin boxonly => bật/tắt chế độ chỉ quản trị viên dùng bot\n` +
+            `» admin only => bật/tắt chế độ chỉ admin mới dùng được bot\n` +
+            `» admin pa => bật/tắt chế độ chỉ có admin mới chat riêng được với bot\n` +
+            `» admin ndhonly => bật/tắt chế độ chỉ có ndh mới dùng được bot\n` +
+            `» HDSD: ${global.config.PREFIX}admin [text]`;
+
+        const mediaPath = path.join(__dirname, 'cache', 'media_links.json');
+        let links = [];
+        if (fs.existsSync(mediaPath)) {
+            try { links = JSON.parse(fs.readFileSync(mediaPath, 'utf8')); } catch (e) {}
+        }
+        if (links.length) {
+            const imgUrl = links[Math.floor(Math.random() * links.length)];
+            const ext = imgUrl.split('.').pop().split('?')[0] || 'jpg';
+            const outPath = path.join(__dirname, 'cache', `admin_${Date.now()}.${ext}`);
+            const callback = () => {
+                api.sendMessage({
+                    body: helpMsg,
+                    attachment: fs.createReadStream(outPath)
+                }, threadID, () => {
+                    try { fs.unlinkSync(outPath); } catch (e) {}
+                }, messageID);
+            };
+            return request(imgUrl).pipe(fs.createWriteStream(outPath)).on("close", callback);
+        }
+        return api.sendMessage(helpMsg, threadID, messageID);
+    }
     const { configPath } = global.client;
     const { ADMINBOT } = global.config;
     const { NDH } = global.config;

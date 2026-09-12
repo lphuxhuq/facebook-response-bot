@@ -41,7 +41,7 @@ module.exports.run = async function ({ api, event, args, Users }) {
   if (!text2) return api.sendMessage('💢Vui lòng nhập đúng định dạng [text1 - text2 - text3] 🥲', event.threadID, event.messageID);
   let Avatar = (
     await axios.get(
-      `https://graph.facebook.com/${event.senderID}/picture?height=500&width=500&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`,
+      `https://graph.facebook.com/${event.senderID}/picture?height=500&width=500&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
       { responseType: "arraybuffer" }
     )
   ).data;

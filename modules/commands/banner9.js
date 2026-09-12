@@ -14,9 +14,10 @@ module.exports.config = {
   };
 
 module.exports.handleReply = async function({ api, event, handleReply }) {
-    if (event.senderID != handleReply.author) return api.sendMessage('Đi chỗ khác chơi', event.threaID);
+    if (event.senderID != handleReply.author) return api.sendMessage('Đi chỗ khác chơi', event.threadID);
+    try {
     let pathImg = __dirname + `/banner9/avatar_5.png`;
-    const lengthchar = (await axios.get('https://API-ThanhAli.thanhali.repl.co/taoanhdep/data')).data
+    const lengthchar = (await axios.get('https://API-ThanhAli.thanhali.repl.co/taoanhdep/data', { timeout: 4000 })).data;
     switch(handleReply.step) {
         case 1: {
             if(isNaN(event.body)) return api.sendMessage('Bạn phải nhập một con số', event.threadID, event.messageID)   
@@ -81,6 +82,9 @@ module.exports.handleReply = async function({ api, event, handleReply }) {
             attachment: fs.createReadStream(pathImg)
             }, event.threadID, event.messageID);
         }
+    }
+    } catch (e) {
+        return api.sendMessage("Tính năng tạo banner đang tạm bảo trì API nhân vật!", event.threadID, event.messageID);
     }
 }
 

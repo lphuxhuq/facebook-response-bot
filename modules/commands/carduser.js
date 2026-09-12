@@ -38,8 +38,22 @@ module.exports.run = async function ({ api, event, args, Users }) {
   /*                 */
   if(event.type == "message_reply") { uid = event.messageReply.senderID }
     else uid = event.senderID;
-    const res = await axios.get(`http://api.leanhtruong.net/api/info?api_key=leanhtruong_VUTs9MLL3k512vAWTpX2&id=${uid}`); 
-  let getAvatarOne = (await axios.get(`https://graph.facebook.com/${uid}/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`, { responseType: 'arraybuffer' })).data;
+    let userInfo = {};
+    try { userInfo = (await Users.getData(uid)) || {}; } catch (e) {}
+    const res = {
+      data: {
+        fullname: userInfo.name || "Người dùng Facebook",
+        gender: userInfo.gender == 2 || userInfo.gender == 'MALE' ? "Nam" : userInfo.gender == 1 || userInfo.gender == 'FEMALE' ? "Nữ" : "Không công khai",
+        follow_user: "Không công khai",
+        birthday: "Không công khai",
+        love: "Không công khai",
+        user_love: "Không công khai",
+        LeAnhTruong_User_Love: "Không công khai",
+        location: "Việt Nam",
+        url_profile: `https://facebook.com/${uid}`
+      }
+    }; 
+  let getAvatarOne = (await axios.get(`https://graph.facebook.com/${uid}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
   let bg = (
     await axios.get(encodeURI(`https://i.imgur.com/fo5Gk9j.png`), {
       responseType: "arraybuffer",

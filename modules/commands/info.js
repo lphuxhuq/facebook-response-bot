@@ -13,14 +13,28 @@ module.exports.run = async function ({ api, event, args, Users }) {
     const axios = require('axios')
     const { threadID, messageID, senderID, type, mentions } = event;
     if (type == "message_reply") {
-        var uid = event.messageReply.senderID
-    } else if (args.join().indexOf(".com/") !== -1) {
-        const res_ID = await axios.get(`https://api.sadgirlluytink.repl.co/finduid?url=${args.join(' ')}`);
-        var uid = res_ID.data.id;
-    } else if (args.join().indexOf('@') !== -1) {
-        var uid = Object.keys(mentions)[0]
+        var uid = event.messageReply.senderID;
+    } else if (args.join(" ").indexOf(".com/") !== -1) {
+        const url = args.join(" ");
+        const matchId = url.match(/[?&]id=(\d+)/) || url.match(/facebook\.com\/(\d+)/);
+        if (matchId) {
+            var uid = matchId[1];
+        } else {
+            try {
+                if (typeof api.getUID === "function") {
+                    var uid = await api.getUID(url);
+                }
+            } catch (e) {}
+            if (!uid) {
+                return api.sendMessage("Không thể tìm UID từ liên kết này! Vui lòng tag người dùng hoặc reply tin nhắn của họ.", threadID, messageID);
+            }
+        }
+    } else if (args.join(" ").indexOf('@') !== -1 && Object.keys(mentions).length > 0) {
+        var uid = Object.keys(mentions)[0];
+    } else if (args[0] && !isNaN(args[0])) {
+        var uid = args[0];
     } else {
-        var uid = senderID
+        var uid = senderID;
     }
     var data = (await Users.getUserFull(uid)).data;
     try {

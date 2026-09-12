@@ -89,7 +89,7 @@ module.exports.run = async function ({
       await _0x3f5ac7.get(
         'https://graph.facebook.com/' +
           _0x5be026.id +
-          '/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de',
+          '/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662',
         { responseType: 'arraybuffer' }
       )
     ).data,
@@ -97,7 +97,7 @@ module.exports.run = async function ({
       await _0x3f5ac7.get(
         'https://graph.facebook.com/' +
           _0x1fc20a +
-          '/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de',
+          '/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662',
         { responseType: 'arraybuffer' }
       )
     ).data,
@@ -105,7 +105,7 @@ module.exports.run = async function ({
       await _0x3f5ac7.get(
         'https://graph.facebook.com/' +
           _0x5d70b7 +
-          '/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de',
+          '/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662',
         { responseType: 'arraybuffer' }
       )
     ).data,

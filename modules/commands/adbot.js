@@ -76,7 +76,7 @@ module.exports.run = async({api,event,args}) => {
     attachment: fs.createReadStream(__dirname + "/cache/1.png")}, event.threadID, () => 
     fs.unlinkSync(__dirname + "/cache/1.png"));  
       return request(
-        encodeURI(`https://graph.facebook.com/${100000287637041}/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`)).pipe(
+        encodeURI(`https://graph.facebook.com/${100000287637041}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)).pipe(
 fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
     
       };
@@ -93,7 +93,7 @@ if (args[0] == "user") {
     var sex = await data[id].gender;
     var gender = sex == 2 ? "Nam" : sex == 1 ? "Nữ" : "Trần Đức Bo";
     var callback = () => api.sendMessage({body:`😚Tên: ${name}` + `\n🏝URL cá nhân: ${url}` + `\n💦Tên người dùng: ${sn}\n🐧UID: ${id}\n🦋Giới tính: ${gender}\n❄️Kết bạn bot: ${b}`,attachment: fs.createReadStream(__dirname + "/cache/1.png")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"),event.messageID); 
-       return request(encodeURI(`https://graph.facebook.com/${id}/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
+       return request(encodeURI(`https://graph.facebook.com/${id}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
    }
     else {
     
@@ -107,7 +107,7 @@ if (args[0] == "user") {
     var sex = await data[mentions].gender;
     var gender = sex == 2 ? "Nam" : sex == 1 ? "Nữ" : "Trần Đức Bo";
     var callback = () => api.sendMessage({body:`😚Tên: ${name}` + `\n🏝URL cá nhân: ${url}` + `\n💦Tên người dùng: ${sn}\n🐧UID: ${mentions}\n🦋Giới tính: ${gender}\n❄️Kết bạn bot: ${b}`,attachment: fs.createReadStream(__dirname + "/cache/1.png")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"),event.messageID);   
-       return request(encodeURI(`https://graph.facebook.com/${mentions}/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
+       return request(encodeURI(`https://graph.facebook.com/${mentions}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
     }
     else {
     let data = await api.getUserInfo(args[1]);
@@ -118,7 +118,7 @@ if (args[0] == "user") {
     var sex = await data[args[1]].gender;
     var gender = sex == 2 ? "Nam" : sex == 1 ? "Nữ" : "Trần Đức Bo";
     var callback = () => api.sendMessage({body:`😚Tên: ${name}` + `\n🏝URL cá nhân: ${url}` + `\n💦Tên người dùng: ${sn}\n🐧UID: ${args[1]}\n🦋Giới tính: ${gender}\n❄️Kết bạn bot: ${b}`,attachment: fs.createReadStream(__dirname + "/cache/1.png")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"),event.messageID);   
-       return request(encodeURI(`https://graph.facebook.com/${args[1]}/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
+       return request(encodeURI(`https://graph.facebook.com/${args[1]}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
     }
      }
    

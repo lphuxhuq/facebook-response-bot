@@ -1,51 +1,53 @@
 module.exports.config = {
     name: "tik",
-    version: "1.0.0",
+    version: "2.0.0",
     hasPermssion: 0,
-    credits: "Shiron",
-    description: "tải video + audio tóc tai",
+    credits: "Shiron / Ponytail fix",
+    description: "Tải video + audio TikTok không logo",
     commandCategory: "download",
-    usages: "tikvd video <link video tóc tai> tikvd audio <link video tóc tai>",
+    usages: "tik video <link> | tik audio <link>",
     cooldowns: 5
 };
-module.exports.run = async ({
-    event,
-    api,
-    args
-}) => {
-    var all = args.join(" ").split(" ");
-    var link1 = all[0];
-    link2 = all[1];
-    if (!link2) return api.sendMessage('Vui lòng nhập link video tóc tai!', event.threadID, event.messageID);
+
+module.exports.run = async ({ event, api, args }) => {
+    const type = (args[0] || "").toLowerCase();
+    const url = args[1] || (args[0] && args[0].startsWith("http") ? args[0] : null);
+    if (!url) return api.sendMessage('Vui lòng nhập link video TikTok! (Ví dụ: !tik video https://vt.tiktok.com/...)', event.threadID, event.messageID);
+
     const axios = require('axios');
     const request = require('request');
     const fs = require('fs-extra');
 
-    if (args[0] == "video") {
-        try {
-            const res = await axios.get(`http://api.leanhtruong.net/api-no-key/tiktok?url=${link2}`);
-
-            var callback = () => api.sendMessage({
-                body: `🪧ID:${res.data.id}\n👀Description:${res.data.title}`,
-                attachment: fs.createReadStream(__dirname + "/cache/toptop.mp4")
-            }, event.threadID, () => fs.unlinkSync(__dirname + "/cache/toptop.mp4"), event.messageID);
-            return request(encodeURI(`${res.data.data_nowatermark[0].url}`)).pipe(fs.createWriteStream(__dirname + "/cache/toptop.mp4")).on('close', () => callback());
-        } catch (err) {
-            console.log(err)
-            return api.sendMessage("Yêu cầu của bạn không thể được xử lý!", event.threadID);
+    try {
+        const res = await axios.get(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`, { timeout: 10000 });
+        if (!res.data || res.data.code !== 0 || !res.data.data) {
+            return api.sendMessage("Không thể lấy dữ liệu từ link TikTok này! Vui lòng kiểm tra lại link.", event.threadID, event.messageID);
         }
-    } else if (args[0] == "audio") {
-        try {
-            const res = await axios.get(`http://api.leanhtruong.net/api-no-key/tiktok?url=${link2}`);
 
-            var callback = () => api.sendMessage({
-                body: `🪧ID:${res.data.id}\n👀Music:${res.data.data_music.title}`,
-                attachment: fs.createReadStream(__dirname + "/cache/toptop.mp3")
-            }, event.threadID, () => fs.unlinkSync(__dirname + "/cache/toptop.mp3"), event.messageID);
-            return request(encodeURI(`${res.data.data_music.url}`)).pipe(fs.createWriteStream(__dirname + "/cache/toptop.mp3")).on('close', () => callback());
-        } catch (err) {
-            console.log(err)
-            return api.sendMessage("Yêu cầu của bạn không thể được xử lý!", event.threadID);
+        const data = res.data.data;
+        if (type === "audio" || type === "music") {
+            const musicUrl = data.music;
+            const musicTitle = (data.music_info && data.music_info.title) || data.title || "TikTok Audio";
+            const filePath = __dirname + "/cache/toptop.mp3";
+            const callback = () => api.sendMessage({
+                body: `🎵 Tên nhạc: ${musicTitle}\n👤 Tác giả: ${data.author ? data.author.nickname : 'Ẩn danh'}`,
+                attachment: fs.createReadStream(filePath)
+            }, event.threadID, () => fs.unlinkSync(filePath), event.messageID);
+
+            return request(encodeURI(musicUrl)).pipe(fs.createWriteStream(filePath)).on('close', () => callback());
+        } else {
+            // Default: video
+            const videoUrl = data.play;
+            const filePath = __dirname + "/cache/toptop.mp4";
+            const callback = () => api.sendMessage({
+                body: `🎬 Tiêu đề: ${data.title}\n👤 Tác giả: ${data.author ? data.author.nickname : 'TikTok'}\n❤️ Tim: ${data.digg_count || 0} | 💬 Comment: ${data.comment_count || 0}`,
+                attachment: fs.createReadStream(filePath)
+            }, event.threadID, () => fs.unlinkSync(filePath), event.messageID);
+
+            return request(encodeURI(videoUrl)).pipe(fs.createWriteStream(filePath)).on('close', () => callback());
         }
+    } catch (err) {
+        console.log(err);
+        return api.sendMessage("Đã xảy ra lỗi khi tải TikTok: " + (err.message || "Lỗi mạng"), event.threadID, event.messageID);
     }
-}
+};

@@ -64,6 +64,10 @@ module.exports.randomString = function (length) {
 	return result;
 }
 
+module.exports.getAvatarUrl = function (uid, size = 720) {
+	return `https://graph.facebook.com/${uid}/picture?width=${size}&height=${size}&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
+};
+
 module.exports.assets = {
 	async font (name) {
 		if (!assets.font.loaded) await assets.font.load();
@@ -127,4 +131,30 @@ module.exports.homeDir = function () {
 	}
 
 	return [typeof os.homedir === 'function' ? os.homedir() : returnHome, typeSystem];
-}
+};
+
+module.exports.getAvatarUrl = function (uid, size = 720) {
+	return `https://graph.facebook.com/${uid}/picture?height=${size}&width=${size}&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
+};
+
+module.exports.translateText = async function (text, targetLang = 'vi') {
+	const axios = require('axios');
+	if (!text) return "";
+	try {
+		const res = await axios.get(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(targetLang)}&dt=t&q=${encodeURIComponent(text)}`, { timeout: 3500 });
+		let result = '';
+		if (res.data && res.data[0]) {
+			res.data[0].forEach(item => { if (item[0]) result += item[0]; });
+			if (result) return result;
+		}
+	} catch (e) {}
+
+	try {
+		const res2 = await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${encodeURIComponent(targetLang)}`, { timeout: 4000 });
+		if (res2.data && res2.data.responseData && res2.data.responseData.translatedText) {
+			return res2.data.responseData.translatedText;
+		}
+	} catch (e) {}
+
+	return text;
+};

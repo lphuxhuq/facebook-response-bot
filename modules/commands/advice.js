@@ -10,17 +10,13 @@ module.exports.config = {
 	dependencies: {"srod-v2": "","request": ""}
 };
 
-module.exports.run = async ({ event, api, args }) => {
-  
-  const request = global.nodemodule["request"];
+module.exports.run = async ({ event, api }) => {
   const srod = global.nodemodule["srod-v2"];
-  const Data = (await srod.GetAdvice()).embed.description;
-  
-  return request(encodeURI(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t&q=${Data}`), (err, response, body) => {
-		if (err) return api.sendMessage("Đ𝐚̃ 𝐜𝐨́ 𝐥𝐨̂̃𝐢 𝐱𝐚̉𝐲 𝐫𝐚!", event.threadID, event.messageID);
-		var retrieve = JSON.parse(body);
-		var text = '';
-		retrieve[0].forEach(item => (item[0]) ? text += item[0] : '');
-    api.sendMessage(Data+'\n'+text, event.threadID, event.messageID)
-  });
-}
+  try {
+    const data = (await srod.GetAdvice()).embed.description;
+    const translated = await global.utils.translateText(data, 'vi');
+    return api.sendMessage(`💡 Lời khuyên:\n${data}\n\n👉 Bản dịch: ${translated}`, event.threadID, event.messageID);
+  } catch (e) {
+    return api.sendMessage("Đã có lỗi xảy ra khi lấy lời khuyên!", event.threadID, event.messageID);
+  }
+};

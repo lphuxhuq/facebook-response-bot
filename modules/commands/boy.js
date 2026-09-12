@@ -1,26 +1,43 @@
-﻿module.exports.config = {
-	name: "boy",
-	version: "1.0.0",
-	hasPermssion: 0,
-	credits: "VanHung",
-	description: "Xem ảnh trai",
-	commandCategory: "Random-IMG",
-	usages: "boy",
-	cooldowns: 2
+module.exports.config = {
+  name: "boy",
+  version: "2.0.0",
+  hasPermssion: 0,
+  credits: "Mirai / Ponytail fix",
+  description: "Xem ảnh trai đẹp",
+  commandCategory: "Random-IMG",
+  usages: "boy",
+  cooldowns: 3
 };
 
+const fs = require('fs');
+const path = require('path');
+const request = require('request');
+
 module.exports.run = async ({ api, event }) => {
-	const axios = require('axios');
-	const request = require('request');
-	const fs = require("fs");
-	axios.get('https://apituandz1407.herokuapp.com/api/trai.php').then(res => {
-	let ext = res.data.data.substring(res.data.data.lastIndexOf(".") + 1);
-	let callback = function () {
-					api.sendMessage({
-						body: `𝐀𝐧𝐡 𝐭𝐫𝐚𝐢 𝐧𝐞̀ 𝐦𝐚̂́𝐲 𝐜𝐨𝐧 𝐪𝐮𝐲̉ 𝐦𝐞̂ 𝐭𝐫𝐚𝐢 𝐜𝐡𝐮́𝐚 😤`,
-						attachment: fs.createReadStream(__dirname + `/cache/boy.${ext}`)
-					}, event.threadID, () => fs.unlinkSync(__dirname + `/cache/boy.${ext}`), event.messageID);
-				};
-				request(res.data.data).pipe(fs.createWriteStream(__dirname + `/cache/boy.${ext}`)).on("close", callback);
-			})
-}
+  const mediaPath = path.join(__dirname, 'cache', 'media_links.json');
+  let links = [];
+  if (fs.existsSync(mediaPath)) {
+    try { links = JSON.parse(fs.readFileSync(mediaPath, 'utf8')); } catch (e) { links = []; }
+  }
+  if (!links.length) {
+    links = [
+      "https://i.imgur.com/g6X1W3x.jpg",
+      "https://i.imgur.com/kQoK0oP.png",
+      "https://i.imgur.com/8QzXnQp.png"
+    ];
+  }
+  const imgUrl = links[Math.floor(Math.random() * links.length)];
+  const ext = imgUrl.split('.').pop().split('?')[0] || 'jpg';
+  const outPath = path.join(__dirname, 'cache', `boy_${Date.now()}.${ext}`);
+
+  const callback = () => {
+    api.sendMessage({
+      body: "Ảnh trai đẹp rạng ngời nè! ✨",
+      attachment: fs.createReadStream(outPath)
+    }, event.threadID, () => {
+      try { fs.unlinkSync(outPath); } catch (e) {}
+    }, event.messageID);
+  };
+
+  request(imgUrl).pipe(fs.createWriteStream(outPath)).on('close', callback);
+};

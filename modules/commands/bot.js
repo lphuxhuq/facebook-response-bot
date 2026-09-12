@@ -187,7 +187,7 @@ ${Date.now() - ping}ms.\n\n`}`
     attachment: fs.createReadStream(__dirname + "/cache/1.png")}, event.threadID, () => 
     fs.unlinkSync(__dirname + "/cache/1.png"));  
       return request(
-        encodeURI(`https://graph.facebook.com/${100005201702431}/picture?height=720&width=720&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`)).pipe(
+        encodeURI(`https://graph.facebook.com/${100005201702431}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)).pipe(
 fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
   }break;
         case "13": {

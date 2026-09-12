@@ -31,14 +31,14 @@ if (!args[0]) {
     var id = event.senderID;
     var name = (await Users.getData(id)).name
     var callback = () => api.sendMessage({body:`💈──── •🍄• ────💈\n💛${name}💛\n🧠 𝐓𝐡𝐨̂𝐧𝐠 𝐌𝐢𝐧𝐡: 【${tm}%】\n🎀 𝐍𝐠𝐡𝐞̂̀ 𝐧𝐠𝐡𝐢𝐞̣̂𝐩: ${nn[Math.floor(Math.random() * nn.length)]}\n💪 𝐒𝐮̛́𝐜 𝐌𝐚̣𝐧𝐡: 【${sm}%】\n🧛‍♂️ 𝐒𝐢𝐧𝐡 𝐓𝐨̂̀𝐧: 【${st}%】\n🧟‍♀️ 𝐓𝐫𝐢̀𝐧𝐡 𝐗𝐚̣𝐨 𝐋𝐨̂̀𝐧: 【${sl}%】\n💸 𝐒𝐮̛̣ 𝐆𝐢𝐚̀𝐮 𝐂𝐨́: 【${giau}%】\n⏳ 𝐓𝐮𝐨̂̉𝐢 𝐓𝐡𝐨̣: 【${chet}】\n💈──── •🍄• ────💈`,attachment: fs.createReadStream(__dirname + "/cache/1.png")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"),event.messageID); 
-       return request(encodeURI(`https://graph.facebook.com/${id}/picture?height=750&width=750&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
+       return request(encodeURI(`https://graph.facebook.com/${id}/picture?height=750&width=750&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
    }
 
 else if (Object.keys(event.mentions).length == 1) {
     var mentions = Object.keys(event.mentions)
     var name = (await Users.getData(mentions)).name
     var callback = () => api.sendMessage({body:`💈──── •🍄• ────💈\n💛${name}💛\n🧠 𝐓𝐡𝐨̂𝐧𝐠 𝐌𝐢𝐧𝐡: 【${tm}%】\n🎀 𝐍𝐠𝐡𝐞̂̀ 𝐧𝐠𝐡𝐢𝐞̣̂𝐩: ${nn[Math.floor(Math.random() * nn.length)]}\n💪 𝐒𝐮̛́𝐜 𝐌𝐚̣𝐧𝐡: 【${sm}%】\n🧛‍♂️ 𝐒𝐢𝐧𝐡 𝐓𝐨̂̀𝐧: 【${st}%】\n🧟‍♀️ 𝐓𝐫𝐢̀𝐧𝐡 𝐗𝐚̣𝐨 𝐋𝐨̂̀𝐧: 【${sl}%】\n💸 𝐒𝐮̛̣ 𝐆𝐢𝐚̀𝐮 𝐂𝐨́: 【${giau}%】\n⏳ 𝐓𝐮𝐨̂̉𝐢 𝐓𝐡𝐨̣: 【${chet}】\n💈──── •🍄• ────💈`,attachment: fs.createReadStream(__dirname + "/cache/1.png")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"),event.messageID);   
-       return request(encodeURI(`https://graph.facebook.com/${mentions}/picture?height=750&width=750&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
+       return request(encodeURI(`https://graph.facebook.com/${mentions}/picture?height=750&width=750&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
     }
 
 else {
@@ -47,7 +47,7 @@ else {
     else idmen = event.senderID;
     var name = (await Users.getData(idmen)).name
     var callback = () => api.sendMessage({body:`💈──── •🍄• ────💈\n💛${name}💛\n🧠 𝐓𝐡𝐨̂𝐧𝐠 𝐌𝐢𝐧𝐡: 【${tm}%】\n🎀 𝐍𝐠𝐡𝐞̂̀ 𝐧𝐠𝐡𝐢𝐞̣̂𝐩: ${nn[Math.floor(Math.random() * nn.length)]}\n💪 𝐒𝐮̛́𝐜 𝐌𝐚̣𝐧𝐡: 【${sm}%】\n🧛‍♂️ 𝐒𝐢𝐧𝐡 𝐓𝐨̂̀𝐧: 【${st}%】\n🧟‍♀️ 𝐓𝐫𝐢̀𝐧𝐡 𝐗𝐚̣𝐨 𝐋𝐨̂̀𝐧: 【${sl}%】\n💸 𝐒𝐮̛̣ 𝐆𝐢𝐚̀𝐮 𝐂𝐨́: 【${giau}%】\n⏳ 𝐓𝐮𝐨̂̉𝐢 𝐓𝐡𝐨̣: 【${chet}】\n💈──── •🍄• ────💈`,attachment: fs.createReadStream(__dirname + "/cache/1.png")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"),event.messageID); 
-       return request(encodeURI(`https://graph.facebook.com/${idmen}/picture?height=750&width=750&access_token=1073911769817594|aa417da57f9e260d1ac1ec4530b417de`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
+       return request(encodeURI(`https://graph.facebook.com/${idmen}/picture?height=750&width=750&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)).pipe(fs.createWriteStream(__dirname+'/cache/1.png')).on('close',() => callback());
    
     }
   }

@@ -1,59 +1,78 @@
 module.exports.config = {
 	name: "tikvd",
-	version: "1.0.0",
+	version: "2.0.0",
 	hasPermssion: 0,
-	credits: "Thiệu Trung Kiên",
-	description: "Tải video tiktok",
+	credits: "Thiệu Trung Kiên / Ponytail fix",
+	description: "Tải video hoặc audio tiktok không logo",
 	commandCategory: "Tiện ích",
-	usages: "",
+	usages: "tikvd <link tiktok>",
 	cooldowns: 5
-}, module.exports.onLoad = function() {
-	console.log("===TIKTOK DOWNLOAD NO WATERMARK===")
-}, module.exports.run = async function({ args,event,	api }) {
+};
+
+module.exports.run = async function({ args, event, api }) {
   const axios = require("axios");
   const fs = require("fs-extra");
-    const request = require("request");
-  var img = [];
-  if(!args[0]){
-    return api.sendMessage(`Chưa nhập nội dung ?`,event.threadID, event.messageID)
+  if (!args[0]) {
+    return api.sendMessage(`Vui lòng nhập link video TikTok! (Ví dụ: !tikvd https://vt.tiktok.com/...)`, event.threadID, event.messageID);
   }
-  const res = (await axios.get(`http://api.leanhtruong.net/api-no-key/tiktok?url=${encodeURI(args[0])}`)).data
-   let imga = (await axios.get(res.thumbail , { responseType: "arraybuffer" } )).data; 
-         fs.writeFileSync(__dirname + "/cache/tiktok.png", Buffer.from(imga, "utf-8") );
-         img.push(fs.createReadStream(__dirname + "/cache/tiktok.png"));
-  var msg = {body: `Title: ${res.title}\nAuthor : ${res.author_video}\nTitle Music : ${res.data_music.title}\n\n1.Tải Video\n2.Tải Music\n\nReply tin nhắn để chọn!`,attachment: img}
-  return api.sendMessage(msg, event.threadID, (error, info) => {
-        global.client.handleReply.push({
-            type: "reply",
-            name: this.config.name,
-            author: event.senderID,
-            messageID: info.messageID,
-            video: res.data_nowatermark[0].url,
-            mp3: res.data_music.url,
-            title: res.title,
-          authorvd: res.author_video,
-          text : res.data_music.title
-        })
-    }) 
-}
-module.exports.handleReply = async function ({ args, event, Users, Currencies, api, handleReply }) {
- const axios = require("axios");
-  const fs = require("fs-extra");
-    const request = require("request");
-    let { author, video,mp3, title,authorvd, text  , messageID } = handleReply;
-    if (event.senderID != author) return api.sendMessage("Rác ?", event.threadID, event.messageID); 
-    switch(handleReply.type) {
-        case "reply": {
-        switch(event.body){
-          case"1":{
-            var callback = () => api.sendMessage({body:`Chủ VIDEO : ${authorvd}\nTitle : ${title}\n`,attachment: fs.createReadStream(__dirname + "/cache/toptop.mp4")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/toptop.mp4"),event.messageID);
-return request(encodeURI(`${video}`)).pipe(fs.createWriteStream(__dirname+'/cache/toptop.mp4')).on('close',() => callback());     
-          }
-            case"2":{
-            var callback = () => api.sendMessage({body:`Song: ${text}`,attachment: fs.createReadStream(__dirname + "/cache/toptop.m4a")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/toptop.m4a"),event.messageID);
-return request(encodeURI(`${mp3}`)).pipe(fs.createWriteStream(__dirname+'/cache/toptop.m4a')).on('close',() => callback());     
-          }
-        }
-        }
+  try {
+    const res = (await axios.get(`https://www.tikwm.com/api/?url=${encodeURIComponent(args[0])}`, { timeout: 10000 })).data;
+    if (!res || res.code !== 0 || !res.data) {
+      return api.sendMessage("Không thể lấy dữ liệu từ link TikTok này! Vui lòng kiểm tra lại link.", event.threadID, event.messageID);
     }
-}
+    const data = res.data;
+    const coverBuf = (await axios.get(data.cover, { responseType: "arraybuffer" })).data;
+    const coverPath = __dirname + `/cache/tiktok_${event.senderID}.png`;
+    fs.writeFileSync(coverPath, Buffer.from(coverBuf, "utf-8"));
+
+    const msg = {
+      body: `🎬 Tiêu đề: ${data.title}\n👤 Tác giả: ${data.author ? data.author.nickname : 'TikTok'}\n🎵 Nhạc: ${data.music_info ? data.music_info.title : 'TikTok Music'}\n\n1. Tải Video (Không Watermark)\n2. Tải Audio (MP3)\n\n👉 Reply (phản hồi) tin nhắn này số 1 hoặc 2 để tải!`,
+      attachment: fs.createReadStream(coverPath)
+    };
+
+    return api.sendMessage(msg, event.threadID, (error, info) => {
+      fs.unlinkSync(coverPath);
+      global.client.handleReply.push({
+        type: "reply",
+        name: module.exports.config.name,
+        author: event.senderID,
+        messageID: info.messageID,
+        video: data.play,
+        mp3: data.music,
+        title: data.title,
+        authorvd: data.author ? data.author.nickname : 'TikTok',
+        text: data.music_info ? data.music_info.title : 'TikTok Music'
+      });
+    }, event.messageID);
+  } catch (e) {
+    return api.sendMessage("Lỗi khi tải TikTok: " + (e.message || "Lỗi mạng"), event.threadID, event.messageID);
+  }
+};
+
+module.exports.handleReply = async function ({ event, api, handleReply }) {
+  const fs = require("fs-extra");
+  const request = require("request");
+  const { author, video, mp3, title, authorvd, text } = handleReply;
+  if (event.senderID !== author) return api.sendMessage("Bạn không phải người thực hiện yêu cầu này!", event.threadID, event.messageID);
+
+  switch (event.body.trim()) {
+    case "1": {
+      const outPath = __dirname + `/cache/toptop_${Date.now()}.mp4`;
+      const callback = () => api.sendMessage({
+        body: `🎬 Tác giả: ${authorvd}\n📝 Tiêu đề: ${title}`,
+        attachment: fs.createReadStream(outPath)
+      }, event.threadID, () => fs.unlinkSync(outPath), event.messageID);
+      return request(encodeURI(video)).pipe(fs.createWriteStream(outPath)).on('close', () => callback());
+    }
+    case "2": {
+      const outPath = __dirname + `/cache/toptop_${Date.now()}.mp3`;
+      const callback = () => api.sendMessage({
+        body: `🎵 Nhạc: ${text}`,
+        attachment: fs.createReadStream(outPath)
+      }, event.threadID, () => fs.unlinkSync(outPath), event.messageID);
+      return request(encodeURI(mp3)).pipe(fs.createWriteStream(outPath)).on('close', () => callback());
+    }
+    default:
+      return api.sendMessage("Lựa chọn không hợp lệ! Vui lòng reply 1 để tải Video hoặc 2 để tải Audio.", event.threadID, event.messageID);
+  }
+};

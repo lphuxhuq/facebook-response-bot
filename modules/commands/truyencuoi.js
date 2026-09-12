@@ -1,49 +1,21 @@
 module.exports.config = {
   name: "truyencuoi",
-  version: "1.0.0",
+  version: "2.0.0",
   hasPermssion: 0,
-  credits: "TuanDz",
-  description: "Những câu truyện cười ngắn",
-  commandCategory: "Tiện Ích",
+  credits: "TuanDz / Ponytail fix",
+  description: "Kể chuyện cười giải trí",
+  commandCategory: "Giải Trí",
   cooldowns: 3
 };
-function byte2mb(bytes) {
-  const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  let l = 0, n = parseInt(bytes, 10) || 0;
-  while (n >= 1024 && ++l) n = n / 1024;
-  return `${n.toFixed(n < 10 && l > 0 ? 1 : 0)} ${units[l]}`;
-}
+
+const jokes = [
+  "Thầy giáo hỏi Tèo:\n- Nếu có 5 cái kẹo, em chia cho bạn 2 cái, em còn mấy cái?\nTèo đáp:\n- Dạ còn nguyên 5 cái ạ vì em không thích chia!",
+  "Bác sĩ nói với bệnh nhân:\n- Bệnh của anh cần phải đi biển nghỉ dưỡng ngắm sóng thì mới khỏi.\nBệnh nhân ngập ngừng:\n- Nhưng thưa bác sĩ, tôi làm nghề gác hải đăng 20 năm nay rồi ạ!",
+  "Một anh chàng đi thi lái xe:\n- Giám thị hỏi: Nếu đằng trước có một người già và một đứa trẻ, anh đâm vào ai?\n- Anh chàng: Dạ đâm vào đứa trẻ ạ.\n- Giám thị: Sai! Anh phải đạp phanh chứ đâm vào ai!",
+  "Vợ hỏi chồng:\n- Anh thấy em hôm nay có gì khác không?\nChồng toát mồ hôi suy nghĩ rồi đáp:\n- Em... em vừa thở ra đúng không?"
+];
+
 module.exports.run = async ({ api, event }) => {
-  const axios = require('axios');
-  const fetch = global.nodemodule["node-fetch"];
-  const request = require('request');
-  const res = await axios.get(`https://apituandz1407.herokuapp.com/api/truyencuoi.php`);
-  var poem = res.data.data;
-  const fs = require("fs");
-  const moment = require("moment-timezone");
-  var gio = moment.tz("Asia/Ho_Chi_Minh").format("HH:mm:ss || D/MM/YYYY");
-  var thu = moment.tz('Asia/Ho_Chi_Minh').format('dddd');
-  if (thu == 'Sunday') thu = '𝐂𝐡𝐮̉ 𝐍𝐡𝐚̣̂𝐭'
-  if (thu == 'Monday') thu = '𝐓𝐡𝐮̛́ 𝐇𝐚𝐢'
-  if (thu == 'Tuesday') thu = '𝐓𝐡𝐮̛́ 𝐁𝐚'
-  if (thu == 'Wednesday') thu = '𝐓𝐡𝐮̛́ 𝐓𝐮̛'
-  if (thu == "Thursday") thu = '𝐓𝐡𝐮̛́ 𝐍𝐚̆𝐦'
-  if (thu == 'Friday') thu = '𝐓𝐡𝐮̛́ 𝐒𝐚́𝐮'
-  if (thu == 'Saturday') thu = '𝐓𝐡𝐮̛́ 𝐁𝐚̉𝐲'
-  const time = process.uptime(),
-    hours = Math.floor(time / (60 * 60)),
-    minutes = Math.floor((time % (60 * 60)) / 60),
-    seconds = Math.floor(time % 60);
-  const pidusage = await global.nodemodule["pidusage"](process.pid);
-  const timeStart = Date.now();
-  axios.get('https://apituandz1407.herokuapp.com/api/meme.php').then(res => {
-    let ext = res.data.data.substring(res.data.data.lastIndexOf(".") + 1);
-    let callback = function () {
-      api.sendMessage({
-        body: `ㅤ 💌 == 𝐓𝐫𝐮𝐲𝐞̣̂𝐧 𝐂𝐮̛𝐨̛̀𝐢 == 💌\n\n🐼──── •❤️‍🔥• ────🐼\n${poem}\n🐼──── •❤️‍🔥• ────🐼\n\nㅤㅤㅤ🏮 ${thu} 🏮\n⏳ ${gio} ⏳`,
-        attachment: fs.createReadStream(__dirname + `/cache/anh.${ext}`)
-      }, event.threadID, () => fs.unlinkSync(__dirname + `/cache/anh.${ext}`), event.messageID);
-    };
-    request(res.data.data).pipe(fs.createWriteStream(__dirname + `/cache/anh.${ext}`)).on("close", callback);
-  })
-}
+  const joke = jokes[Math.floor(Math.random() * jokes.length)];
+  return api.sendMessage(`🤣 [ CHUYỆN CƯỜI HÔM NAY ] 🤣\n━━━━━━━━━━━━━━━━━\n${joke}`, event.threadID, event.messageID);
+};

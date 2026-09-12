@@ -1,36 +1,44 @@
 module.exports.config = {
-    name:"ninoteach",
-    version: "1.0.2",
+    name: "ninoteach",
+    version: "2.0.0",
     hasPermssion: 0,
-    credits: "DungUwU",
-    description: "Dạy nino cute :3",
+    credits: "DungUwU / Ponytail fix",
+    description: "Dạy nino cute trả lời câu hỏi",
     commandCategory: "Chat cùng sim, nino",
-    usages: "câu muốn hỏi nino => câu muốn nino trả lời",
-    cooldowns: 5
+    usages: "[câu hỏi] => [câu trả lời]",
+    cooldowns: 2
 };
 
-const axios = require('axios');
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports.run = async ({ api, event, args }) => {
-    let { messageID, threadID } = event;
-    let work = args.join(" ");
-    let fw = work.indexOf(" => ");
-    if (fw == -1) {
-        api.sendMessage("𝗦𝗮𝗶 𝗳𝗼𝗿𝗺𝗮𝘁 𝗿𝗼̂̀𝗶 𝗻𝗵𝗲́",threadID,messageID);
-    } else {
-        let ask = work.slice(0, fw);
-        let answer = work.slice(fw + 4, work.length);
-        if (ask=="") {api.sendMessage("𝘁𝗵𝗶𝗲̂́𝘂 𝗰𝗮̂𝘂 𝗵𝗼̉𝗶 𝗸𝗶̀𝗮 ",threadID,messageID)} else {
-            if (!answer) {api.sendMessage("𝘁𝗵𝗶𝗲̂́𝘂 𝗰𝗮̂𝘂 𝘁𝗿𝗮̉ 𝗹𝗼̛̀𝗶 𝗸𝗶̀𝗮 ",threadID,messageID)} else {
-                    axios.get(encodeURI(`https://adreno-api.rootandroid.repl.co/nino/add/${ask}&&${answer}`)).then(res => {
-                        if (res.data.reply == "𝗞𝗲𝘆 𝘃𝗼̛́𝗶 𝘃𝗮𝗹𝘂𝗲 𝗰𝗼́ 𝗵𝗲̂́𝘁 𝗰𝗺𝗻𝗿, 𝘁𝗵𝗲̂𝗺 𝗰𝗮́𝗶 𝗰𝗰"){
-                            api.sendMessage("𝗰𝗮̂𝘂 𝗵𝗼̉𝗶, 𝗰𝗮̂𝘂 𝘁𝗿𝗮̉ 𝗹𝗼̛̀𝗶 đ𝗮̃ 𝘁𝗼̂̀𝗻 𝘁𝗮̣𝗶 𝗿 𝗻𝗵𝗮 :))",threadID,messageID)} else {
-                                if (res.data.reply == "𝗕𝗶̣ 𝗹𝗼̂̃𝗶 𝗰𝗰 𝗴𝗶̀ 𝗲́𝗼 𝗯𝗶𝗲̂́𝘁") {api.sendMessage('𝗟𝗼̂̃𝗶 𝗸𝗵𝗼̂𝗻𝗴 𝘅𝗮́𝗰 𝗱𝗶̣𝗻𝗵 :>',threadID,messageID)} else {
-                                    api.sendMessage("𝗗𝗮̣𝘆 𝘁𝗵𝗮̀𝗻𝗵 𝗰𝗼̂𝗻𝗴!",threadID,messageID);
-                                }
-                            }
-                    })
-            }
-        }
+    const { messageID, threadID } = event;
+    const work = args.join(" ");
+    const fw = work.indexOf(" => ");
+    if (fw === -1) {
+        return api.sendMessage("Sai format rồi nhé! Vui lòng dùng: câu hỏi => câu trả lời", threadID, messageID);
     }
-}
+    const ask = work.slice(0, fw).trim().toLowerCase();
+    const answer = work.slice(fw + 4).trim();
+    if (!ask) return api.sendMessage("Bạn chưa nhập câu hỏi kìa!", threadID, messageID);
+    if (!answer) return api.sendMessage("Bạn chưa nhập câu trả lời kìa!", threadID, messageID);
+
+    try {
+        const ninoPath = path.join(__dirname, 'cache', 'nino.json');
+        let data = {};
+        if (fs.existsSync(ninoPath)) {
+            try { data = JSON.parse(fs.readFileSync(ninoPath, 'utf8')); } catch (e) { data = {}; }
+        }
+        if (!data.teaches) data.teaches = {};
+        if (!Array.isArray(data.teaches[ask])) data.teaches[ask] = [];
+        if (data.teaches[ask].includes(answer)) {
+            return api.sendMessage("Câu hỏi và câu trả lời này đã tồn tại trong trí nhớ của Nino rồi nha!", threadID, messageID);
+        }
+        data.teaches[ask].push(answer);
+        fs.writeFileSync(ninoPath, JSON.stringify(data, null, 4), 'utf8');
+        return api.sendMessage(`Dạy Nino thành công!\nKhi hỏi: "${ask}" => Nino sẽ đáp: "${answer}"`, threadID, messageID);
+    } catch (e) {
+        return api.sendMessage("Lỗi khi lưu bài học cho Nino: " + e.message, threadID, messageID);
+    }
+};
