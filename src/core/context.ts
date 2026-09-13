@@ -6,9 +6,26 @@ export enum Role {
   OWNER = 3,
 }
 
-export interface Attachment {
+export interface UrlAttachment {
   type: 'image' | 'video' | 'audio' | 'file';
   url: string;
+}
+
+/**
+ * Attachment chứa dữ liệu nhị phân (ví dụ buffer render từ Canvas).
+ * Sender sẽ upload lên Graph API qua multipart file upload.
+ */
+export interface DataAttachment {
+  type: 'image' | 'video' | 'audio' | 'file';
+  data: Buffer | Uint8Array;
+  filename: string;
+  contentType?: string;
+}
+
+export type Attachment = UrlAttachment | DataAttachment;
+
+export function isDataAttachment(att: Attachment): att is DataAttachment {
+  return (att as DataAttachment).data !== undefined;
 }
 
 export interface OutgoingMessage {

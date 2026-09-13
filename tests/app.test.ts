@@ -81,7 +81,7 @@ describe('Fastify HTTP Server & Observability Endpoints', () => {
 
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.body);
-    expect(body.count).toBe(7);
+    expect(body.count).toBe(10);
     const pluginNames = body.plugins.map((p: any) => p.name);
     expect(pluginNames).toContain('core');
     expect(pluginNames).toContain('admin');
@@ -90,6 +90,9 @@ describe('Fastify HTTP Server & Observability Endpoints', () => {
     expect(pluginNames).toContain('economy');
     expect(pluginNames).toContain('entertainment');
     expect(pluginNames).toContain('ai');
+    expect(pluginNames).toContain('media');
+    expect(pluginNames).toContain('games');
+    expect(pluginNames).toContain('knowledge');
   });
 
   it('POST /pause and POST /resume should toggle runtime transport state', async () => {

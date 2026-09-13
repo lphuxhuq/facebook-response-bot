@@ -21,6 +21,9 @@ import { utilityPlugin } from './plugins/utility/index.js';
 import { economyPlugin } from './plugins/economy/index.js';
 import { entertainmentPlugin } from './plugins/entertainment/index.js';
 import { aiPlugin } from './plugins/ai/index.js';
+import { mediaPlugin } from './plugins/media/index.js';
+import { gamesPlugin } from './plugins/games/index.js';
+import { knowledgePlugin } from './plugins/knowledge/index.js';
 import { MockAIProvider, GeminiAIProvider } from './services/ai/mock-provider.js';
 import { WeatherService } from './services/weather/weather.service.js';
 
@@ -97,6 +100,9 @@ export async function createServer(customDbPath?: string): Promise<{ app: Fastif
   await pluginLoader.registerPlugin(economyPlugin);
   await pluginLoader.registerPlugin(entertainmentPlugin);
   await pluginLoader.registerPlugin(aiPlugin);
+  await pluginLoader.registerPlugin(mediaPlugin);
+  await pluginLoader.registerPlugin(gamesPlugin);
+  await pluginLoader.registerPlugin(knowledgePlugin);
 
   // 6. Observability & Health Endpoints
   app.get('/health', async (_, reply) => {
