@@ -102,12 +102,20 @@ export class CommandRouter {
       }
     }
 
-    // 2. Check for prefix
-    if (!trimmed.startsWith(this.prefix)) {
+    // 2. Check for prefix (support group-specific override if present)
+    let effectivePrefix = this.prefix;
+    if (ctx.isGroup && this.repositories?.threadSettings) {
+      const settings = this.repositories.threadSettings.getSettings(ctx.conversationId);
+      if (settings?.prefix) {
+        effectivePrefix = settings.prefix;
+      }
+    }
+
+    if (!trimmed.startsWith(effectivePrefix)) {
       return false;
     }
 
-    const withoutPrefix = trimmed.slice(this.prefix.length).trim();
+    const withoutPrefix = trimmed.slice(effectivePrefix.length).trim();
     const parts = withoutPrefix.split(/\s+/);
     const trigger = parts[0]?.toLowerCase();
     if (!trigger) return false;
@@ -115,6 +123,16 @@ export class CommandRouter {
     const command = this.getCommand(trigger);
     if (!command) {
       return false; // Unknown command - ignore or let event router handle
+    }
+
+    // Check scope: DM vs GROUP
+    if (command.scope === 'GROUP' && !ctx.isGroup) {
+      await ctx.reply(`⛔ Lệnh '${command.name}' chỉ có thể sử dụng trong Nhóm Chat (Group).`);
+      return true;
+    }
+    if (command.scope === 'DM' && ctx.isGroup) {
+      await ctx.reply(`⛔ Lệnh '${command.name}' chỉ có thể sử dụng trong Tin Nhắn Riêng (DM).`);
+      return true;
     }
 
     const args = parts.slice(1);

@@ -1,265 +1,192 @@
-# LEGACY CODEBASE AUDIT REPORT: facebook-response-bot (V1)
+# LEGACY CODEBASE AUDIT: FACEBOOK PERSONAL ACCOUNT & GROUP CHAT BOT
 
-- **Audited Repository**: `https://github.com/lphuxhuq/facebook-response-bot`
-- **Branch**: `remake-and-test`
-- **Auditor**: Principal Software Architect & Security Lead
+- **Repository**: `https://github.com/lphuxhuq/facebook-response-bot`
+- **Scope**: Comprehensive Audit of Personal Facebook Account Automation & Group Chat Mechanics
+- **Auditor**: Principal Software Architect & Lead Security Engineer
 - **Date**: 2026-09-13
-- **Classification**: COMPREHENSIVE ARCHITECTURAL & SECURITY POST-MORTEM
+- **Classification**: DETAILED POST-MORTEM & TECHNICAL DEBT AUDIT
 
 ---
 
-## 1. Architecture Overview
+## 1. Runtime Lifecycle & Supervisor Architecture
 
-The legacy bot is built on a fork of the "MiraiBot" / "Horizon" Messenger bot framework, originally developed around 2020–2022 to automate personal Facebook user accounts via unofficial internal Facebook endpoints and reverse-engineered MQTT/HTTP protocols.
+The legacy system executes in a two-tier node process model:
 
 ```text
-                                [ Facebook User Account ]
-                                            │ (Unofficial HTTP/MQTT)
-                                            ▼
-                               [ fca-horizon-remake ]
-                                            │
-                                            ▼
-                                     [ mirai.js ]
-                                            │
-    ┌───────────────────────────────┴───────────────────────────────┐
-    ▼                                                               ▼
-[ global.client ] (In-memory god object)                 [ includes/listen.js ] (Event dispatcher)
-    ├── commands (435 modules)                                      ├── handleCommand
-    ├── events (7 modules)                                          ├── handleReply
-    ├── handleReply (Ephemeral array)                               ├── handleReaction
-    └── nodemodule (Dynamic Proxy + sync npm install)              └── handleEvent
-                                                                    │
-                                                                    ▼
-                                                   [ Sequelize SQLite / JSON files ]
+       [ index.js ] (Supervisor process)
+            │ Spawns child_process.spawn("node", ["mirai.js"])
+            ▼
+       [ mirai.js ] (Worker process)
+            ├── 1. Synchronously reads config.json, package.json
+            ├── 2. Connects Sequelize SQLite (includes/database/index.js)
+            ├── 3. Scans & dynamically requires modules/commands/ (435 files)
+            ├── 4. Scans & dynamically requires modules/events/ (7 files)
+            ├── 5. Reads appstate.json cookie jar into memory
+            ├── 6. Calls login({ appState }, callback) via fca-horizon-remake
+            ├── 7. Monkey-patches api.sendMessage to fall back to api.sendMessageMqtt
+            └── 8. api.listenMqtt((err, event) => includes/listen.js)
 ```
 
-### Core Architecture Flaws:
-1. **Unofficial Reverse-Engineered Transport**: The system completely depends on `fca-horizon-remake` to emulate browser cookies (`appstate.json`), directly violating Meta Terms of Service and leading to permanent account bans (checkpoint 282 / 956).
-2. **Global Mutable State God Object**: State is managed via `global.client`, `global.data`, `global.config`, and `global.nodemodule`. Any module can mutate state across the application, leading to severe concurrency race conditions and non-deterministic behavior.
-3. **Implicit Sync Dependencies**: `global.nodemodule` uses an ES6 `Proxy` that intercepts `require()` calls and executes synchronous shell commands (`child_process.execSync("npm --package-lock false --save install ...")`) inside the running process, blocking the Node event loop and introducing Remote Code Execution (RCE) vectors.
-4. **Tightly Coupled Business Logic**: Every single command (`modules/commands/*.js`) accepts the raw `api` object provided by FCA. Commands directly invoke `api.sendMessage`, `api.changeAdminStatus`, `api.setMessageReaction`, etc., preventing any multi-platform adoption or unit testing without mocking thousands of unofficial API behaviors.
+### Critical Flaws Identified:
+- **Supervisor Flaw (`index.js`)**: Spawns `mirai.js` using `{ shell: true }`. If `mirai.js` exits with code 1, it indefinitely restarts in an unthrottled loop, causing aggressive login attempts to Facebook and triggering instant checkpoint 282.
+- **Express Port Binding in Supervisor**: Starts a barebones Express HTTP server on port 80/process.env.PORT purely to respond to UptimeRobot pings without any connection to the actual bot lifecycle.
+- **Fatal Sync Execution**: `global.nodemodule` uses an ES6 Proxy intercepting `require()` calls and invoking synchronous `execSync("npm install " + package)` at runtime, freezing the Node.js event loop and opening an RCE vector.
 
 ---
 
-## 2. Entry Points
+## 2. Facebook Transport (FCA & Reverse-Engineered MQTT)
 
-The legacy application has two primary entry points:
+The legacy bot relies on `fca-horizon-remake` (a fork of `facebook-chat-api`):
+- **Transport Medium**: Emulates browser sessions by replaying cookie jars (`appstate.json`) against Facebook's internal desktop website (`https://www.facebook.com`) and mobile touch endpoints (`https://m.facebook.com`).
+- **Realtime Event Stream**: Connects via WebSockets/TLS to Facebook's edge MQTT brokers (`wss://edge-chat.facebook.com/chat`).
+- **Message Dispatch Protocol**: Messages are sent via HTTP POST to GraphQL DocIDs or `/messaging/send/` endpoints, falling back to MQTT publish on failure.
 
-### 2.1 `index.js` (Process Supervisor Wrapper)
-- Spawns `mirai.js` using `child_process.spawn("node", ["--trace-warnings", "--async-stack-traces", "mirai.js"], { cwd: __dirname, stdio: "inherit", shell: true })`.
-- Implements a basic auto-restart loop on exit code `1`.
-- Starts a minimal Express HTTP ping server on `process.env.PORT || 80` serving `"Duy Khánh Vẫn Bất Tử Nhé"` intended for free hosting platforms (e.g. Replit, Glitch, UptimeRobot).
-
-### 2.2 `mirai.js` (Bot Bootstrap)
-- Initializes global structures: `global.client`, `global.data`, `global.config`, `global.utils`, `global.nodemodule`.
-- Loads configuration from `config.json`.
-- Establishes connection to SQLite using Sequelize in `includes/database/index.js`.
-- Scans and dynamically requires all files in `modules/commands/` and `modules/events/`.
-- Attempts authentication with FCA by reading `appstate.json` via `login({ appState }, (err, api) => ...)`.
-- Monkey-patches `api.sendMessage` to fall back to `api.sendMessageMqtt` if the HTTP send fails.
-- Attaches the event listener via `api.listenMqtt((err, event) => listener(event))`.
+### Transport Risks:
+- Zero official SLA or stability; breaks whenever Meta modifies internal JSON structures or GraphQL schemas.
+- Uncontrolled connection drops cause silent listener death.
+- Re-connection logic in `fca-horizon-remake` spams login calls with stale cookies, tripping anti-abuse heuristics.
 
 ---
 
-## 3. Runtime Lifecycle & Event Loop
+## 3. Login, Authentication & Session Store
 
-1. **Bootstrap Phase**:
-   - Synchronously reads JSON configuration files from disk.
-   - Sequelize syncs SQLite models (`Threads`, `Users`, `Currencies`).
-   - Dynamic scanning of 435 command files and 7 event files into in-memory Maps (`global.client.commands`).
-2. **Authentication Phase**:
-   - `fca-horizon-remake` deserializes cookie jars from `appstate.json`.
-   - Sends requests to Facebook internal endpoints (`/login/device-based/regular/login/`, `/pull/`, etc.).
-   - Establishes persistent WebSocket / MQTT connection to `wss://edge-chat.facebook.com/chat`.
-3. **Listen / Dispatch Loop (`includes/listen.js`)**:
-   - Incoming MQTT frames parsed into event objects (`message`, `message_reply`, `message_reaction`, `event`, `typ`).
-   - Dispatches in parallel to:
-     - `handleCommand({ api, event, client, __GLOBAL, Users, Threads, Currencies })`
-     - `handleReply({ api, event, client, __GLOBAL, Users, Threads, Currencies })`
-     - `handleReaction({ api, event, client, __GLOBAL, Users, Threads, Currencies })`
-     - `handleEvent({ api, event, client, __GLOBAL, Users, Threads, Currencies })`
-4. **Shutdown / Crash Handling**:
-   - Unhandled rejections and exceptions are logged, but frequently trigger process termination or deadlock in `execSync`.
-   - No graceful shutdown hooks (`SIGINT` / `SIGTERM`) exist to cleanly close database connections or save in-flight sessions.
+- **Format**: Plaintext JSON array of cookie objects (`c_user`, `xs`, `fr`, `datr`, `sb`, `presence`, etc.) stored in `appstate.json`.
+- **Security Exposure**:
+  - Anyone with file read access possesses permanent full access to the personal Facebook account.
+  - No encryption at rest (no AES, no secret key).
+  - Stale cookies are neither invalidated nor refreshed safely.
+- **V2 Remediation**:
+  - `SessionStore` with AES-256-GCM encryption at rest using `SESSION_ENCRYPTION_KEY`.
+  - Strict pause on `AUTH_ERROR` to prevent risky automated login loops.
 
 ---
 
-## 4. Facebook Integration (Unofficial FCA vs Meta API)
+## 4. Group Chat Handling
 
-| Property | Legacy (V1) | Official Meta API (Target V2) |
-| :--- | :--- | :--- |
-| **Transport** | Web-scraping, Cookie jar (`appstate.json`), Reverse-engineered MQTT | Official HTTPS Webhook + Graph API v21.0 |
-| **Identity Type** | Personal Facebook Profile (Illegal automation) | Verified Facebook Page + System User Token |
-| **Stability** | Extremely brittle; breaks with Facebook DOM/Header changes | Highly stable, versioned SLA backed by Meta |
-| **Security Risk** | Account takeover, credential theft, session hijacking | Scoped OAuth2 bearer tokens, HMAC-SHA256 signature verification |
-| **Group Support** | Arbitrary Messenger group chats | Page-to-User direct messaging & Page-managed inbox |
-| **Rate Limits** | Undocumented, triggers silent Facebook checkpoints | Explicit `Usage` headers, documented Graph API tier limits |
+In Facebook Personal accounts, group chats are identified by a numeric `threadID` (typically 15-17 digits).
+Legacy mechanisms:
+- `api.getThreadInfo(threadID, callback)`: Fetches thread title, admin IDs, participant list, and message count.
+- `api.changeNickname(nickname, threadID, participantID)`: Modifies user nickname in group.
+- `api.removeUserFromGroup(userID, threadID)`: Kicks members (requires bot to be group admin).
+- `api.addUserToGroup(userID, threadID)`: Adds users.
+- `api.changeAdminStatus(threadID, targetID, true/false)`: Modifies thread admin status.
 
-### Legacy API Monkey-Patching in `mirai.js`:
-```javascript
-// From mirai.js lines 270-282
-const oldSendMessage = api.sendMessage;
-api.sendMessage = function (message, threadID, callback, messageID) {
-    return oldSendMessage(message, threadID, (err, info) => {
-        if (err) {
-            return api.sendMessageMqtt(message, threadID, callback, messageID);
-        }
-        if (callback) return callback(err, info);
-    }, messageID);
-};
-```
-This brittle fallback mechanism masks underlying authentication or rate-limiting errors.
+### Flaws in Group Chat Logic:
+- `handleCommand.js` queries `Threads.getData(threadID)` without local in-memory caching, executing redundant SQLite read queries on every single message.
+- Group member joins/leaves trigger unthrottled welcome/goodbye messages that spam Facebook endpoints and cause account rate-limits.
 
 ---
 
-## 5. Command System Analysis
+## 5. Direct Message (DM) Handling
 
-- **Total legacy commands**: 435 files in `modules/commands/`.
-- **Structure**:
-  ```javascript
-  module.exports.config = {
-      name: "ping",
-      version: "1.0.0",
-      hasPermssion: 0, // 0: User, 1: Group Admin, 2: Bot Admin
-      credits: "...",
-      description: "...",
-      commandCategory: "tiện ích",
-      usages: "[text]",
-      cooldowns: 5,
-      dependencies: { "axios": "" }
-  };
-  module.exports.run = async function({ api, event, args, Users, Threads, Currencies, permssion }) { ... };
-  ```
-- **Findings**:
-  - `hasPermssion` is typo-ridden (`hasPermssion` vs `permission`) and hardcoded per file.
-  - Commands directly parse raw strings using `event.body.split(" ")`.
-  - 175 commands declare a `dependencies` object which triggers dynamic `npm install` on first load.
-  - Over 50 commands are redundant image-fetchers downloading from dead personal cloud APIs or NSFW sources.
-  - Lack of type safety: Any runtime error crashes the entire message handler.
+- Legacy treats DMs identically to groups (`threadID == senderID`).
+- Fails to distinguish between personal 1-on-1 private messaging and group threads, leading to broken commands (e.g. attempting to kick or change group settings inside a private DM).
 
 ---
 
-## 6. Events Analysis
+## 6. Message Handling & Normalization
 
-Located in `modules/events/`:
-- `adminUpdate.js`: Watches for group admin promotion/demotion.
-- `antijoin.js`: Kicks newly joined users if anti-join lock is enabled.
-- `antiout.js`: Re-adds users who leave the group chat.
-- `autosetname.js`: Automatically sets nicknames for users joining threads.
-- `chongcuopbox.js`: Anti-group-theft; reclaims admin status if unauthorized users attempt to take over.
-- `joinNoti.js`: Sends welcome messages and media to new members.
-- `leaveNoti.js`: Sends goodbye notifications.
-- `log.js`: System event logging.
+In `includes/listen.js`, incoming MQTT frames are loosely formatted:
+- `event.type`: `"message"`, `"message_reply"`, `"message_reaction"`, `"event"`.
+- `event.body`: Raw text string.
+- `event.attachments`: Raw array of Facebook media objects.
+- `event.mentions`: Raw object mapping user ID to tagged substring.
 
-> [!WARNING]
-> **Official Meta Page API Limitation**:
-> Features like `antiout`, `chongcuopbox`, and arbitrary group member removal are **not supported** by the official Meta Graph API because a Facebook Page cannot join private user group chats as a regular member. These commands must be categorized as `LEGACY CAPABILITY NOT AVAILABLE IN OFFICIAL API`.
+### Flaws:
+- Commands parse strings manually with ad-hoc `.split(" ")` or regexes.
+- No unified `NormalizedMessage` object existed; commands directly accessed raw platform fields.
 
 ---
 
-## 7. Reply & Reaction Handling (`handleReply` & `handleReaction`)
+## 7. Reaction Handling (`handleReaction`)
 
-- **Mechanism**:
-  - In command execution: `global.client.handleReply.push({ name: this.config.name, messageID: info.messageID, author: event.senderID, ...customData })`.
-  - When a user replies to any message, `includes/listen.js` searches `global.client.handleReply` by `event.messageReply.messageID`.
-  - If a match is found, invokes `command.handleReply({ api, event, handleReply, ... })`.
-- **Severe Flaws**:
-  - **Memory Leak**: The `global.client.handleReply` array has no automated eviction or TTL. It grows unboundedly until process restart.
-  - **Restart Volatility**: Whenever the process restarts or crashes, all active conversations and multi-step dialogs are instantly destroyed.
-  - **No Concurrency Isolation**: Concurrent replies to the same message can trigger duplicate runs and state corruption.
+- Stored in-memory in `global.client.handleReaction = []`.
+- When an MQTT `message_reaction` packet arrives, `listen.js` searches the array by `event.messageID`.
+- Flaws: Ephemeral, destroyed upon restart, unevicted unbounded memory leak.
 
 ---
 
-## 8. Scheduling & Background Jobs
+## 8. Reply Handling (`handleReply`)
 
-- In `mirai.js`, periodic timers and `node-cron` were loosely registered.
-- Commands like `checktt.js` (activity tracking) and `autosend.js` create arbitrary `setInterval` loops inside module code.
-- No unified job scheduler or persistent job table exists; timer callbacks hold references to stale socket connections.
-
----
-
-## 9. External Services & APIs
-
-Audit reveals extensive reliance on uncontrolled, ephemeral, third-party endpoints:
-1. **Dead Domain Endpoints**: Multiple APIs hosted on temporary free domains (Heroku, Vercel personal apps, ngrok) are offline, causing unhandled promise rejections.
-2. **Direct Unchecked HTTP Calls**: Libraries like `axios`, `request`, and `node-fetch` are invoked without timeout parameters or retry backoffs.
-3. **Hardcoded Tokens / Secret Leaks**: Several command files contain embedded tokens, exposed API keys, or raw personal URLs.
+- Stored in-memory in `global.client.handleReply = []`.
+- When an MQTT `message_reply` packet arrives, searches by `event.messageReply.messageID`.
+- Flaws: Concurrent replies corrupt state; process restart terminates active quiz/registration sessions.
 
 ---
 
-## 10. Database & State Persistence
+## 9. Scheduler & Background Jobs
 
-- **Database Engine**: SQLite (`includes/database/data.sqlite`).
-- **ORM**: Sequelize v6.
-- **Models**:
-  - `Users`: `userID`, `name`, `gender`, `data` (Text/JSON).
-  - `Threads`: `threadID`, `threadName`, `adminIDs`, `data` (Text/JSON).
-  - `Currencies`: `userID`, `money`, `exp`, `data` (Text/JSON).
-- **Flaws**:
-  - All complex metadata is shoved into an unstructured JSON string in the `data` column without schema validation.
-  - Race conditions in `Currencies.increaseMoney` / `decreaseMoney` due to lack of transactional locking.
-  - File-based persistence in `modules/commands/cache/*.json` and `modules/commands/data/*.json` written directly with `fs.writeFileSync`, causing file corruption if interrupted.
+- Arbitrary `setInterval` and `node-cron` timers started inside individual command files (e.g. `checktt.js`, `autosend.js`).
+- Timers never persist across restarts; pending reminders are completely lost when the bot reboots.
 
 ---
 
-## 11. Configuration & Secrets
+## 10. Commands Inventory
 
-- Root configuration is stored in `config.json`.
-- Contains:
-  - `ADMINBOT`: Array of Facebook profile IDs.
-  - `PREFIX`: String trigger.
-  - `BOTNAME`: String bot identifier.
-  - `DATABASE`: Path to SQLite database.
-- Missing `.env` integration: Developers frequently commit secrets and `appstate.json` directly into git repositories.
+- **435 Command Files** in `modules/commands/`.
+- Majority are duplicate copy-paste scripts fetching images from random third-party endpoints.
+- 93 commands require elevated permissions (`hasPermssion: 1` for Group Admin, `2` for Bot Admin).
+- 63 commands use interactive `handleReply`.
+- 12 commands use `handleReaction`.
 
 ---
 
-## 12. Security Vulnerabilities Identified
+## 11. Events Inventory
 
-1. **Remote Code Execution (RCE) via `global.nodemodule`**:
-   - Intercepts missing packages and calls `execSync("npm install " + package)`. Any untrusted input reaching `require()` can execute arbitrary shell commands.
-2. **Credential Theft via `appstate.json`**:
-   - Plaintext Facebook session cookies stored on disk. Anyone with read access to the repo can seize full control of the Facebook account.
-3. **Command Injection & Eval**:
-   - Admin command `eval.js` evaluates arbitrary JavaScript strings in the process global scope.
-   - Admin command `cmd.js` passes unvalidated strings directly to `child_process.exec`.
-4. **Path Traversal**:
-   - File downloaders and cache readers concatenate user-supplied input into filesystem paths without `path.normalize` / safe directory bounds checking.
-5. **SSRF (Server-Side Request Forgery)**:
-   - Media download commands download any URL passed by the user without IP filtering (allowing requests to `http://169.254.169.254` or local network addresses).
+7 Active Event Handlers in `modules/events/`:
+1. `adminUpdate.js`: Watches for group admin promotions/demotions.
+2. `antijoin.js`: Kicks newly joined users if group lock is active.
+3. `antiout.js`: Re-adds users who leave group chat.
+4. `autosetname.js`: Sets predetermined nickname prefixes for new joiners.
+5. `chongcuopbox.js`: Anti-group-theft; reclaims admin privileges.
+6. `joinNoti.js`: Welcome message with image/gif.
+7. `leaveNoti.js`: Goodbye message.
 
 ---
 
-## 13. Dependency Tree Audit
+## 12. External APIs & Unreliable Dependencies
 
-- Total packages listed in `package.json`: 71 dependencies.
-- Heavily bloated with duplicate/deprecated libraries:
-  - `request` (deprecated since 2020) alongside `axios`, `node-fetch`, and `got`.
-  - `moment` alongside `moment-timezone`.
-  - Massive Canvas & graphics binaries (`canvas`, `jimp`, `@jimp/plugin-print`).
-  - Deprecated crypto/hashing packages (`crypto-js`, `base-64`).
-- Unpinned versions causing dependency resolution failures on modern Node.js versions (v20+).
+Audit reveals:
+- Over 20 personal Vercel/Heroku API domains that have gone permanently offline (HTTP 404/502).
+- Zero timeout configurations on HTTP requests (allowing requests to hang forever).
+- No circuit breaker or rate limiting for third-party calls.
 
 ---
 
-## 14. Technical Debt Summary
+## 13. Persistence & Database
 
-1. Monolithic god functions spanning 500+ lines with deeply nested callbacks.
-2. Over 30 variations of Vietnam-specific humor and random image fetchers with identical logic copied across separate files.
-3. Non-standard naming conventions (`hasPermssion`, `dependecies`).
-4. Absence of automated test suites (zero unit or integration tests).
-5. Heavy binary files checked into git history:
-   - `modules/commands/cache/pornlist.txt` (64.5 MB)
-   - `ArialUnicodeMS.ttf` (22.2 MB)
+- Sequelize v6 + SQLite (`includes/database/data.sqlite`).
+- Columns `Users.data`, `Threads.data`, `Currencies.data` store unvalidated JSON strings.
+- Concurrent writes regularly cause `SQLITE_BUSY` database lock crashes due to missing WAL mode.
 
 ---
 
-## 15. Known Failure Points
+## 14. Security Vulnerabilities
 
-| Failure Point | Trigger | Legacy Consequence | V2 Mitigation |
+1. **RCE via `global.nodemodule`**: Synchronous shell command execution (`execSync`).
+2. **Arbitrary Code Evaluation**: `eval.js` evaluates raw user input via `eval()`.
+3. **Shell Command Execution**: `cmd.js` executes raw user strings via `child_process.exec`.
+4. **Credential Exposure**: Plaintext cookies in `appstate.json`.
+5. **SSRF**: Media commands download arbitrary URLs provided by users without network boundary checks.
+
+---
+
+## 15. Known Failure Points & Post-Mortem Matrix
+
+| Failure Mode | Legacy Behavior | Consequence | V2 Solution |
 | :--- | :--- | :--- | :--- |
-| **Facebook Checkpoint** | Facebook bot detection detects automated user account | Entire bot dies; account banned | Official Meta Webhooks + Graph API |
-| **Dead External API** | Third-party endpoint unreachable | Unhandled crash / infinite wait | Circuit breaker, timeout, fallback mock |
-| **Process Crash** | Unhandled exception in command | All active user reply sessions lost | Persistent SQLite sessions with TTL |
-| **Sync `npm install`** | Command requires missing dependency | Event loop completely frozen | Pre-bundled, typed modules with strict boundaries |
-| **Concurrent DB writes** | Multiple commands update currency | SQLite database locked (`SQLITE_BUSY`) | WAL mode, connection pooling, transactional ORM |
+| **Session Invalidation** | Endless restart loop in `index.js` | Account checkpointed / IP banned | Immediate `AUTH_ERROR` -> `PAUSE` |
+| **Facebook Rate Limit** | Synchronous burst requests | Temporary ban on sending messages | `RateLimiter` + `OutgoingMessageQueue` |
+| **Process Crash** | In-memory `handleReply` wiped | All active multi-step sessions lost | SQLite `conversation_sessions` with TTL |
+| **DB Lock Concurrency** | Unhandled SQLite Busy exception | Entire process dies | SQLite WAL mode + Transactional Repositories |
+| **Dead Third-Party API** | Uncaught Promise Rejection | Message processing hangs | Timeout bounds + CircuitBreaker |
+
+---
+
+## 16. Technical Debt Summary
+
+The legacy codebase represents an unmaintainable accumulation of legacy PHP-era conventions ported to Node.js callbacks:
+- 100% reliant on global mutable state.
+- Zero unit tests or contract tests.
+- High risk of permanent account bans due to unthrottled requests.
+- Complete absence of layered architecture.

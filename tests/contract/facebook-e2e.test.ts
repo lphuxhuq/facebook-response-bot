@@ -17,7 +17,7 @@ describe('End-to-End Meta Webhook Contract & Resilience Test', () => {
   }
 
   beforeAll(async () => {
-    const server = await createServer();
+    const server = await createServer(':memory:');
     app = server.app;
     await app.ready();
   });

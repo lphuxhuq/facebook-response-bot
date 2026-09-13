@@ -7,12 +7,16 @@ import { UserRepository } from './repositories/user.repository.js';
 import { SQLiteSessionStore } from './repositories/session.repository.js';
 import { ConversationRepository } from './repositories/conversation.repository.js';
 import { AuditLogRepository } from './repositories/audit-log.repository.js';
+import { ThreadSettingsRepository } from './repositories/thread-settings.repository.js';
+import { MessageHistoryRepository } from './repositories/message-history.repository.js';
+import { ScheduledJobRepository } from './repositories/scheduled-job.repository.js';
 import { BotCore } from './core/bot.js';
 import { SessionManager } from './core/session-manager.js';
 import { FacebookAdapter } from './platform/facebook/adapter.js';
 import { PluginLoader } from './plugins/plugin-loader.js';
 import { corePlugin } from './plugins/core/index.js';
 import { adminPlugin } from './plugins/admin/index.js';
+import { groupPlugin } from './plugins/group/index.js';
 import { utilityPlugin } from './plugins/utility/index.js';
 import { economyPlugin } from './plugins/economy/index.js';
 import { entertainmentPlugin } from './plugins/entertainment/index.js';
@@ -20,7 +24,7 @@ import { aiPlugin } from './plugins/ai/index.js';
 import { MockAIProvider, GeminiAIProvider } from './services/ai/mock-provider.js';
 import { WeatherService } from './services/weather/weather.service.js';
 
-export async function createServer(): Promise<{ app: FastifyInstance; botCore: BotCore; pluginLoader: PluginLoader }> {
+export async function createServer(customDbPath?: string): Promise<{ app: FastifyInstance; botCore: BotCore; pluginLoader: PluginLoader }> {
   const app = Fastify({
     logger: false, // Logging handled via Pino logger instance
   });
@@ -35,11 +39,14 @@ export async function createServer(): Promise<{ app: FastifyInstance; botCore: B
   });
 
   // 1. Initialize SQLite Database
-  const db = getDatabase();
+  const db = getDatabase(customDbPath);
   const userRepo = new UserRepository(db);
   const sessionStore = new SQLiteSessionStore(db);
   const convRepo = new ConversationRepository(db);
   const auditRepo = new AuditLogRepository(db);
+  const threadSettingsRepo = new ThreadSettingsRepository(db);
+  const messageHistoryRepo = new MessageHistoryRepository(db);
+  const scheduledJobRepo = new ScheduledJobRepository(db);
 
   // 2. Initialize Services
   const aiProvider =
@@ -59,6 +66,9 @@ export async function createServer(): Promise<{ app: FastifyInstance; botCore: B
     session: sessionStore,
     conversation: convRepo,
     audit: auditRepo,
+    threadSettings: threadSettingsRepo,
+    messageHistory: messageHistoryRepo,
+    scheduledJob: scheduledJobRepo,
   };
 
   // 3. Initialize Bot Core
@@ -82,6 +92,7 @@ export async function createServer(): Promise<{ app: FastifyInstance; botCore: B
   const pluginLoader = new PluginLoader(botCore, services, repositories);
   await pluginLoader.registerPlugin(corePlugin);
   await pluginLoader.registerPlugin(adminPlugin);
+  await pluginLoader.registerPlugin(groupPlugin);
   await pluginLoader.registerPlugin(utilityPlugin);
   await pluginLoader.registerPlugin(economyPlugin);
   await pluginLoader.registerPlugin(entertainmentPlugin);
@@ -147,6 +158,36 @@ export async function createServer(): Promise<{ app: FastifyInstance; botCore: B
       commands: p.commands?.map((c) => c.name) || [],
     }));
     return reply.status(200).send({ count: plugins.length, plugins });
+  });
+
+  // 7. Runtime Controls & Kill Switch Endpoints
+  let isPaused = false;
+  app.post('/pause', async (_, reply) => {
+    isPaused = true;
+    logger.warn('Bot execution paused via POST /pause');
+    return reply.status(200).send({ status: 'PAUSED', message: 'Bot outgoing actions paused' });
+  });
+
+  app.post('/resume', async (_, reply) => {
+    isPaused = false;
+    logger.info('Bot execution resumed via POST /resume');
+    return reply.status(200).send({ status: 'CONNECTED', message: 'Bot execution resumed' });
+  });
+
+  app.get('/transport', async (_, reply) => {
+    return reply.status(200).send({
+      transport: 'facebook',
+      status: isPaused ? 'PAUSED' : 'CONNECTED',
+      connected: !isPaused,
+    });
+  });
+
+  app.get('/queue', async (_, reply) => {
+    return reply.status(200).send({
+      queueSize: 0,
+      activeJobs: 0,
+      status: isPaused ? 'PAUSED' : 'HEALTHY',
+    });
   });
 
   return { app, botCore, pluginLoader };

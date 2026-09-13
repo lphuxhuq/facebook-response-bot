@@ -7,7 +7,7 @@ describe('Fastify HTTP Server & Observability Endpoints', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
-    const server = await createServer();
+    const server = await createServer(':memory:');
     app = server.app;
     await app.ready();
   });
@@ -81,13 +81,38 @@ describe('Fastify HTTP Server & Observability Endpoints', () => {
 
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.body);
-    expect(body.count).toBe(6);
+    expect(body.count).toBe(7);
     const pluginNames = body.plugins.map((p: any) => p.name);
     expect(pluginNames).toContain('core');
     expect(pluginNames).toContain('admin');
+    expect(pluginNames).toContain('group');
     expect(pluginNames).toContain('utility');
     expect(pluginNames).toContain('economy');
     expect(pluginNames).toContain('entertainment');
     expect(pluginNames).toContain('ai');
   });
+
+  it('POST /pause and POST /resume should toggle runtime transport state', async () => {
+    // Pause
+    const pauseRes = await app.inject({ method: 'POST', url: '/pause' });
+    expect(pauseRes.statusCode).toBe(200);
+    expect(JSON.parse(pauseRes.body).status).toBe('PAUSED');
+
+    const transportRes = await app.inject({ method: 'GET', url: '/transport' });
+    expect(JSON.parse(transportRes.body).status).toBe('PAUSED');
+
+    // Resume
+    const resumeRes = await app.inject({ method: 'POST', url: '/resume' });
+    expect(resumeRes.statusCode).toBe(200);
+    expect(JSON.parse(resumeRes.body).status).toBe('CONNECTED');
+  });
+
+  it('GET /queue should return queue status', async () => {
+    const res = await app.inject({ method: 'GET', url: '/queue' });
+    expect(res.statusCode).toBe(200);
+    const body = JSON.parse(res.body);
+    expect(body.queueSize).toBe(0);
+    expect(body.status).toBe('HEALTHY');
+  });
 });
+

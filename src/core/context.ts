@@ -68,6 +68,14 @@ export interface CommandContext extends MessageContext {
   readonly sessionManager: any;
   readonly services: any;
   readonly repositories: any;
+  readonly thread?: any;
+  readonly isThreadAdmin?: boolean;
+}
+
+export interface GroupContext extends CommandContext {
+  readonly isGroup: true;
+  readonly thread: any;
+  readonly isThreadAdmin: boolean;
 }
 
 export interface Command {
@@ -78,5 +86,7 @@ export interface Command {
   readonly category: string;
   readonly requiredRole?: Role;
   readonly cooldown?: number; // In seconds
+  readonly scope?: 'DM' | 'GROUP' | 'BOTH';
   execute(ctx: CommandContext): Promise<void>;
 }
+

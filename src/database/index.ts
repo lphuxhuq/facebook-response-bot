@@ -7,7 +7,7 @@ import { logger } from '../utils/logger.js';
 let dbInstance: DatabaseSync | null = null;
 
 export function getDatabase(dbPath?: string): DatabaseSync {
-  if (dbInstance) {
+  if (dbInstance && !dbPath) {
     return dbInstance;
   }
 
@@ -89,6 +89,39 @@ export function initializeSchema(db: DatabaseSync): void {
       action TEXT NOT NULL,
       details TEXT,
       created_at INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS thread_settings (
+      thread_id TEXT PRIMARY KEY,
+      prefix TEXT,
+      ai_enabled INTEGER NOT NULL DEFAULT 1,
+      welcome_enabled INTEGER NOT NULL DEFAULT 1,
+      leave_enabled INTEGER NOT NULL DEFAULT 1,
+      anti_spam INTEGER NOT NULL DEFAULT 0,
+      updated_at INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS messages (
+      id TEXT PRIMARY KEY,
+      thread_id TEXT NOT NULL,
+      sender_id TEXT NOT NULL,
+      text TEXT,
+      attachments TEXT,
+      reply_to_id TEXT,
+      created_at INTEGER NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_messages_thread ON messages(thread_id, created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS scheduled_jobs (
+      id TEXT PRIMARY KEY,
+      thread_id TEXT NOT NULL,
+      creator_id TEXT NOT NULL,
+      type TEXT NOT NULL,
+      payload TEXT,
+      run_at INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      attempt INTEGER NOT NULL DEFAULT 0
     );
   `);
 }
