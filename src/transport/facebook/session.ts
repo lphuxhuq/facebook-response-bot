@@ -31,7 +31,13 @@ export class SessionStore {
 
   private getKeyBuffer(): Buffer {
     if (!this.encryptionKey) {
-      // Fallback dev key if unset (warns in logs)
+      if (process.env.NODE_ENV === 'production') {
+        // Fail-fast: never silently use a fixed key in production (audit S4)
+        throw new AuthenticationError(
+          'ENCRYPTION_KEY is required in production to protect the Facebook session store'
+        );
+      }
+      logger.warn('ENCRYPTION_KEY not set — using insecure dev fallback key. NEVER do this in production.');
       return crypto.createHash('sha256').update('default_dev_session_secret_key_32_bytes!').digest();
     }
     return crypto.createHash('sha256').update(this.encryptionKey).digest();

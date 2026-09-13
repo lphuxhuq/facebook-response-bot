@@ -5,6 +5,11 @@ import { SessionManager } from './session-manager.js';
 import { logger } from '../utils/logger.js';
 import { BotError } from '../utils/errors.js';
 
+/** Minimal execution gate (implemented by reliability/HealthMonitor). */
+export interface ExecutionGate {
+  isExecutionAllowed(): boolean;
+}
+
 export interface CommandRouterOptions {
   prefix: string;
   permissionManager: PermissionManager;
@@ -12,6 +17,7 @@ export interface CommandRouterOptions {
   sessionManager: SessionManager;
   services?: any;
   repositories?: any;
+  healthMonitor?: ExecutionGate;
 }
 
 export class CommandRouter {
@@ -23,6 +29,7 @@ export class CommandRouter {
   private sessionManager: SessionManager;
   private services: any;
   private repositories: any;
+  private healthMonitor?: ExecutionGate;
 
   constructor(options: CommandRouterOptions) {
     this.prefix = options.prefix;
@@ -31,6 +38,7 @@ export class CommandRouter {
     this.sessionManager = options.sessionManager;
     this.services = options.services || {};
     this.repositories = options.repositories || {};
+    this.healthMonitor = options.healthMonitor;
   }
 
   register(command: Command): void {
@@ -80,6 +88,13 @@ export class CommandRouter {
       const activeCommand = this.getCommand(session.command);
       if (activeCommand) {
         const userRole = await this.permissionManager.getRole(ctx.userId);
+
+        // Kill switch applies to dialog replies too (except ADMIN+)
+        if (this.healthMonitor && !this.healthMonitor.isExecutionAllowed() && userRole < Role.ADMIN) {
+          logger.warn({ userId: ctx.userId, session: session.command }, 'Session reply blocked: bot is paused');
+          return true;
+        }
+
         const cmdCtx: CommandContext = {
           ...ctx,
           commandName: session.command,
@@ -144,6 +159,13 @@ export class CommandRouter {
 
     if (userRole === Role.BANNED) {
       logger.info({ userId: ctx.userId }, 'Banned user attempted command execution');
+      return true;
+    }
+
+    // 3b. Kill switch / auth-error gate: while paused, only ADMIN+ commands may run
+    if (this.healthMonitor && !this.healthMonitor.isExecutionAllowed() && userRole < Role.ADMIN) {
+      logger.warn({ userId: ctx.userId, command: command.name }, 'Command blocked: bot is paused');
+      await ctx.reply('⏸️ Bot đang tạm dừng. Vui lòng thử lại sau.');
       return true;
     }
 

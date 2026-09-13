@@ -1,4 +1,4 @@
-import Fastify, { FastifyInstance } from 'fastify';
+import Fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import fastifyRawBody from 'fastify-raw-body';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
@@ -13,6 +13,7 @@ import { ScheduledJobRepository } from './repositories/scheduled-job.repository.
 import { BotCore } from './core/bot.js';
 import { SessionManager } from './core/session-manager.js';
 import { FacebookAdapter } from './platform/facebook/adapter.js';
+import { HealthMonitor } from './reliability/health-monitor.js';
 import { PluginLoader } from './plugins/plugin-loader.js';
 import { corePlugin } from './plugins/core/index.js';
 import { adminPlugin } from './plugins/admin/index.js';
@@ -27,7 +28,9 @@ import { knowledgePlugin } from './plugins/knowledge/index.js';
 import { MockAIProvider, GeminiAIProvider } from './services/ai/mock-provider.js';
 import { WeatherService } from './services/weather/weather.service.js';
 
-export async function createServer(customDbPath?: string): Promise<{ app: FastifyInstance; botCore: BotCore; pluginLoader: PluginLoader }> {
+export async function createServer(
+  customDbPath?: string
+): Promise<{ app: FastifyInstance; botCore: BotCore; pluginLoader: PluginLoader; healthMonitor: HealthMonitor }> {
   const app = Fastify({
     logger: false, // Logging handled via Pino logger instance
   });
@@ -52,6 +55,7 @@ export async function createServer(customDbPath?: string): Promise<{ app: Fastif
   const scheduledJobRepo = new ScheduledJobRepository(db);
 
   // 2. Initialize Services
+  const healthMonitor = new HealthMonitor(env.BOT_ENABLED);
   const aiProvider =
     env.AI_PROVIDER === 'gemini' && env.AI_API_KEY
       ? new GeminiAIProvider(env.AI_API_KEY, env.AI_MODEL)
@@ -61,6 +65,7 @@ export async function createServer(customDbPath?: string): Promise<{ app: Fastif
   const services = {
     aiProvider,
     weatherService,
+    healthMonitor,
     commandRouter: null as any,
   };
 
@@ -80,6 +85,8 @@ export async function createServer(customDbPath?: string): Promise<{ app: Fastif
     ownerId: env.BOT_OWNER_ID,
     services,
     repositories,
+    sessionStore,
+    healthMonitor,
   });
   services.commandRouter = botCore.commandRouter;
 
@@ -166,41 +173,61 @@ export async function createServer(customDbPath?: string): Promise<{ app: Fastif
     return reply.status(200).send({ count: plugins.length, plugins });
   });
 
-  // 7. Runtime Controls & Kill Switch Endpoints
-  let isPaused = false;
-  app.post('/pause', async (_, reply) => {
-    isPaused = true;
-    logger.warn('Bot execution paused via POST /pause');
-    return reply.status(200).send({ status: 'PAUSED', message: 'Bot outgoing actions paused' });
+  // 7. Runtime Controls & Kill Switch Endpoints (ADMIN_API_TOKEN guarded — audit S3)
+  const assertAdminAuth = (req: FastifyRequest, reply: FastifyReply): boolean => {
+    const token = (req.headers['x-admin-token'] as string) || '';
+    if (!token || token !== env.ADMIN_API_TOKEN) {
+      reply.status(401).send({ error: 'Unauthorized: invalid admin token' });
+      return false;
+    }
+    return true;
+  };
+
+  app.post('/pause', async (req, reply) => {
+    if (!assertAdminAuth(req, reply)) return;
+    healthMonitor.pause('Paused via POST /pause');
+    return reply.status(200).send({ status: 'PAUSED', message: 'Bot execution paused' });
   });
 
-  app.post('/resume', async (_, reply) => {
-    isPaused = false;
-    logger.info('Bot execution resumed via POST /resume');
+  app.post('/resume', async (req, reply) => {
+    if (!assertAdminAuth(req, reply)) return;
+    healthMonitor.resume();
     return reply.status(200).send({ status: 'CONNECTED', message: 'Bot execution resumed' });
   });
 
   app.get('/transport', async (_, reply) => {
+    const hs = healthMonitor.getStatus();
     return reply.status(200).send({
       transport: 'facebook',
-      status: isPaused ? 'PAUSED' : 'CONNECTED',
-      connected: !isPaused,
+      status: hs.status,
+      reason: hs.reason || undefined,
+      connected: hs.botEnabled && hs.status === 'CONNECTED',
     });
   });
 
   app.get('/queue', async (_, reply) => {
+    const hs = healthMonitor.getStatus();
+    const stats = fbAdapter.sender.getQueueStats();
     return reply.status(200).send({
-      queueSize: 0,
-      activeJobs: 0,
-      status: isPaused ? 'PAUSED' : 'HEALTHY',
+      queueSize: stats.queued,
+      activeJobs: stats.active,
+      status: hs.status === 'PAUSED' || hs.status === 'AUTH_ERROR' ? 'PAUSED' : 'HEALTHY',
     });
   });
 
-  return { app, botCore, pluginLoader };
+  return { app, botCore, pluginLoader, healthMonitor };
 }
 
 async function start() {
   try {
+    // Production fail-fast guards (audit S3/S4)
+    if (env.NODE_ENV === 'production') {
+      if (env.ADMIN_API_TOKEN === 'change_me_strong_random_admin_token') {
+        throw new Error('ADMIN_API_TOKEN must be set to a strong random value in production');
+      }
+      // ENCRYPTION_KEY becomes mandatory once the personal transport (Phase 5) is active.
+    }
+
     const { app, botCore } = await createServer();
 
     // Graceful Shutdown Registration

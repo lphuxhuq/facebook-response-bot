@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const DHBC_PATH = join(__dirname, '..', '..', '..', '..', 'modules', 'commands', 'cache', 'dhbc.json');
+const DHBC_PATH = join(__dirname, '..', '..', 'shared', 'assets', 'dhbc.json');
 
 interface DhbcQuestion {
   question: string;

@@ -1,13 +1,12 @@
 import { createCanvas, loadImage, GlobalFonts, SKRSContext2D } from '@napi-rs/canvas';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { existsSync, readdirSync, readFileSync } from 'fs';
+import { existsSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const LEGACY_CACHE = join(__dirname, '..', '..', '..', 'modules', 'commands', 'cache');
-const FONTS_DIR = join(__dirname, '..', '..', '..', 'modules', 'commands', 'cache');
+const FONTS_DIR = join(__dirname, 'fonts');
 
 let fontsRegistered = false;
 
@@ -112,8 +111,4 @@ export function wrapText(ctx: SKRSContext2D, text: string, maxWidth: number): st
   }
   if (current) lines.push(current);
   return lines;
-}
-
-export function legacyAssetPath(...segments: string[]): string {
-  return join(LEGACY_CACHE, ...segments);
 }

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createServer } from '../src/app.js';
+import { env } from '../src/config/env.js';
 import { FastifyInstance } from 'fastify';
 import { closeDatabase } from '../src/database/index.js';
 
@@ -95,9 +96,16 @@ describe('Fastify HTTP Server & Observability Endpoints', () => {
     expect(pluginNames).toContain('knowledge');
   });
 
+  it('POST /pause should reject missing admin token (audit S3)', async () => {
+    const res = await app.inject({ method: 'POST', url: '/pause' });
+    expect(res.statusCode).toBe(401);
+  });
+
   it('POST /pause and POST /resume should toggle runtime transport state', async () => {
+    const adminHeaders = { 'x-admin-token': env.ADMIN_API_TOKEN };
+
     // Pause
-    const pauseRes = await app.inject({ method: 'POST', url: '/pause' });
+    const pauseRes = await app.inject({ method: 'POST', url: '/pause', headers: adminHeaders });
     expect(pauseRes.statusCode).toBe(200);
     expect(JSON.parse(pauseRes.body).status).toBe('PAUSED');
 
@@ -105,16 +113,20 @@ describe('Fastify HTTP Server & Observability Endpoints', () => {
     expect(JSON.parse(transportRes.body).status).toBe('PAUSED');
 
     // Resume
-    const resumeRes = await app.inject({ method: 'POST', url: '/resume' });
+    const resumeRes = await app.inject({ method: 'POST', url: '/resume', headers: adminHeaders });
     expect(resumeRes.statusCode).toBe(200);
     expect(JSON.parse(resumeRes.body).status).toBe('CONNECTED');
+
+    const resumedTransport = await app.inject({ method: 'GET', url: '/transport' });
+    expect(JSON.parse(resumedTransport.body).status).toBe('CONNECTED');
   });
 
-  it('GET /queue should return queue status', async () => {
+  it('GET /queue should report real sender queue stats', async () => {
     const res = await app.inject({ method: 'GET', url: '/queue' });
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.body);
-    expect(body.queueSize).toBe(0);
+    expect(typeof body.queueSize).toBe('number');
+    expect(typeof body.activeJobs).toBe('number');
     expect(body.status).toBe('HEALTHY');
   });
 });

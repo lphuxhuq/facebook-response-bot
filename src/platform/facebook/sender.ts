@@ -141,6 +141,10 @@ export class FacebookSender {
     };
   }
 
+  getQueueStats(): { queued: number; active: number } {
+    return { queued: this.queue.size, active: this.queue.active };
+  }
+
   async sendSenderAction(recipientId: string, action: 'typing_on' | 'typing_off' | 'mark_seen'): Promise<void> {
     try {
       const url = `${this.baseUrl}/${this.apiVersion}/me/messages?access_token=${encodeURIComponent(this.pageAccessToken)}`;

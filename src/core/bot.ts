@@ -1,8 +1,8 @@
-import { CommandRouter } from './command-router.js';
+import { CommandRouter, ExecutionGate } from './command-router.js';
 import { EventRouter } from './event-router.js';
 import { PermissionManager, InMemoryPermissionProvider } from './permission-manager.js';
 import { CooldownManager } from './cooldown-manager.js';
-import { SessionManager } from './session-manager.js';
+import { SessionManager, SessionStore } from './session-manager.js';
 import { Scheduler } from './scheduler.js';
 import { MessageContext } from './context.js';
 import { logger } from '../utils/logger.js';
@@ -12,6 +12,8 @@ export interface BotCoreConfig {
   ownerId: string;
   services?: any;
   repositories?: any;
+  sessionStore?: SessionStore;
+  healthMonitor?: ExecutionGate;
 }
 
 export class BotCore {
@@ -21,13 +23,16 @@ export class BotCore {
   public readonly cooldownManager: CooldownManager;
   public readonly sessionManager: SessionManager;
   public readonly scheduler: Scheduler;
+  public readonly healthMonitor?: ExecutionGate;
 
   constructor(config: BotCoreConfig) {
     this.permissionManager = new PermissionManager(new InMemoryPermissionProvider(config.ownerId));
     this.cooldownManager = new CooldownManager();
-    this.sessionManager = new SessionManager();
+    // Inject SQLiteSessionStore when provided so dialog sessions survive restarts
+    this.sessionManager = new SessionManager(config.sessionStore);
     this.eventRouter = new EventRouter();
     this.scheduler = new Scheduler();
+    this.healthMonitor = config.healthMonitor;
 
     this.commandRouter = new CommandRouter({
       prefix: config.prefix,
@@ -36,6 +41,7 @@ export class BotCore {
       sessionManager: this.sessionManager,
       services: config.services,
       repositories: config.repositories,
+      healthMonitor: this.healthMonitor,
     });
   }
 

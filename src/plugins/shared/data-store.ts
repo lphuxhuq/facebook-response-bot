@@ -5,16 +5,16 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const LEGACY_CACHE = join(__dirname, '..', '..', '..', 'modules', 'commands', 'cache');
+const ASSETS_DIR = join(__dirname, 'assets');
 const DATA_DIR = join(__dirname, '..', '..', 'data', 'plugins');
 
 if (!existsSync(DATA_DIR)) {
   mkdirSync(DATA_DIR, { recursive: true });
 }
 
-export function readLegacyJson<T>(filename: string, fallback: T): T {
+export function readPluginAsset<T>(filename: string, fallback: T): T {
   try {
-    const p = join(LEGACY_CACHE, filename);
+    const p = join(ASSETS_DIR, filename);
     if (!existsSync(p)) return fallback;
     const raw = JSON.parse(readFileSync(p, 'utf8'));
     if (raw === null || raw === undefined) return fallback;

@@ -13,6 +13,7 @@ export const adminCommand: Command = {
     const targetUserId = ctx.args[1];
     const userRepo = ctx.repositories?.user;
     const auditRepo = ctx.repositories?.audit;
+    const healthMonitor = ctx.services?.healthMonitor;
 
     if (!sub) {
       await ctx.reply(
@@ -23,7 +24,46 @@ export const adminCommand: Command = {
           `!admin setrole <userId> <USER|MODERATOR|ADMIN|OWNER>`,
           `!admin ban <userId>     : Cấm user sử dụng bot`,
           `!admin unban <userId>   : Hủy cấm user`,
+          `!admin pause|resume     : Tạm dừng / tiếp tục bot (kill switch)`,
+          `!admin status           : Xem trạng thái hệ thống`,
           `!admin logs             : Xem 5 nhật ký gần nhất`,
+        ].join('\n')
+      );
+      return;
+    }
+
+    if (sub === 'pause') {
+      if (!healthMonitor) {
+        await ctx.reply('⚠️ HealthMonitor chưa được khởi tạo.');
+        return;
+      }
+      healthMonitor.pause(`Paused by admin ${ctx.userId}`);
+      auditRepo?.log({ userId: ctx.userId, action: 'BOT_PAUSE', details: {} });
+      await ctx.reply('⏸️ Bot đã tạm dừng. Chỉ lệnh ADMIN+ còn hoạt động. Dùng !admin resume để mở lại.');
+      return;
+    }
+
+    if (sub === 'resume') {
+      if (!healthMonitor) {
+        await ctx.reply('⚠️ HealthMonitor chưa được khởi tạo.');
+        return;
+      }
+      healthMonitor.resume();
+      auditRepo?.log({ userId: ctx.userId, action: 'BOT_RESUME', details: {} });
+      await ctx.reply('▶️ Bot đã hoạt động trở lại.');
+      return;
+    }
+
+    if (sub === 'status') {
+      const hs = healthMonitor?.getStatus?.() ?? { status: 'UNKNOWN', reason: '' };
+      const mem = process.memoryUsage();
+      await ctx.reply(
+        [
+          `📊 TRẠNG THÁI HỆ THỐNG`,
+          `• Bot: ${hs.status}${hs.reason ? ` (${hs.reason})` : ''}`,
+          `• Uptime: ${Math.floor(process.uptime())}s`,
+          `• RAM: ${(mem.rss / 1024 / 1024).toFixed(1)} MB`,
+          `• Sessions: ${ctx.repositories?.session ? 'SQLite (persistent)' : 'InMemory'}`,
         ].join('\n')
       );
       return;

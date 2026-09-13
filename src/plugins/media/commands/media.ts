@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const MEDIA_CACHE_PATH = join(__dirname, '..', '..', '..', '..', 'modules', 'commands', 'cache', 'media_links.json');
+const MEDIA_CACHE_PATH = join(__dirname, '..', '..', 'shared', 'assets', 'media_links.json');
 
 const FALLBACK_LINKS = [
   'https://i.imgur.com/FNRRTy7.jpg',

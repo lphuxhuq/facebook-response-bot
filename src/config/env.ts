@@ -21,6 +21,17 @@ const envSchema = z.object({
   BOT_NAME: z.string().default('Facebook Response Bot V2'),
   BOT_PREFIX: z.string().default('!'),
   BOT_OWNER_ID: z.string().default('100000000000001'),
+  BOT_ENABLED: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
+
+  // Admin control-plane auth (required in production, see app.ts startup check)
+  ADMIN_API_TOKEN: z.string().default('change_me_strong_random_admin_token'),
+
+  // Personal account session (Phase 5)
+  FB_SESSION_PATH: z.string().default('./data/facebook/session/session.enc'),
+  ENCRYPTION_KEY: z.string().optional().default(''),
 
   // Storage
   DATABASE_PATH: z.string().default('./data/bot.sqlite'),
