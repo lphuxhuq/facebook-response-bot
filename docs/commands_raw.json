@@ -1,0 +1,4352 @@
+[
+  {
+    "file": "10mm.js",
+    "name": "10mm",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "12congiap.js",
+    "name": "12congiap",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "12cunghoangdao.js",
+    "name": "12cunghoangdao",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "12thi.js",
+    "name": "12thitrongtienganh",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "6mui.js",
+    "name": "6mui",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "777.js",
+    "name": "777",
+    "category": "game",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "acp.js",
+    "name": "acp",
+    "category": "admin",
+    "permission": 2,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "ad.js",
+    "name": "ad",
+    "category": "Thông tin admin",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "adbot.js",
+    "name": "adbot",
+    "category": "Admin",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 4
+  },
+  {
+    "file": "adden.js",
+    "name": "anhdaden",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "addfile.js",
+    "name": "addfile",
+    "category": "ADMIN",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "adduser.js",
+    "name": "adduser",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "admin.js",
+    "name": "admin",
+    "category": "Admin",
+    "permission": 3,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "advice.js",
+    "name": "advice",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "allbox.js",
+    "name": "allbox",
+    "category": "Admin",
+    "permission": 2,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "altp.js",
+    "name": "altp",
+    "category": "Game",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "anh.js",
+    "name": "anh",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "anh18+.js",
+    "name": "anh18",
+    "category": "nsfw",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "anhnude.js",
+    "name": "anhnude",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "animeimg.js",
+    "name": "animeimg",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "animeinfo.js",
+    "name": "animeinfo",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "antiout.js",
+    "name": "antiout",
+    "category": "Box Chat",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "api.js",
+    "name": "api",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "autosetname.js",
+    "name": "autosetname",
+    "category": "Box Chat",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "ayaka.js",
+    "name": "ayaka",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "bacho.js",
+    "name": "bacho",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "baicahoatri.js",
+    "name": "baicahoatri",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "baicao.js",
+    "name": "baicao",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 1
+  },
+  {
+    "file": "baitap.js",
+    "name": "searchbt",
+    "category": "Kiến thức học hỏi",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "balance.js",
+    "name": "balance",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "banbaucua.js",
+    "name": "banbc",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "banchim.js",
+    "name": "banchim",
+    "category": "Game",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "bancl.js",
+    "name": "bancl",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "bancobiet.js",
+    "name": "bancobiet",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 1
+  },
+  {
+    "file": "bang.js",
+    "name": "bang",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "bangmau.js",
+    "name": "bangmau",
+    "category": "Trợ Giúp",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "bank.js",
+    "name": "bank",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "banking.js",
+    "name": "banking",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "banner9.js",
+    "name": "banner9",
+    "category": "Tạo ảnh",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "bannertt.js",
+    "name": "bannertt",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "bantaixiu.js",
+    "name": "bantx",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "bantho.js",
+    "name": "bantho",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "baolixi.js",
+    "name": "baolixi",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "batgiam.js",
+    "name": "batgiam",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "baucua.js",
+    "name": "baucua",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "baucuaca.js",
+    "name": "baucuaca",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "baucuagai.js",
+    "name": "cuagai",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "Bigtext.js",
+    "name": "bigtext",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "bj.js",
+    "name": "bj",
+    "category": "nsfw",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "blackpink.js",
+    "name": "blackpink",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "boctham.js",
+    "name": "boctham",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 1
+  },
+  {
+    "file": "boctham2.js",
+    "name": "boctham2",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "bopmong.js",
+    "name": "bopmong",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "bopvu.js",
+    "name": "bopvu",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "bot.js",
+    "name": "bot",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 0
+  },
+  {
+    "file": "botship.js",
+    "name": "botship",
+    "category": "Admin",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "box.js",
+    "name": "box",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 1
+  },
+  {
+    "file": "boy.js",
+    "name": "boy",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "bra.js",
+    "name": "bra",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "bucu.js",
+    "name": "bucu",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "bulon.js",
+    "name": "bulon",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "busy.js",
+    "name": "busy",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "bống.js",
+    "name": "bống",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "cadao.js",
+    "name": "cadao",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "cafe.js",
+    "name": "cafe",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "callad.js",
+    "name": "callad",
+    "category": "Admin",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "canbang.js",
+    "name": "canbang",
+    "category": "tiện ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "canhbao.js",
+    "name": "canhbao",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "capdoi.js",
+    "name": "capdoi",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "card.js",
+    "name": "card",
+    "category": "tạo ảnh",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "card1.js",
+    "name": "card1",
+    "category": "tạo ảnh",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardbox.js",
+    "name": "cardbox",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardbox2.js",
+    "name": "cardbox2",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardbox3.js",
+    "name": "cardbox3",
+    "category": "tạo ảnh",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardboxsex.js",
+    "name": "cardboxsex",
+    "category": "Box Chat",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardcute.js",
+    "name": "cardcute",
+    "category": "info",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardin4.js",
+    "name": "cạt in tư",
+    "category": "info",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardinfo.js",
+    "name": "cardinfo",
+    "category": "Nhóm",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardinfo2.js",
+    "name": "cardinfo2",
+    "category": "info",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardinfo3.js",
+    "name": "cardinfo3",
+    "category": "Nhóm",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardinfov2.js",
+    "name": "cardinfov2",
+    "category": "info",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "cardsad.js",
+    "name": "cardsad",
+    "category": "info",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 1
+  },
+  {
+    "file": "carduser.js",
+    "name": "carduser",
+    "category": "info",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "caro.js",
+    "name": "caro",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "casino.js",
+    "name": "casino",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "cauca.js",
+    "name": "cauca",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "cave.js",
+    "name": "cave",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "cavev2.js",
+    "name": "cavevip",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "cccd.js",
+    "name": "cccd",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "chacu.js",
+    "name": "chacu",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "changebio.js",
+    "name": "change bio",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "chanlemomo.js",
+    "name": "clmomo",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "chart.js",
+    "name": "chart",
+    "category": "Box Chat",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "check.js",
+    "name": "check",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "checktt.js",
+    "name": "checktt",
+    "category": "group",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "checkv1.js",
+    "name": "checkv1",
+    "category": "Dành cho người dùng",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "checkv2.js",
+    "name": "checkv2",
+    "category": "Thông tin",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "cheems.js",
+    "name": "cheems",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "chitanda.js",
+    "name": "chitanda",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "choigay.js",
+    "name": "choigay",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "choiless.js",
+    "name": "choiless",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "chongcuopbox.js",
+    "name": "chongcuopbox",
+    "category": "Box Chat",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "choose.js",
+    "name": "choose",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "chuctet.js",
+    "name": "chuctet",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "chuhoa.js",
+    "name": "chuhoa",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "chuidenchet.js",
+    "name": "chuidenchet",
+    "category": "Gọi Hồn",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "Chuilientuc.js",
+    "name": "chuilientuc",
+    "category": "Gọi Hồn",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "chén.js",
+    "name": "chén",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "chúc mừng sn.js",
+    "name": "chucmungsn",
+    "category": "Gọi Hồn",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "chịch.js",
+    "name": "chịch",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "cmd.js",
+    "name": "cmd",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "cnbh.js",
+    "name": "cnbh",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "code.js",
+    "name": "code",
+    "category": "admin",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "coinflip.js",
+    "name": "latdongxu",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "concu.js",
+    "name": "cu",
+    "category": "nsfw",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "congthuc.js",
+    "name": "congthuc",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "console.js",
+    "name": "console",
+    "category": "Hệ Thống",
+    "permission": 3,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 2
+  },
+  {
+    "file": "cony.js",
+    "name": "cony",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "cosplay.js",
+    "name": "cosplay",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "coutmessage.js",
+    "name": "count",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "covid.js",
+    "name": "covid",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "csgo.js",
+    "name": "csgo",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "cuop.js",
+    "name": "cuoptien",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Cutepic.js",
+    "name": "pantiesclose",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "cấm.js",
+    "name": "cấm",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "daily.js",
+    "name": "daily",
+    "category": "Tài chính",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "damma.js",
+    "name": "damma",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "danhngon.js",
+    "name": "danhngon",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "daoly.js",
+    "name": "daoly",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "daorong.js",
+    "name": "daorong",
+    "category": "Game",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "dating.js",
+    "name": "dating",
+    "category": "Hẹn Hò",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "datlich.js",
+    "name": "datlich",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "delmsg.js",
+    "name": "delmsg",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "delthread.js",
+    "name": "delthread",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "demngayyeu.js",
+    "name": "demngayyeu",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "dhbc.js",
+    "name": "dhbc",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "dhbcv2.js",
+    "name": "dhbcv2",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "dhtg.js",
+    "name": "dhtg",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "dictionary.js",
+    "name": "tudien",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "dinhluatvatly.js",
+    "name": "dinhluatvatly",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "dizz.js",
+    "name": "dizz",
+    "category": "Gọi Hồn",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "doanthangbangnhau.js",
+    "name": "doanthangbangnhau",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "doantuoi.js",
+    "name": "đoán tuổi",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "dobede.js",
+    "name": "dobede",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "dodepgai.js",
+    "name": "dodepgai",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "dodeptrai.js",
+    "name": "doeptrai",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "doggy.js",
+    "name": "doggy",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "donghiensex.js",
+    "name": "donghiensex",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "doof.js",
+    "name": "doof",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "download.js",
+    "name": "download",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "drake.js",
+    "name": "drake",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "dsqtv.js",
+    "name": "dsqtv",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "duaxe.js",
+    "name": "duaxe",
+    "category": "Game",
+    "permission": 2,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "duyet.js",
+    "name": "duyet",
+    "category": "Người hỗ trợ bot",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "dú.js",
+    "name": "dú",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "emojitroll.js",
+    "name": "emojitroll",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "family.js",
+    "name": "family",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "fbget.js",
+    "name": "fbget",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "file.js",
+    "name": "file",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "filter.js",
+    "name": "filter",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "fixspam.js",
+    "name": "fixspam",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 0
+  },
+  {
+    "file": "flop.js",
+    "name": "flop",
+    "category": "box chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "florentino.js",
+    "name": "florentino",
+    "category": "Tấu Hài",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "football.js",
+    "name": "football",
+    "category": "Football",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "gadit.js",
+    "name": "gadit",
+    "category": "Gọi Hồn",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "gai2.js",
+    "name": "gai2",
+    "category": "random-img",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "gaiditbu.js",
+    "name": "gaiditbu",
+    "category": "Random-IMG",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "gaixinh.js",
+    "name": "gaixinh",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "ganyu.js",
+    "name": "ganyu",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "gentle.js",
+    "name": "gentle",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "getappstate.js",
+    "name": "getappstate",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Getavt.js",
+    "name": "avt",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "getlink.js",
+    "name": "getlink",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "ghep.js",
+    "name": "ghep",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 200
+  },
+  {
+    "file": "ghepv2.js",
+    "name": "kimny",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "ghichu.js",
+    "name": "ghichu",
+    "category": "Admin",
+    "permission": 3,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "ghichu2.js",
+    "name": "ghichu2",
+    "category": "Tiện ích",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "giadinh.js",
+    "name": "giadinh",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "giangdaoly.js",
+    "name": "giangdaoly",
+    "category": "Gọi Hồn",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 90
+  },
+  {
+    "file": "gianghoa.js",
+    "name": "gianghoa",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "giangsinh.js",
+    "name": "giangsinh",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "girl.js",
+    "name": "girl",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Girlnude.js",
+    "name": "girlnude",
+    "category": "nsfw",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "github.js",
+    "name": "github",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "giveaway.js",
+    "name": "giveaway",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "givefile.js",
+    "name": "txt",
+    "category": "Admin",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "goibotv2.js",
+    "name": "goibot2",
+    "category": "Không xài lệnh",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "goibotv3.js",
+    "name": "goibotv2",
+    "category": "Noprefix",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 2
+  },
+  {
+    "file": "gojo.js",
+    "name": "gojo",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "google.js",
+    "name": "google",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "gái.js",
+    "name": "gái",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "gáinga.js",
+    "name": "gaitay",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "gỡ.js",
+    "name": "gỡ",
+    "category": "Hệ Thống",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "haigocbangnhau.js",
+    "name": "haigocbangnhau",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "hallowin.js",
+    "name": "halloween",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "hangdangthuc.js",
+    "name": "hangdangthuc",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "hanhtinh.js",
+    "name": "hanhtinh",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Hanna.js",
+    "name": "hanna",
+    "category": "nsfw",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "help.js",
+    "name": "help",
+    "category": "Trợ Giúp",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "hentaigif.js",
+    "name": "hentaigif",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "hentaiimg.js",
+    "name": "hentai",
+    "category": "nsfw",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "heodenroi.js",
+    "name": "heodenroi",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "hi.js",
+    "name": "hi",
+    "category": "Other",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 0
+  },
+  {
+    "file": "hiepdam.js",
+    "name": "hiepdam",
+    "category": "Lệnh 18+",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "hololive.js",
+    "name": "hololive",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "hpbd.js",
+    "name": "hpbd",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 10
+  },
+  {
+    "file": "hug.js",
+    "name": "ôm",
+    "category": "Tình Yêu",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "huyền.js",
+    "name": "huyền",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "hôn.js",
+    "name": "hôn",
+    "category": "Tình Yêu",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Ig.js",
+    "name": "ig",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "in4.js",
+    "name": "in4",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "info.js",
+    "name": "info",
+    "category": "Nhóm",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "instagram.js",
+    "name": "instagram",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "ip.js",
+    "name": "ip",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "iss.js",
+    "name": "iss",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "japan.js",
+    "name": "japan",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "join.js",
+    "name": "join",
+    "category": "Hệ Thống",
+    "permission": 3,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "joker.js",
+    "name": "joker",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "kbb.js",
+    "name": "kbb",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "keobo.js",
+    "name": "keobo",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 0
+  },
+  {
+    "file": "khaigiang.js",
+    "name": "khaigiang",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "kick.js",
+    "name": "kick",
+    "category": "Hệ Thống",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "kiss.js",
+    "name": "kiss",
+    "category": "Tình Yêu",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "language.js",
+    "name": "language",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "lgbt.js",
+    "name": "lgbt",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "liemnach.js",
+    "name": "liemnach",
+    "category": "Edit-IMG",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "lienquan.js",
+    "name": "lienquan",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "linhanh.js",
+    "name": "linhanh",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "listanm.js",
+    "name": "listanm",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "listban.js",
+    "name": "listban",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "listbox.js",
+    "name": "listbox",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 15
+  },
+  {
+    "file": "listfriend.js",
+    "name": "listfriend",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "lixi.js",
+    "name": "lixi",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "locmem.js",
+    "name": "locmem",
+    "category": "Box Chat",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "locndfb.js",
+    "name": "locmemdie",
+    "category": "Box Chat",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 300
+  },
+  {
+    "file": "log.js",
+    "name": "log",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "logout.js",
+    "name": "logout",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "loibaihat.js",
+    "name": "loibaihat",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "lol.js",
+    "name": "lol",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "loli.js",
+    "name": "loli",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "lolquestion.js",
+    "name": "lolquestion",
+    "category": "Game",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "loto.js",
+    "name": "loto",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "love.js",
+    "name": "love",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 1
+  },
+  {
+    "file": "lq.js",
+    "name": "lq",
+    "category": "Tạo ảnh",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "lqquiz.js",
+    "name": "lqquiz",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "luatbot.js",
+    "name": "luatbot",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "lucy.js",
+    "name": "lucy",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "lồn.js",
+    "name": "lồn",
+    "category": "nsfw",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "ma.js",
+    "name": "ma",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "marry.js",
+    "name": "marry",
+    "category": "Tình Yêu",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "math.js",
+    "name": "math",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "mau.js",
+    "name": "màu",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "mbbank.js",
+    "name": "mbbank",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "meme.js",
+    "name": "meme",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 1
+  },
+  {
+    "file": "memevn.js",
+    "name": "memevn",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "menu.js",
+    "name": "menu",
+    "category": "Dành cho người dùng",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Meow.js",
+    "name": "meow",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 1
+  },
+  {
+    "file": "mine.js",
+    "name": "mine",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "money.js",
+    "name": "money",
+    "category": "Game",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "mophat.js",
+    "name": "mophat",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "morse.js",
+    "name": "morse",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "mông.js",
+    "name": "mông",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "namtay.js",
+    "name": "namtay",
+    "category": "Tình Yêu",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "ndh.js",
+    "name": "ndh",
+    "category": "Admin",
+    "permission": 3,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "nettruyen.js",
+    "name": "nettruyen",
+    "category": "cc",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "newbox.js",
+    "name": "newbox",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "news.js",
+    "name": "news",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "nganhang.js",
+    "name": "nganhang",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "nguyentohoahoc.js",
+    "name": "nguyentohoahoc",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "nguyentunangcao.js",
+    "name": "nguyentunangcao",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "ngôn.js",
+    "name": "ngôn",
+    "category": "Kiến Thức War",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "ngủ.js",
+    "name": "ngủ",
+    "category": "không cần dấu lệnh",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 10
+  },
+  {
+    "file": "nhentai.js",
+    "name": "nhentai",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "nhomnguyentu.js",
+    "name": "nhomnguyentu",
+    "category": "Kiến Thức Học Hỏi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "nino.js",
+    "name": "nino",
+    "category": "Chat cùng sim, nino",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 2
+  },
+  {
+    "file": "ninoteach.js",
+    "name": "ninoteach",
+    "category": "Chat cùng sim, nino",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "noitu.js",
+    "name": "noitu",
+    "category": "Giải trí",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "note.js",
+    "name": "note",
+    "category": "Box chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "nsfw.js",
+    "name": "nsfw",
+    "category": "Hệ Thống",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "nude.js",
+    "name": "nude",
+    "category": "nsfw",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "offbot.js",
+    "name": "offbot",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "osu.js",
+    "name": "osu",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "out all.js",
+    "name": "outall",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "out.js",
+    "name": "out",
+    "category": "Hệ thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "Pantisclosev2.js",
+    "name": "pantiesclose2",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "pay.js",
+    "name": "pay",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "pending.js",
+    "name": "pending",
+    "category": "Hệ thống",
+    "permission": 2,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "pheduyet.js",
+    "name": "duyettv",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "phub.js",
+    "name": "phub",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "pin.js",
+    "name": "pin",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "ping.js",
+    "name": "ping",
+    "category": "system",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 80
+  },
+  {
+    "file": "poem.js",
+    "name": "poem",
+    "category": "Kiến Thức Thả Thính",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "poke.js",
+    "name": "poke",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "pokemon.js",
+    "name": "pokemon",
+    "category": "Game",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": true,
+    "hasEvent": true,
+    "cooldown": 0
+  },
+  {
+    "file": "poll.js",
+    "name": "poll",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "prefix.js",
+    "name": "prefix",
+    "category": "Dành cho Admin",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "pubg.js",
+    "name": "pubg",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "qr.js",
+    "name": "qr",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "quiz.js",
+    "name": "quiz",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "quockhanh.js",
+    "name": "quockhanh",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "raider.js",
+    "name": "raiden",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "rainbow.js",
+    "name": "rainbow",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "rank.js",
+    "name": "rank",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 20
+  },
+  {
+    "file": "rc.js",
+    "name": "rc",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 0
+  },
+  {
+    "file": "refresh.js",
+    "name": "refresh",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 500
+  },
+  {
+    "file": "rela.js",
+    "name": "rela",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "rem.js",
+    "name": "rem",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "reminder.js",
+    "name": "nhacnho",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "resend.js",
+    "name": "resend",
+    "category": "Box Chat",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 0
+  },
+  {
+    "file": "resetexp.js",
+    "name": "resetexp",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "resetmoney.js",
+    "name": "resetmoney",
+    "category": "Hệ Thống",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "restart.js",
+    "name": "restart",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "rnamebot.js",
+    "name": "rnamebot",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "rnamebox.js",
+    "name": "rnamebox",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 20
+  },
+  {
+    "file": "roll.js",
+    "name": "roll",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "rule.js",
+    "name": "rule",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "run.js",
+    "name": "run",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "sailenh.js",
+    "name": "\n",
+    "category": "Hình ảnh",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "sakuna.js",
+    "name": "sukuna",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "say.js",
+    "name": "say",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "screenshot.js",
+    "name": "screenshot",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "sendmsg.js",
+    "name": "sendmsg",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "sendnotiv2.js",
+    "name": "sendnoti",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "sendonti.js",
+    "name": "sendonti",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "seophi.js",
+    "name": "seophi",
+    "category": "Tình Yêu",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "setdatabox.js",
+    "name": "setdatabox",
+    "category": "Hệ thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "setdatauser.js",
+    "name": "setdatauser",
+    "category": "Hệ thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "setexp.js",
+    "name": "setexp",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "setjoin.js",
+    "name": "setjoin",
+    "category": "Hệ Thống",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "setleave.js",
+    "name": "setleave",
+    "category": "Hệ Thống",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "setluot.js",
+    "name": "setluot",
+    "category": "admin",
+    "permission": 3,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "setmoney.js",
+    "name": "setmoney",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "setname.js",
+    "name": "setname",
+    "category": "other",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "setnameall.js",
+    "name": "setall",
+    "category": "other",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "setprefix.js",
+    "name": "setprefix",
+    "category": "Hệ Thống",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "setrankup.js",
+    "name": "setrankup",
+    "category": "Hệ Thống",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "sexy.js",
+    "name": "sexy",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "shortanh.js",
+    "name": "shortimage",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "shortcut.js",
+    "name": "shortcut",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "shortlink.js",
+    "name": "shortlink",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "shortvd.js",
+    "name": "shortvd",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "shortvoice.js",
+    "name": "shortaudio",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "siesta.js",
+    "name": "siesta",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "sieunhan.js",
+    "name": "sieunhan",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "sim.js",
+    "name": "sim",
+    "category": "Chat cùng sim",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "sing.js",
+    "name": "sing",
+    "category": "tiện ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "sing1.js",
+    "name": "sing1",
+    "category": "tiện ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "sinhnhatad.js",
+    "name": "sinhnhatad",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "skinlqmb.js",
+    "name": "skinlqmb",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "sleep.js",
+    "name": "sleep",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "slot.js",
+    "name": "slot",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "snauzk.js",
+    "name": "snauzk",
+    "category": "media",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "spamban.js",
+    "name": "spamban",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "stk.js",
+    "name": "stk",
+    "category": "Admin",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "subnau.js",
+    "name": "subnau",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "suggest.js",
+    "name": "suggest",
+    "category": "Admin",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "swx.js",
+    "name": "swx",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "system.js",
+    "name": "system",
+    "category": "Hệ Thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Sừng.js",
+    "name": "sừng",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tagadmin.js",
+    "name": "tagadmin",
+    "category": "Other",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 3
+  },
+  {
+    "file": "taglientuc.js",
+    "name": "taglientuc",
+    "category": "Box Chat",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "taixiu.js",
+    "name": "taixiu",
+    "category": "Game",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tamchung.js",
+    "name": "tamchung",
+    "category": "Lệnh 18+",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Tangai.js",
+    "name": "tangai",
+    "category": "Tấu Hài",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "taoanhdep.js",
+    "name": "taoanhdep",
+    "category": "game",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "tds.js",
+    "name": "tds",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "teach.js",
+    "name": "teach",
+    "category": "Chat cùng sim, nino",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "teamtag.js",
+    "name": "teamtag",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tet.js",
+    "name": "tet",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tetam.js",
+    "name": "tetam",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tetduong.js",
+    "name": "tetduong",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thamgia.js",
+    "name": "thamgia",
+    "category": "Lệnh admin/qtv",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "thayboi.js",
+    "name": "thayboi",
+    "category": "Bói Toán",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thinhtag.js",
+    "name": "thathinh",
+    "category": "Kiến Thức Thả Thính",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thoitiet.js",
+    "name": "thoitiet",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thongbao.js",
+    "name": "thongbao",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thongdit.js",
+    "name": "thongdit",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thongtin.js",
+    "name": "thongtin",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thread.js",
+    "name": "thread",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thudam.js",
+    "name": "thudam",
+    "category": "Lệnh 18+",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thuphap.js",
+    "name": "thuphap",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "thả thính.js",
+    "name": "thính",
+    "category": "Kiến Thức Thả Thính",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tid.js",
+    "name": "tid",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tientri.js",
+    "name": "tientri",
+    "category": "Bói toán",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "tik.js",
+    "name": "tik",
+    "category": "download",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tiktok.js",
+    "name": "tiktok",
+    "category": "Mạng xã hội",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tikvd.js",
+    "name": "tikvd",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tile.js",
+    "name": "tile",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "time.js",
+    "name": "time",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "toctoc.js",
+    "name": "toctoc",
+    "category": "Tiện Ích",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "tod.js",
+    "name": "tod",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tokyo revengers.js",
+    "name": "idol",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "top.js",
+    "name": "top",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "totinh.js",
+    "name": "totinh",
+    "category": "Hẹn Hò",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "trai.js",
+    "name": "trai",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "trandan.js",
+    "name": "trandan",
+    "category": "Tấu Hài",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "trandan2.js",
+    "name": "trandan2",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "trans.js",
+    "name": "trans",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "traogiai.js",
+    "name": "traobang",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "trinh.js",
+    "name": "trinh",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "tromcho.js",
+    "name": "tromcho",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tromexp.js",
+    "name": "tromexp",
+    "category": "economy",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "Trump.js",
+    "name": "trump",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "trungthu.js",
+    "name": "trungthu",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "truyencuoi.js",
+    "name": "truyencuoi",
+    "category": "Giải Trí",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "tát.js",
+    "name": "tát",
+    "category": "Hành Động",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "tâm trạng.js",
+    "name": "tamtrang",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "uid.js",
+    "name": "uid",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "unban.js",
+    "name": "unban",
+    "category": "Admin",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "unsendrt.js",
+    "name": "unsendrt",
+    "category": "Box Chat",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "upt.js",
+    "name": "upt",
+    "category": "Hệ thống",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "upt1.js",
+    "name": "upt1",
+    "category": "system",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "uptime.js",
+    "name": "uptime",
+    "category": "system",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "user.js",
+    "name": "user",
+    "category": "Hệ Thống",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "valentine.js",
+    "name": "valentine",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "video.js",
+    "name": "video",
+    "category": "media",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "videosex.js",
+    "name": "videosex",
+    "category": "nsfw",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "vsbg.js",
+    "name": "vsbg",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 2
+  },
+  {
+    "file": "war.js",
+    "name": "war",
+    "category": "Kiến Thức War",
+    "permission": 1,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "weather.js",
+    "name": "weather",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "wibu.js",
+    "name": "wibu",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  },
+  {
+    "file": "wiki.js",
+    "name": "wiki",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 1
+  },
+  {
+    "file": "work.js",
+    "name": "work",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "work1.js",
+    "name": "lamviec",
+    "category": "Kiếm Tiền",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "xidach.js",
+    "name": "xidach",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": true,
+    "cooldown": 5
+  },
+  {
+    "file": "xoa.js",
+    "name": "xoa",
+    "category": "Tình Yêu",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "yaytext.js",
+    "name": "yaytext",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 0
+  },
+  {
+    "file": "yaytextv2.js",
+    "name": "yaytextv2",
+    "category": "Công Cụ",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "zuck.js",
+    "name": "zuck",
+    "category": "Edit-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 10
+  },
+  {
+    "file": "zwar.js",
+    "name": "zwar",
+    "category": "Trò Chơi",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": true,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "đá.js",
+    "name": "đá",
+    "category": "Hành Động",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "đấm.js",
+    "name": "đấm",
+    "category": "Hành Động",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "địt.js",
+    "name": "địt",
+    "category": "Lệnh 18+",
+    "permission": 2,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 5
+  },
+  {
+    "file": "ảnh hot.js",
+    "name": "tw",
+    "category": "Random-IMG",
+    "permission": 0,
+    "hasReply": false,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 1
+  },
+  {
+    "file": "ảnh.js",
+    "name": "ảnh",
+    "category": "Tiện ích",
+    "permission": 0,
+    "hasReply": true,
+    "hasReaction": false,
+    "hasEvent": false,
+    "cooldown": 3
+  }
+]

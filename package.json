@@ -1,12 +1,18 @@
 {
     "name": "MiraiBypassD-Jukie",
-    "version": "1.2.14",
-    "description": "A simple Facebook Messenger Bot made by me(CatalizCS) and my brother SpermLord.",
-    "main": "mirai.js",
+    "version": "2.0.0",
+    "type": "module",
+    "description": "Facebook Response Bot V2 - Clean, Modern TypeScript Architecture",
+    "main": "dist/app.js",
     "scripts": {
-        "start": "node index",
-        "login": "node login",
-        "test": "node --trace-warnings --use_strict --async-stack-traces mirai"
+        "build": "tsc",
+        "dev": "tsx watch src/app.ts",
+        "start": "tsx src/app.ts",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "typecheck": "tsc --noEmit",
+        "legacy:start": "node index",
+        "legacy:test": "node --trace-warnings --use_strict --async-stack-traces mirai"
     },
     "repository": {
         "type": "git",
@@ -26,9 +32,13 @@
         "chalk": "^4.1.2",
         "cheerio": "^1.0.0-rc.11",
         "chem-eb": "^0.1.19",
+        "dotenv": "^17.4.2",
+        "drizzle-orm": "^0.45.2",
         "eval": "",
         "extract-zip": "",
         "fast-speedtest-api": "^0.3.2",
+        "fastify": "^5.12.4",
+        "fastify-raw-body": "^6.0.1",
         "fca-horizon-remake": "git+https://github.com/VangBanLaNhat/fca-unofficial.git",
         "figlet": "",
         "fs-extra": "",
@@ -46,6 +56,8 @@
         "npmlog": "",
         "pastebin-api": "^4.0.1",
         "pidusage": "^4.0.1",
+        "pino": "^10.3.1",
+        "pino-pretty": "^13.1.3",
         "qrcode": "^1.5.4",
         "request": "",
         "semver": "",
@@ -61,6 +73,13 @@
         "turl": "^1.1.2",
         "wikijs": "^6.4.1",
         "youtube-search-api": "^1.1.0",
-        "ytdl-core": "npm:@distube/ytdl-core@^4.16.12"
+        "ytdl-core": "npm:@distube/ytdl-core@^4.16.12",
+        "zod": "^4.6.4"
+    },
+    "devDependencies": {
+        "@types/node": "^26.5.1",
+        "tsx": "^4.23.13",
+        "typescript": "^7.0.2",
+        "vitest": "^5.0.0"
     }
 }

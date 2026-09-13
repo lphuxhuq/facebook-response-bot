@@ -1,64 +1,136 @@
-<h1> 𝐇𝐞𝐥𝐥𝐨, 𝐁𝐋𝐀𝐂𝐊 𝐜𝐮𝐭𝐞 𝐧𝐞̀ 🍑 <img src="" width="35"></h1> 
+# Facebook Response Bot V2
 
-<p align="center">
-    <img align="center" alt="PNG" src="https://c.tenor.com/KhGC_UueKfAAAAAd/kamadonezuko-nezuko.gif" />
-</p> 
-<h1>HƯỚNG DẪN CÁCH CÀI ĐẶT BOT MESSENGER TRÊN CÁC NỀN TẢNG</h1>
+> Modern, robust, modular Facebook Messenger Bot built on official Meta Webhooks & Graph API v21.0 with Node.js 24 LTS and TypeScript.
 
->  **TRƯỚC KHI CHẠY BOT CÁC BẠN PHẢI CHẤP NHẬN VIỆC ACC FACEBOOK BỊ QUÉT VÀ DIE, MỌI KHIẾU NẠI VỀ ACC FACEBOOK BÊN MÌNH KHÔNG CHỊU TRÁCH NHIỆM**
+---
 
-<h1>Đối với Replit - Dùng trên ĐT hoặc PC</h1> 
+## 🌟 Key Highlights of V2
 
-**Công cụ cần chuẩn cài đặt**
+- **100% Official Meta Messenger Platform**: Fully compliant with Meta Developer Policies. No cookie jars (`appstate.json`), no reverse-engineered MQTT endpoints, and zero reliance on deprecated unofficial FCA packages (`fca-horizon-remake`).
+- **Transport-Agnostic Core**: The core bot engine operates entirely on a normalized `MessageContext`. Commands never talk directly to Facebook Graph API, enabling simple adaptation to Discord, Telegram, or Webchat in the future.
+- **Persistent Restart-Safe Dialogs**: Multi-step interactive commands (such as quizzes and registration workflows) utilize `SessionManager` with SQLite-backed TTL, surviving process restarts and server redeployments without losing conversation state.
+- **Enterprise-Grade Security**:
+  - Webhook payload HMAC-SHA256 signature verification (`x-hub-signature-256`) with `crypto.timingSafeEqual`.
+  - Zero arbitrary code execution (`eval` and shell commands completely eliminated).
+  - Structured logging via Pino with automated redaction of tokens and secrets.
+- **Reliable Storage**: SQLite 3 in WAL mode (`Write-Ahead Logging`) with strongly-typed repositories for users, conversations, sessions, and audit trails.
+- **Production Observability**: Built-in endpoints for container health (`GET /health`), database readiness (`GET /ready`), metrics (`GET /status`), commands directory (`GET /commands`), and plugins (`GET /plugins`).
 
-- 🍁 **Một tài khoản trên [Replit](https://replit.com/)**
+---
 
-**Thứ tự các thao tác trên [Replit](https://replit.com/)**
+## 🏗️ Architecture
 
-- 🍁 **+ New repl**
-- 🍁 Qua tab **Import from github**
-- 🍁 Nhập link **github** vào **from** và **click** vào nút **Import from github**
-- 🍁 Đợi repl **Cloning**
-- 🍁 Chọn **select language** là **Bash** và **configure the run button** là **npm start** xong rồi ấn **done**
-- 🍁 Đợi tầm 10s nếu không tự **refesh trang thì refesh thủ công bằng phím F5 hoặc nút refesh trên thanh địa chỉ**
-
-**Cách cài đặt - gõ từng lệnh theo thứ tự dưới đây và đợi cài đặt**
-
-- 🍁 Chuyển qua tab **console** và gõ các lệnh theo thứ tự sau:
-- 🍁 **npm install** - đợi khoảng 3-5p tùy theo tốc độ mạng
-- 🍁 **npm audit fix**
-- 🍁 **Ấn nút run trên màn hình** - đợi khoảng 3-5p tùy theo tốc độ mạng
-- 🍁 **Lưu Ý: Khi cài đặt xong phải tắt đi và khởi động lại để tránh gặp lỗi không mong muốn.**
-
-**Cách cài đặt treo 24/24 trên uptimerobot**
-
-- 🍁 Vào chỉnh sửa file **mirai.js**
-- 🍁 Thêm đoạn code sau vào dòng 1 của file **mirai.js**
-
-```diff
-const app = require ("express") ();  app.get ('/', (req, res) => {res.send ("RUN BOT");});app.listen(process.env. PORT);    
+```text
+                  ┌──────────────────────────────────────────────┐
+                  │              Meta Messenger Webhook          │
+                  └──────────────────────┬───────────────────────┘
+                                         │ HTTPS POST (HMAC-SHA256)
+                                         ▼
+                  ┌──────────────────────────────────────────────┐
+                  │          src/platform/facebook/              │
+                  │  ├── Webhook Route & Signature Verification  │
+                  │  ├── Event Normalizer (To MessageContext)    │
+                  │  └── Outgoing Rate-Limited Sender & Queue    │
+                  └──────────────────────┬───────────────────────┘
+                                         │ Normalized MessageContext
+                                         ▼
+                  ┌──────────────────────────────────────────────┐
+                  │                   src/core/                  │
+                  │  ├── BotCore Engine                          │
+                  │  ├── CommandRouter (Prefix, Aliases, RBAC)   │
+                  │  ├── SessionManager (SQLite TTL Store)       │
+                  │  ├── PermissionManager (Role-Based Access)   │
+                  │  └── CooldownManager (Token Bucket)          │
+                  └──────────────┬───────────────────────────────┘
+                                 │
+         ┌───────────────────────┼───────────────────────┐
+         ▼                       ▼                       ▼
+┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+│   src/plugins/   │   │  src/services/   │   │src/repositories/ │
+│ ├── core/        │   │ ├── ai/          │   │ ├── user.ts      │
+│ ├── admin/       │   │ ├── weather/     │   │ ├── thread.ts    │
+│ ├── utility/     │   │ └── translation/ │   │ ├── session.ts   │
+│ └── economy/     │   │                  │   │ └── audit.ts     │
+└──────────────────┘   └──────────────────┘   └─────────┬────────┘
+                                                        │
+                                                        ▼
+                                              ┌──────────────────┐
+                                              │  SQLite Database │
+                                              │    (WAL Mode)    │
+                                              └──────────────────┘
 ```
 
-- 🍁 **npm install express**
-- 🍁 **npm audit fix**
-- 🍁 **Ấn nút run trên màn hình** - đợi khoảng 3-5p tùy theo tốc độ mạng
-- 🍁 **Copy link** ở trang replit. Link có định dạng **https://miraiv2.nameuser.repl.co**
-- 🍁 **Tạo tài khoản trên trang [UptimeRobot](https://uptimerobot.com/)**
+---
 
-**Thứ tự các thao tác trên [UptimeRobot](https://uptimerobot.com/)**
+## 🚀 Quick Start
 
+### 1. Requirements
+- Node.js 24 LTS or Docker
+- A verified Facebook Page and Meta Developer App
 
-- 🍁 **+  Add New Monitor**
-- 🍁 **Monitor Type** chọn **HTTP(s)**
-- 🍁 **Friendly Name** đặt tùy ý
-- 🍁 **URL (or IP)**: Dán link vừa copy bên **[Replit](https://replit.com/)** 
-- 🍁 Ấn **tick** vào ô  **Select "Alert Contacts To Notify** (nhận thông báo từ email)
-- 🍁 Ấn **Create Monitor** để hoàn thành quá trình tạo **uptime**
-# 🤝🏻 Connect With 𝐁𝐋𝐀𝐂𝐊
-<p align="center"> 
-&nbsp; <a href="https://www.instagram.com/tuan.dzz_1/" target="_blank" rel="noopener noreferrer"><img src="https://img.icons8.com/plasticine/100/000000/instagram-new.png" width="100" /></a> 
-&nbsp; <a href="https://www.tiktok.com/@tuandz.1407" target="_blank" rel="noopener noreferrer"><img src="https://i.imgur.com/jcWPUix.png" width="100" /></a>    
-&nbsp; <a href="https://github.com/tuandz2250" target="_blank" rel="noopener noreferrer"><img src="https://img.icons8.com/plasticine/100/000000/github.png" width="100" /></a>
-&nbsp; <a href="https://www.facebook.com/TuannDzz123/" target="_blank" rel="noopener noreferrer"><img src="https://img.icons8.com/plasticine/100/000000/facebook.png"  width="100" /></a>
-&nbsp; <a href="mailto:kenyrm2250@gmail.com" target="_blank" rel="noopener noreferrer"><img src="https://img.icons8.com/plasticine/100/000000/gmail.png"  width="100" /></a>
-</p>
+### 2. Installation
+```bash
+# Clone the repository
+git clone https://github.com/lphuxhuq/facebook-response-bot.git
+cd facebook-response-bot
+
+# Checkout the V2 branch
+git checkout remake-and-test
+
+# Install dependencies
+npm install
+```
+
+### 3. Configuration
+```bash
+cp .env.example .env
+```
+Edit `.env` with your Meta credentials:
+```env
+PORT=3000
+FACEBOOK_PAGE_ID=your_page_id
+FACEBOOK_APP_SECRET=your_meta_app_secret
+FACEBOOK_VERIFY_TOKEN=your_custom_verify_token
+FACEBOOK_PAGE_ACCESS_TOKEN=your_page_access_token
+```
+
+### 4. Running Locally
+```bash
+# Development mode with hot-reload
+npm run dev
+
+# Run full test suite
+npm test
+
+# Build production bundle
+npm run build
+
+# Start production server
+npm start
+```
+
+---
+
+## 🐳 Docker Deployment
+
+```bash
+docker compose up -d --build
+```
+See [README_DEPLOYMENT.md](file:///d:/Project/BOTMSG/README_DEPLOYMENT.md) for full production deployment instructions.
+
+---
+
+## 📚 Documentation Index
+
+- [Target Architecture Spec](file:///d:/Project/BOTMSG/docs/ARCHITECTURE.md)
+- [Legacy Codebase Audit](file:///d:/Project/BOTMSG/docs/LEGACY_AUDIT.md)
+- [Feature Inventory & Migration Catalog](file:///d:/Project/BOTMSG/docs/FEATURE_INVENTORY.md)
+- [Migration Matrix](file:///d:/Project/BOTMSG/docs/MIGRATION_MATRIX.md)
+- [Final Architectural & Security Audit](file:///d:/Project/BOTMSG/docs/FINAL_AUDIT.md)
+- [Troubleshooting Guide](file:///d:/Project/BOTMSG/docs/TROUBLESHOOTING.md)
+- [Architecture Decision Records (ADRs)](file:///d:/Project/BOTMSG/docs/ADR/)
+
+---
+
+## 📜 License
+GPL-3.0 License
