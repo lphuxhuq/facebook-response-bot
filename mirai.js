@@ -179,6 +179,17 @@ try {
         appState = appState.cookies;
     }
     logger.loader(global.getText("mirai", "foundPathAppstate"))
+
+    // Tự động vá lỗi tràn số 32-bit (timestamp << 22) của OTID trong sendMessageMqtt nếu có
+    const smMqttPath = resolve(join(global.client.mainPath, 'node_modules/fca-horizon-remake/src/actions/sendMessageMqtt.js'));
+    if (existsSync(smMqttPath)) {
+        let code = readFileSync(smMqttPath, 'utf8');
+        if (code.includes('timestamp << 22')) {
+            code = code.replace(/var timestamp = Date\.now\(\);\s*var epoch = timestamp << 22;\s*var otid = epoch \+ Math\.floor\(Math\.random\(\) \* 4194304\);/g, 'var otid = utils.generateOfflineThreadingID();');
+            code = code.replace(/otid:\s*\(otid \+ 1\)\.toString\(\)/g, 'otid: utils.generateOfflineThreadingID()');
+            writeFileSync(smMqttPath, code, 'utf8');
+        }
+    }
 }
 catch {
     logger.loader(global.getText("mirai", "notFoundPathAppstate"), "error");
