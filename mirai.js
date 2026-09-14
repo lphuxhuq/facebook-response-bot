@@ -87,6 +87,10 @@ global.data = new Object({
     allThreadID: new Array()
 });
 
+global.taixiuS = new Map();
+global.baucuaS = new Map();
+global.chanle = new Map();
+
 global.utils = require("./utils");
 
 global.nodemodule = new Proxy({}, {

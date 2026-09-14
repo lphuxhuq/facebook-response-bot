@@ -96,8 +96,9 @@ module.exports.config = {
 		senderID: g
 	} = n, h = ["chẵn", "lẻ"], o = ((await a.getData(n.senderID)).money, h[Math.floor(Math.random() * h.length)]);
 	if (r && ("chẵn" == r.toLowerCase() || "lẻ" == r.toLowerCase())) {
-		const n = global.chanle.get(s) || {};
-		if (!n) return;
+		if (!global.chanle) global.chanle = new Map();
+		const n = global.chanle.get(s);
+		if (!n || !Array.isArray(n.player)) return;
 		if (1 != n.start) return;
 		if (!n.player.find((e => e.userID == g))) return;
 		var i, c = n.player.findIndex((e => e.userID == g));

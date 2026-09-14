@@ -24,8 +24,9 @@ const folderimg = __dirname + "/trogiup/menu";
 body.toLowerCase() == 'tôm' || 
 body.toLowerCase() == 'cá' || body.toLowerCase() == 'nai' ||
 body.toLowerCase() == 'gà' ) {
-    const gameThread = global.baucuaS.get(threadID) || {};
-    if (!gameThread) return;
+    if (!global.baucuaS) global.baucuaS = new Map();
+    const gameThread = global.baucuaS.get(threadID);
+    if (!gameThread || !Array.isArray(gameThread.player)) return;
     else {
       if (!gameThread.player.find(i => i.userID == senderID)) return;
       else {

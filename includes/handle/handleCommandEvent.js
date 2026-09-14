@@ -34,7 +34,11 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                 Obj.Threads = Threads 
                 Obj.Currencies = Currencies 
                 Obj.getText = getText2;
-                if (cmd) cmd.handleEvent(Obj);
+                if (cmd && typeof cmd.handleEvent === 'function') {
+                    Promise.resolve(cmd.handleEvent(Obj)).catch(error => {
+                        logger(global.getText('handleCommandEvent', 'moduleError', cmd.config.name) + ': ' + (error && error.message || error), 'error');
+                    });
+                }
             } catch (error) {
                 logger(global.getText('handleCommandEvent', 'moduleError', cmd.config.name), 'error');
             }

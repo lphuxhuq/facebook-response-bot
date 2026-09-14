@@ -22,8 +22,9 @@ const folderimg = __dirname + "/trogiup/menu";
   if (!body) return;
   if (body.toLowerCase() == 'tài' || body.toLowerCase() == 'xỉu' ||
 body.toLowerCase() == 'ba mặt đồng nhất và nhà cái thắng') {
-    const gameThread = global.taixiuS.get(threadID) || {};
-    if (!gameThread) return;
+    if (!global.taixiuS) global.taixiuS = new Map();
+    const gameThread = global.taixiuS.get(threadID);
+    if (!gameThread || !Array.isArray(gameThread.player)) return;
     else {
       if (!gameThread.player.find(i => i.userID == senderID)) return;
       else {
