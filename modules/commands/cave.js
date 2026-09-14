@@ -1,51 +1,72 @@
 module.exports.config = {
-	name: "cave",
-	version: "1.0.0",
-	hasPermssion: 0,
-	credits: "Huy",
-	description: "Bán vốn tự có",
-	commandCategory: "Kiếm Tiền",
-    cooldowns: 5,
+    name: "cave",
+    version: "2.0.0",
+    hasPermssion: 0,
+    credits: "Remake by Kilo",
+    description: "Khởi nghiệp bán vốn tự có cực bựa và kịch tính",
+    commandCategory: "Kiếm Tiền",
+    cooldowns: 10,
     envConfig: {
-        cooldownTime: 1000000
+        cooldownTime: 60000
     }
 };
 
-module.exports.languages = {
-    "vi": {
-        "cooldown": "𝐁𝐚̣𝐧 𝐯𝐮̛̀𝐚 𝐜𝐡𝐢̣𝐜𝐡 𝐭𝐫𝐨𝐧𝐠 𝐡𝐨̂𝐦 𝐧𝐚𝐲 𝐫𝐨̂̀𝐢, 𝐭𝐫𝐚́𝐧𝐡 𝐛𝐢̣ 𝐤𝐢𝐞̣̂𝐭 𝐬𝐮̛́𝐜 𝐡𝐚̃𝐲 𝐪𝐮𝐚𝐲 𝐥𝐚̣𝐢 𝐬𝐚𝐮: %1 𝐩𝐡𝐮́𝐭 %2 𝐠𝐢𝐚̂𝐲 🛏",
-        "rewarded": "𝐁𝐚̣𝐧 𝐯𝐮̛̀𝐚 𝐜𝐡𝐢̣𝐜𝐡 𝐨𝐯𝐞𝐫𝐧𝐢𝐠𝐡𝐭 𝐯𝐨̛́𝐢 𝐜𝐮̣ 𝐓𝐨𝐤𝐮𝐝𝐚 𝐯𝐚̀ 𝐧𝐡𝐚̣̂𝐧 𝐯𝐞̂̀ %2$ 💸",
-        "job1": "Bạn đã bán vốn tự có!",
-    },
-    "en": {
-        "cooldown": "You have worked today, to avoid exhaustion please come back after: %1 minute(s) %2 second(s).",
-        "rewarded": "You did the job: Cave and received: %2$",
-        "job1": "Cave",
-    }
-}
-
-module.exports.run = async ({ event, api, Currencies, getText }) => {
+module.exports.run = async ({ event, api, Currencies }) => {
     const { threadID, messageID, senderID } = event;
+    const cooldown = (global.configModule && global.configModule["cave"] && global.configModule["cave"].cooldownTime) || 60000;
     
-    const cooldown = global.configModule[this.config.name].cooldownTime;
-    let data = (await Currencies.getData(senderID)).data || {};
-    if (typeof data !== "undefined" && cooldown - (Date.now() - data.workTime) > 0) {
-        var time = cooldown - (Date.now() - data.workTime),
-            minutes = Math.floor(time / 20000),
-            seconds = ((time % 20000) / 500).toFixed(0);
-        
-		return api.sendMessage(getText("cooldown", minutes, (seconds < 10 ? "0" + seconds : seconds)), event.threadID, event.messageID);
+    let userCur = await Currencies.getData(senderID);
+    let data = userCur.data || {};
+    const lastTime = data.caveTime || 0;
+
+    if (Date.now() - lastTime < cooldown) {
+        const leftSec = Math.ceil((cooldown - (Date.now() - lastTime)) / 1000);
+        return api.sendMessage(`🛏️ [HÃY BIẾT GIỮ SỨC]\n\nBạn vừa đi khách xong, xương khớp đang rã rời, máy móc nóng ran!\nVui lòng dưỡng sức, tắm rửa sạch sẽ rồi quay lại sau ${leftSec} giây nữa nhé.`, threadID, messageID);
     }
-    else {
-        const job = [
-            getText("job1"),
-        ];
-        const amount = Math.floor(Math.random() * 10000);
-        return api.sendMessage(getText("rewarded", job[Math.floor(Math.random() * job.length)], amount), threadID, async () => {
-            await Currencies.increaseMoney(senderID, parseInt(amount));
-            data.workTime = Date.now();
-            await Currencies.setData(event.senderID, { data });
-            return;
-        }, messageID);
-    }     
-      }
+
+    const scenarios = [
+        {
+            text: "💋 Bạn bắt được khách sộp là một Phú Bà đi Rolls-Royce. Phục vụ nhiệt tình từ A đến Á, được bo ngập mồm:",
+            gain: Math.floor(Math.random() * 50000) + 20000
+        },
+        {
+            text: "👴 Phục vụ cụ ông 75 tuổi hồi xuân tại khách sạn ngàn sao. Vừa đấm lưng vừa nghe cụ kể chuyện thời kháng chiến, nhận tiền công:",
+            gain: Math.floor(Math.random() * 30000) + 10000
+        },
+        {
+            text: "🔥 Gặp một em sinh viên mới lớn bỡ ngỡ. Bạn hướng dẫn tận tình các tư thế 69, 360 độ điêu luyện, em bo nóng:",
+            gain: Math.floor(Math.random() * 40000) + 15000
+        },
+        {
+            text: "😱 Đang hành sự cao trào trên giường thì vợ khách đạp cửa xông vào đánh ghen! Bạn phải nhảy cửa sổ tầng 2 tụt cả quần chạy thục mạng. May mắn nhặt vội được ví của khách:",
+            gain: Math.floor(Math.random() * 25000) + 5000
+        },
+        {
+            text: "💃 Khách là đại gia phố cổ bao nguyên đêm tại resort 5 sao, phục vụ kiệt cả tinh lực nhưng được nhận thù lao cực khủng:",
+            gain: Math.floor(Math.random() * 80000) + 40000
+        },
+        {
+            text: "🤡 Gặp đúng thánh quỵt tiền! Làm quần quật 2 tiếng xong nó bảo quên mang ví, nhét cho bạn 3 cái kẹo mút và tờ tiền lẻ:",
+            gain: Math.floor(Math.random() * 500) + 200
+        },
+        {
+            text: "🚓 Đang hành nghề tại Trần Duy Hưng thì công an phường ập vào kiểm tra hành chính! Bạn nhanh trí chui gầm giường giả làm chuột, nhặt được tiền rơi:",
+            gain: Math.floor(Math.random() * 15000) + 3000
+        },
+        {
+            text: "🕺 Gặp một anh Gymer 6 múi dồi dào sinh lực, bạn bị hành hạ suốt 4 hiệp liền mỏi hết cả hàm nhưng bù lại tiền nhiều:",
+            gain: Math.floor(Math.random() * 60000) + 25000
+        }
+    ];
+
+    const pick = scenarios[Math.floor(Math.random() * scenarios.length)];
+    data.caveTime = Date.now();
+
+    await Currencies.increaseMoney(senderID, pick.gain);
+    await Currencies.setData(senderID, { data });
+
+    const totalMoney = (userCur.money || 0) + pick.gain;
+    const msg = `🏮 ───『 𝐏𝐇𝐎̂́ 𝐇𝐎𝐀 𝐊𝐈𝐄̂̀𝐔 』─── 🏮\n\n${pick.text}\n\n💰 Tiền kiếm được: +${pick.gain.toLocaleString()}$\n💳 Số dư hiện tại: ${totalMoney.toLocaleString()}$`;
+
+    return api.sendMessage(msg, threadID, messageID);
+};

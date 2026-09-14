@@ -1,46 +1,80 @@
 module.exports.config = {
-  name: "ghep",
-  version: "1.0.0", 
-  hasPermssion: 0,
-  credits: "Hungcho edit by Hungdz30cm",
-  description: "Ghép đôi ngẫu nhiên",
-  commandCategory: "Trò Chơi", 
-  usages: "ghep", 
-  cooldowns: 200,
-  dependencies: [] 
+    name: "ghep",
+    version: "2.0.0",
+    hasPermssion: 0,
+    credits: "Remake by Kilo",
+    description: "Ghép đôi ngẫu nhiên siêu bựa và phán xét nhân phẩm",
+    commandCategory: "Trò Chơi",
+    usages: "ghep",
+    cooldowns: 15
 };
-module.exports.run = async function({ api, event, args, Users, Threads, Currencies }) {
-        const axios = global.nodemodule["axios"];
-        const fs = global.nodemodule["fs-extra"];
-        var data = await Currencies.getData(event.senderID);
-        var money = data.money
-        if(money < 500) api.sendMessage("𝐁𝐚̣𝐧 𝐜𝐚̂̀𝐧 𝟓𝟎𝟎 𝐜𝐡𝐨 𝐦𝐨̣̂𝐭 𝐥𝐚̂̀𝐧 𝐠𝐡𝐞́𝐩 𝐧𝐡𝐚́ 💌\n𝐂𝐨́ 𝐥𝐚̀𝐦 𝐦𝐨̛́𝐢 𝐜𝐨́ 𝐚̆𝐧 🤑",event.threadID,event.messageID)
-        else {
-        var tl = ['21%', '67%', '19%', '37%', '17%', '96%', '52%', '62%', '76%', '83%', '100%', '99%', "10%", "48%", "50%", "90%", "1000%", "30%"];
-        var tle = tl[Math.floor(Math.random() * tl.length)];
-        let dataa = await api.getUserInfo(event.senderID);
-        let namee = await dataa[event.senderID].name
-        let loz = await api.getThreadInfo(event.threadID);
-        var emoji = loz.participantIDs;
-        var id = emoji[Math.floor(Math.random() * emoji.length)];
-        let data = await api.getUserInfo(id);
-        let name = await data[id].name
-        var arraytag = [];
-                arraytag.push({id: event.senderID, tag: namee});
-                arraytag.push({id: id, tag: name});
-        api.changeNickname(`𝐂𝐮̣𝐜 𝐜𝐮̛𝐧𝐠 𝐜𝐮̉𝐚 ${name} ❤️`, event.threadID, event.senderID);
-        api.changeNickname(`𝐁𝐞́ 𝐲𝐞̂𝐮 𝐜𝐮̉𝐚 ${namee} 💚`, event.threadID, id);
-        var sex = await data[id].gender;
-        var gender = sex == 2 ? "𝐍𝐚𝐦 🧑" : sex == 1 ? "𝐍𝐮̛̃ 👩‍🦰" : "𝐆𝐚𝐲";
-        Currencies.setData(event.senderID, options = {money: money - 500})
-        let Avatar = (await axios.get( `https://graph.facebook.com/${id}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: "arraybuffer" } )).data;
-            fs.writeFileSync( __dirname + "/cache/avt.png", Buffer.from(Avatar, "utf-8") );
-        let Avatar2 = (await axios.get( `https://graph.facebook.com/${event.senderID}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: "arraybuffer" } )).data;
-            fs.writeFileSync( __dirname + "/cache/avt2.png", Buffer.from(Avatar2, "utf-8") );
-        var imglove = [];
-              imglove.push(fs.createReadStream(__dirname + "/cache/avt.png"));
-              imglove.push(fs.createReadStream(__dirname + "/cache/avt2.png"));
-        var msg = {body: `💖─ 𝐕𝐈̀ 𝐘𝐄̂𝐔 • 𝐌𝐀̀ 𝐓𝐎̛́𝐈 ─💖\n\n𝗚𝗵𝗲́𝗽 𝗰𝗮̣̆𝗽 𝘁𝗵𝗮̀𝗻𝗵 𝗰𝗼̂𝗻𝗴 𝗻𝗲̀ ❤️\n𝗧𝗶̉ 𝗹𝗲̣̂ 𝗵𝗼̛̣𝗽 𝗻𝗵𝗮𝘂 𝗹𝗮̀: ${tle}\n𝗩𝘂̛̀𝗮 𝘁𝗿𝘂̛̀ 𝟱𝟬𝟬 𝗩𝗡𝗗 💸\n`+namee+" "+"💓"+" "+name+"\n", mentions: arraytag, attachment: imglove}
-        return api.sendMessage(msg, event.threadID, event.messageID)
-      }
-}
+
+module.exports.run = async function ({ api, event, Users, Threads }) {
+    const { threadID, senderID, messageID } = event;
+
+    if (!event.isGroup) {
+        return api.sendMessage("💔 Lệnh này chỉ dùng được trong nhóm chat đông vui thôi bạn ơi!", threadID, messageID);
+    }
+
+    const threadInfo = (await Threads.getData(threadID)).threadInfo || await api.getThreadInfo(threadID) || {};
+    const botID = api.getCurrentUserID();
+    const participants = (threadInfo.participantIDs || []).filter(id => id != botID && id != senderID);
+
+    if (participants.length === 0) {
+        return api.sendMessage("🥺 Nhóm này có mỗi bạn và bot, không có ai để ghép đôi đâu!", threadID, messageID);
+    }
+
+    const targetID = participants[Math.floor(Math.random() * participants.length)];
+    const senderName = (await Users.getData(senderID)).name || "Người bí ẩn";
+    const targetName = (await Users.getData(targetID)).name || "Người được chọn";
+
+    const percent = Math.floor(Math.random() * 101);
+
+    const greenFlags = [
+        "Cả hai đều lười tắm như nhau",
+        "Có cùng đam mê hóng drama lúc 2 giờ sáng",
+        "Đều thích ăn trực và ngại rửa bát",
+        "Có sở thích ngắm gái/trai đẹp chung",
+        "Cùng nghèo rớt mồng tơi nhưng thích sang chảnh",
+        "Rất hợp nhau khoản nói đạo lý nhưng sống như cặc",
+        "Chuyên gia nhắn tin chậm nhưng hay dỗi"
+    ];
+
+    const redFlags = [
+        "Một người chuyên cắm sừng, một người thích nuôi sừng",
+        "Hở tí là đòi chia tay để được dỗ",
+        "Hay quên ví khi đi ăn với người yêu",
+        "Có tính lăng nhăng bẩm sinh khó chữa",
+        "Hay xem story người yêu cũ rồi khóc thầm",
+        "Dở hơi biết bơi, khó chiều hơn thời tiết Hà Nội"
+    ];
+
+    const predictions = [
+        "Dự đoán: Yêu nhau được 3 ngày thì chia tay vì tranh nhau miếng thịt gà.",
+        "Dự đoán: Cưới nhau về đẻ được 5 đứa con rồi cùng nhau đi bán vé số.",
+        "Dự đoán: Tình yêu bền chặt đến khi một trong hai đứa có người giàu hơn tán.",
+        "Dự đoán: Sáng cãi nhau, trưa chặn nhau, tối rủ nhau vào nhà nghỉ làm hòa.",
+        "Dự đoán: Mối tình bùng cháy dữ dội nhưng kết thúc trong đồn công an.",
+        "Dự đoán: Đôi bạn cùng tiến... tiến thẳng vào hố đen tình ái."
+    ];
+
+    const gf = greenFlags[Math.floor(Math.random() * greenFlags.length)];
+    const rf = redFlags[Math.floor(Math.random() * redFlags.length)];
+    const pred = predictions[Math.floor(Math.random() * predictions.length)];
+
+    const mentions = [
+        { id: senderID, tag: senderName },
+        { id: targetID, tag: targetName }
+    ];
+
+    const msg = `💘 ───『 𝐓𝐎̛ 𝐇𝐎̂̀𝐍𝐆 𝐂𝐇𝐈̉ Đ𝐈̣𝐍𝐇 』─── 💘\n\n` +
+        `👩‍❤️‍👨 Cặp đôi duyên trời định hôm nay:\n` +
+        `👉 ${senderName} 💖 ${targetName}\n\n` +
+        `📊 Tỉ lệ tâm đầu ý hợp: ${percent}%\n` +
+        `🟢 Green Flag: ${gf}\n` +
+        `🔴 Red Flag: ${rf}\n` +
+        `🔮 ${pred}\n\n` +
+        `👉 Hai bạn hãy nhanh chóng inbox hẹn hò hoặc dắt nhau ra gốc cây tâm sự ngay đi nhé!`;
+
+    return api.sendMessage({ body: msg, mentions }, threadID, messageID);
+};
