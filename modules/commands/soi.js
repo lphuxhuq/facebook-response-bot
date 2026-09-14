@@ -1,9 +1,11 @@
+const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp } = require('../../utils/canvasHelper');
+
 module.exports.config = {
     name: "soi",
-    version: "1.0.0",
+    version: "2.0.0",
     hasPermssion: 0,
-    credits: "Kilo",
-    description: "Soi độ dâm ngầm, độ xạo lìn và nhân phẩm của bạn bè",
+    credits: "Remake with Canvas by Kilo",
+    description: "Soi độ dâm ngầm, độ xạo lìn và xuất giấy chứng nhận tâm thần",
     commandCategory: "Giải Trí",
     usages: "!soi hoặc !soi @tag",
     cooldowns: 5
@@ -16,7 +18,6 @@ module.exports.run = async function ({ api, event, Users }) {
     const targetID = mentionIDs.length > 0 ? mentionIDs[0] : senderID;
     const targetName = (await Users.getData(targetID)).name || "Đối tượng bị soi";
 
-    // Hash theo UID và ngày hôm nay để trong cùng một ngày kết quả không bị nhảy loạn xạ
     const today = new Date().toDateString();
     let seed = 0;
     const seedStr = targetID + today;
@@ -30,27 +31,106 @@ module.exports.run = async function ({ api, event, Users }) {
     const simp = ((seed * 17) % 101);
 
     const judgments = [
-        "Đối tượng này mặt ngoài thì giả vờ ngoan hiền trong sáng, nhưng đêm về là lướt web đen tới sáng.",
-        "Nói 10 câu thì có đến 9 câu rưỡi là bốc phét, sống ảo là lẽ sống của cuộc đời.",
-        "Simp chúa không lối thoát, người ta chỉ rep 'ừ' một cái là tưởng tượng ra cả cảnh đám cưới.",
-        "Nhân phẩm tuyệt vời, xứng đáng làm cháu ngoan Bác Hồ... nhưng khoản nhậu nhẹt thì không ai cứu nổi.",
-        "Tiềm năng trở thành trap boy / trap girl thượng thừa, chuyên gia thả thính dạo rồi sủi tăm.",
-        "Tâm hồn thánh thiện như một tờ giấy trắng... nhưng giấy này đem đi gói xôi cháy mất rồi."
+        "Mặt ngoài thì ngây thơ ngoan hiền, đêm về lướt web đen tới sáng.",
+        "Nói 10 câu thì có đến 9 câu rưỡi là bốc phét, sống ảo là lẽ sống.",
+        "Simp chúa không lối thoát, người ta vừa rep 'ừ' đã tính đặt tên con.",
+        "Nhân phẩm tuyệt vời... nhưng khoản nhậu nhẹt thì không ai cứu nổi.",
+        "Tiềm năng trở thành trap boy / trap girl, thả thính dạo rồi sủi tăm.",
+        "Tâm hồn thánh thiện như giấy trắng... nhưng đem đi gói xôi cháy rồi."
     ];
 
     const comment = judgments[seed % judgments.length];
 
+    // Vẽ Canvas Giấy Khám Bệnh Tâm Thần
+    const width = 780;
+    const height = 480;
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Nền Dark Tech
+    const grad = ctx.createLinearGradient(0, 0, width, height);
+    grad.addColorStop(0, '#111827');
+    grad.addColorStop(1, '#1e1b4b');
+    ctx.fillStyle = grad;
+    roundRect(ctx, 0, 0, width, height, 20);
+    ctx.fill();
+
+    // Viền phát sáng
+    ctx.strokeStyle = '#4338ca';
+    ctx.lineWidth = 3;
+    roundRect(ctx, 4, 4, width - 8, height - 8, 18);
+    ctx.stroke();
+
+    // Header bệnh viện
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText('🏥 BỆNH VIỆN TÂM THẦN TRUNG ƯƠNG', 40, 50);
+
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(`MÃ HỒ SƠ: #TT-${seed} | NGÀY KHÁM: ${new Date().toLocaleDateString('vi-VN')}`, 40, 75);
+
+    // Tên bệnh nhân
+    ctx.fillStyle = '#f9fafb';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText(`BỆNH NHÂN: ${targetName.toUpperCase().slice(0, 28)}`, 40, 120);
+
+    // 4 Thanh tiến trình đo chỉ số
+    const startY = 160;
+    const barW = 420;
+    const barH = 14;
+
+    // 1. Độ dâm ngầm
+    ctx.fillStyle = '#f43f5e';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('🔞 Độ Dâm Ngầm:', 40, startY);
+    drawProgressBar(ctx, 40, startY + 12, barW, barH, dam, '#f43f5e', 'rgba(255,255,255,0.08)', `${dam}%`);
+
+    // 2. Độ xạo lìn
+    ctx.fillStyle = '#eab308';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('🐍 Độ Xạo Lìn / Bốc Phét:', 40, startY + 55);
+    drawProgressBar(ctx, 40, startY + 67, barW, barH, luon, '#eab308', 'rgba(255,255,255,0.08)', `${luon}%`);
+
+    // 3. Khả năng ế
+    ctx.fillStyle = '#06b6d4';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('💔 Khả Năng Ế Cả Đời:', 40, startY + 110);
+    drawProgressBar(ctx, 40, startY + 122, barW, barH, e, '#06b6d4', 'rgba(255,255,255,0.08)', `${e}%`);
+
+    // 4. Chỉ số Simp
+    ctx.fillStyle = '#a855f7';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('🥺 Chỉ Số Simp Lụy Tình:', 40, startY + 165);
+    drawProgressBar(ctx, 40, startY + 177, barW, barH, simp, '#a855f7', 'rgba(255,255,255,0.08)', `${simp}%`);
+
+    // Hộp kết luận của bác sĩ
+    roundRect(ctx, 40, 385, width - 80, 65, 10);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('📋 KẾT LUẬN BÁC SĨ ĐIỀU TRỊ:', 55, 410);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = 'italic 14px sans-serif';
+    ctx.fillText(`"${comment.slice(0, 75)}"`, 55, 435);
+
+    // Con dấu mộc đỏ
+    drawRedStamp(ctx, 620, 240, 'HỘI ĐỒNG GIÁM ĐỊNH', 'TỪ CHỐI CỨU', -0.18);
+
+    const { stream, cleanup } = await canvasToStream(canvas);
+
     const msg = `🔬 ───『 𝐌𝐀́𝐘 𝐒𝐎𝐈 𝐍𝐇𝐀̂𝐍 𝐏𝐇𝐀̂̉𝐌 𝟒.𝟎 』─── 🔬\n\n` +
-        `👤 Hồ sơ giám định: ${targetName}\n` +
-        `📅 Ngày quét: ${new Date().toLocaleDateString("vi-VN")}\n\n` +
-        `🔥 Chỉ số thực tế:\n` +
-        `🔞 Độ dâm ngầm: ${dam}%\n` +
-        `🐍 Độ lươn lẹo / xạo lìn: ${luon}%\n` +
-        `💔 Khả năng ế cả đời: ${e}%\n` +
-        `🥺 Chỉ số Simp lụy tình: ${simp}%\n\n` +
-        `⚖️ ĐÁNH GIÁ TỪ HỘI ĐỒNG:\n` +
-        `👉 "${comment}"`;
+        `👤 Hồ sơ: ${targetName}\n` +
+        `🔞 Độ dâm ngầm: ${dam}% | 🐍 Độ xạo: ${luon}%\n` +
+        `💔 Khả năng ế: ${e}% | 🥺 Chỉ số Simp: ${simp}%\n` +
+        `👉 Bác sĩ phán: "${comment}"`;
 
     const tagMentions = [{ id: targetID, tag: targetName }];
-    return api.sendMessage({ body: msg, mentions: tagMentions }, threadID, messageID);
+    return api.sendMessage({ body: msg, mentions: tagMentions, attachment: stream }, threadID, cleanup, messageID);
 };

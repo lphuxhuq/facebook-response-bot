@@ -1,181 +1,220 @@
+const { createCanvas, canvasToStream, roundRect, drawRedStamp } = require('../../utils/canvasHelper');
+
 module.exports.config = {
     name: "taixiu",
-    version: "1.0.0",
+    version: "2.0.0",
     hasPermssion: 0,
-    credits: "khoa",
-    description: "Chơi tài xỉu một người đặt, không dùng api",
-    commandCategory: "Game",
-    usages: '[tài/xỉu hoặc chẵn/lẻ] [số tiền]\nDùng ">taixiu luật chơi" để biết luật chơi!',
+    credits: "Remake with Native Canvas by Kilo",
+    description: "Chơi tài xỉu mở bát 3D siêu chân thực giật thưởng cực đã",
+    commandCategory: "Trò Chơi",
+    usages: "!taixiu [tài/xỉu] [số tiền/all]",
     cooldowns: 5
-  };
-  
-  module.exports.onLoad = () => {
-    const fs = require("fs-extra");
-    const request = require("request");
-    const dirMaterial = __dirname + `/cache/`;
-    if (!fs.existsSync(dirMaterial + "cache")) fs.mkdirSync(dirMaterial, { recursive: true });
-    if (!fs.existsSync(dirMaterial + "icontaixiu.png")) request("https://i.postimg.cc/ydh7gfLg/icontaixiu.png").pipe(fs.createWriteStream(dirMaterial + "icontaixiu.png"));
-  }
-  
-  module.exports.run = async function ({
-    api,
-    event,
-    args,
-    Currencies,
-    Users
-  }) {
-  
-    // Loli is the best!!
-  
-    const { loadImage, createCanvas } = require("canvas");
-    const fs = global.nodemodule["fs-extra"];
-    const axios = global.nodemodule["axios"];
-    let pathImg = __dirname + "/cache/bkdia.png";
-    let pathXn1 = __dirname + "/cache/xingaum.png";
-    let pathXn2 = __dirname + "/cache/xingauh.png";
-    let pathXn3 = __dirname + "/cache/xingaub.png";
-  
-    var { threadID, messageID, senderID } = event;
-    const dataMoney = await Currencies.getData(senderID);
-    const money = dataMoney.money
-    if (args.length !== 2) return api.sendMessage("Không đúng định dạng!", threadID, messageID);
-  
-    if (event.body.indexOf("luật chơi") !== -1) {
-      var msg = {
-        body: "-Có hai cách cược t���i-xỉu và chẵn-lẻ.\n\n-Nếu cược tài xỉu:\n +Xỉu: Tổng 3 viên xúc xắc từ 4-10 điểm\n +Tài: Tổng 3 viên xúc xắc từ 11–17 điểm\n +Nếu ba xí ngầu bằng nút nhau cả tài và xỉu đều thua\n\n-Nếu cược chẵn lẻ:\n +Chẵn: khi tổng điểm 3 viên xúc xắc là số chẵn(4, 6, 8, 10, 12, 14, 16, 18)\n +Lẻ: khi tổng điểm 3 viên xúc xắc là số lẻ(3, 5, 7, 9, 11, 13, 15, 17).",
-        attachment: fs.createReadStream(__dirname + `/cache/icontaixiu.png`)
-      }
-      return api.sendMessage(msg, threadID, messageID);
-    }
-  
-    var datcuoc = args[0].toLowerCase();
-    var tiencuoc = parseInt(args[1]);
-    if (datcuoc !== 'tài' && (datcuoc !== 'xỉu' && (datcuoc !== 'chẵn' && (datcuoc !== 'lẻ')))) return api.sendMessage(`Đặt cược tài/xỉu hoặc chẵn/lẻ thôi, ${datcuoc} là cc gì thế!`, threadID, messageID);
-    if (tiencuoc < 100) return api.sendMessage("Tiền cược quá ít tao không chấp nhận!", threadID, messageID);
-    if (isNaN(tiencuoc)) return api.sendMessage("Tiền cược ph���i là một con số!", threadID, messageID);
-    if (tiencuoc > money) return api.sendMessage(`Bạn không có đủ ${tiencuoc}$ để chơi, vui lòng theo thầy Huấn bươn chải!`, threadID, messageID);
-  
-    api.sendMessage("Đang lắc...", threadID, messageID);
-  
-    var xnmot = Math.floor(Math.random() * 6) + 1;
-    var xnhai = Math.floor(Math.random() * 6) + 1;
-    var xnba = Math.floor(Math.random() * 6) + 1;
-    var tong = xnmot + xnhai + xnba;
-  
-    if (datcuoc == 'tài' || (datcuoc == 'xỉu')) {
-      if (xnmot == xnhai && (xnmot == xnba)) var ketqua = 'thua';
-      if (tong >= 4 && (tong <= 10)) var ketqua = 'xỉu';
-      if (tong >= 11 && (tong <= 17)) var ketqua = 'tài';
+};
+
+function drawDice(ctx, x, y, size, value) {
+    ctx.save();
+    roundRect(ctx, x, y, size, size, size * 0.22);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    const dotColor = (value === 1) ? '#ef4444' : '#0f172a';
+    const dotR = (value === 1) ? size * 0.14 : size * 0.09;
+
+    const dot = (dx, dy) => {
+        ctx.beginPath();
+        ctx.arc(x + size * dx, y + size * dy, dotR, 0, Math.PI * 2);
+        ctx.fillStyle = dotColor;
+        ctx.fill();
     };
-  
-    if (datcuoc == 'chẵn' || (datcuoc == 'lẻ')) {
-      if (tong % 2 == 0) var ketqua = 'chẵn';
-      else var ketqua = 'lẻ';
-    };
-  
-    if (xnmot == 1) var link1 = `https://i.postimg.cc/c1mGP3CX/x-ng-u-1.png`
-    if (xnmot == 2) var link1 = `https://i.postimg.cc/pr2bpWGf/x-ng-u-2.png`
-    if (xnmot == 3) var link1 = `https://i.postimg.cc/d0dz6kgR/x-ng-u-3.png`
-    if (xnmot == 4) var link1 = `https://i.postimg.cc/52Dh8qKN/x-ng-u-4.png`
-    if (xnmot == 5) var link1 = `https://i.postimg.cc/76nj8vHf/x-ng-u-5.png`
-    if (xnmot == 6) var link1 = `https://i.postimg.cc/j5bBFqrp/x-ng-u-6.png`
-  
-    if (xnhai == 1) var link2 = `https://i.postimg.cc/c1mGP3CX/x-ng-u-1.png`
-    if (xnhai == 2) var link2 = `https://i.postimg.cc/pr2bpWGf/x-ng-u-2.png`
-    if (xnhai == 3) var link2 = `https://i.postimg.cc/d0dz6kgR/x-ng-u-3.png`
-    if (xnhai == 4) var link2 = `https://i.postimg.cc/52Dh8qKN/x-ng-u-4.png`
-    if (xnhai == 5) var link2 = `https://i.postimg.cc/76nj8vHf/x-ng-u-5.png`
-    if (xnhai == 6) var link2 = `https://i.postimg.cc/j5bBFqrp/x-ng-u-6.png`
-  
-    if (xnba == 1) var link3 = `https://i.postimg.cc/c1mGP3CX/x-ng-u-1.png`
-    if (xnba == 2) var link3 = `https://i.postimg.cc/pr2bpWGf/x-ng-u-2.png`
-    if (xnba == 3) var link3 = `https://i.postimg.cc/d0dz6kgR/x-ng-u-3.png`
-    if (xnba == 4) var link3 = `https://i.postimg.cc/52Dh8qKN/x-ng-u-4.png`
-    if (xnba == 5) var link3 = `https://i.postimg.cc/76nj8vHf/x-ng-u-5.png`
-    if (xnba == 6) var link3 = `https://i.postimg.cc/j5bBFqrp/x-ng-u-6.png`
-  
-    var color = [
-      "https://i.postimg.cc/mggtbQLy/green.png",
-      "https://i.postimg.cc/Gmg99H9w/lightblue.png",
-      "https://i.postimg.cc/PqLJDT8L/lightgreen.png",
-      "https://i.postimg.cc/26h5HGGr/luzaly.png",
-      "https://i.postimg.cc/90BQ2fsk/orange.png",
-      "https://i.postimg.cc/T2jwgkhc/pantone.png",
-      "https://i.postimg.cc/1zLtc2pv/pink.png",
-      "https://i.postimg.cc/2yYSgW9v/red.png",
-      "https://i.postimg.cc/DwXR4Nwv/yellow.png",
-      "https://i.postimg.cc/y8zQbyHn/violet.png"
-    ];
-    var background = color[Math.floor(Math.random() * color.length)];
-  
-    // Đống link trên bị lỗi thì liên hệ https://www.facebook.com/khoa.lolicon/ để lấy ảnh.
-  
-    let Xingaum = (
-      await axios.get(
-        `${link1}`,
-        { responseType: "arraybuffer" }
-      )
-    ).data;
-    fs.writeFileSync(pathXn1, Buffer.from(Xingaum, "utf-8"));
-  
-    let Xingauh = (
-      await axios.get(
-        `${link2}`,
-        { responseType: "arraybuffer" }
-      )
-    ).data;
-    fs.writeFileSync(pathXn2, Buffer.from(Xingauh, "utf-8"));
-  
-    let Xingaub = (
-      await axios.get(
-        `${link3}`,
-        { responseType: "arraybuffer" }
-      )
-    ).data;
-    fs.writeFileSync(pathXn3, Buffer.from(Xingaub, "utf-8"));
-  
-    let getBkdia = (
-      await axios.get(`${background}`, {
-        responseType: "arraybuffer",
-      })
-    ).data;
-    fs.writeFileSync(pathImg, Buffer.from(getBkdia, "utf-8"));
-  
-    let baseImage = await loadImage(pathImg);
-    let baseXn1 = await loadImage(pathXn1);
-    let baseXn2 = await loadImage(pathXn2);
-    let baseXn3 = await loadImage(pathXn3);
-    let canvas = createCanvas(baseImage.width, baseImage.height);
-    let ctx = canvas.getContext("2d");
-    ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
-    ctx.drawImage(baseXn1, 200, 150, 100, 100);
-    ctx.drawImage(baseXn2, 280, 150, 100, 100);
-    ctx.drawImage(baseXn3, 250, 220, 100, 100);
-    const imageBuffer = canvas.toBuffer();
-    fs.writeFileSync(pathImg, imageBuffer);
-    fs.removeSync(pathXn1);
-    fs.removeSync(pathXn2);
-    fs.removeSync(pathXn3);
-  
-    if (ketqua == 'thua') {
-      Currencies.decreaseMoney(senderID, tiencuoc);
-      return api.sendMessage({ body: `Xí ngầu ra: ${xnmot}, ${xnhai} và ${xnba}\nBa xí ngầu bằng nút nên cả tài và xỉu đều thua sml!`, attachment: fs.createReadStream(pathImg) },
-        threadID,
-        () => fs.unlinkSync(pathImg),
-        messageID);
+
+    if (value === 1) {
+        dot(0.5, 0.5);
+    } else if (value === 2) {
+        dot(0.28, 0.28);
+        dot(0.72, 0.72);
+    } else if (value === 3) {
+        dot(0.25, 0.25);
+        dot(0.5, 0.5);
+        dot(0.75, 0.75);
+    } else if (value === 4) {
+        dot(0.28, 0.28);
+        dot(0.72, 0.28);
+        dot(0.28, 0.72);
+        dot(0.72, 0.72);
+    } else if (value === 5) {
+        dot(0.25, 0.25);
+        dot(0.75, 0.25);
+        dot(0.5, 0.5);
+        dot(0.25, 0.75);
+        dot(0.75, 0.75);
+    } else if (value === 6) {
+        dot(0.28, 0.22);
+        dot(0.72, 0.22);
+        dot(0.28, 0.5);
+        dot(0.72, 0.5);
+        dot(0.28, 0.78);
+        dot(0.72, 0.78);
     }
-    else if (ketqua == datcuoc) {
-      Currencies.increaseMoney(senderID, tiencuoc);
-      return api.sendMessage({ body: `Xí ngầu ra: ${xnmot}, ${xnhai} và ${xnba}\nTổng là ${tong} nút\nKết quả là ${ketqua} \nBạn thắng! +${tiencuoc}$`, attachment: fs.createReadStream(pathImg) },
-        threadID,
-        () => fs.unlinkSync(pathImg),
-        messageID);
+    ctx.restore();
+}
+
+module.exports.run = async function ({ api, event, args, Currencies, Users }) {
+    const { threadID, senderID, messageID } = event;
+
+    const choose = (args[0] || '').toLowerCase().trim();
+    if (!['tài', 'tai', 't', 'xỉu', 'xiu', 'x'].includes(choose)) {
+        return api.sendMessage("🎲 Cách chơi: !taixiu [tài/xỉu] [số tiền cược hoặc all]\n(Ví dụ: !taixiu tài 10000 hoặc !taixiu xỉu all)", threadID, messageID);
     }
-    else {
-      Currencies.decreaseMoney(senderID, tiencuoc);
-      return api.sendMessage({ body: `Xí ngầu ra: ${xnmot}, ${xnhai} và ${xnba}\nTổng là ${tong} nút\nKết quả là ${ketqua} \nBạn thua sml -${tiencuoc}$`, attachment: fs.createReadStream(pathImg) },
-        threadID,
-        () => fs.unlinkSync(pathImg),
-        messageID);
-    };
-  }
+
+    const isTai = ['tài', 'tai', 't'].includes(choose);
+    const userBetChoice = isTai ? 'TÀI' : 'XỈU';
+
+    const userData = await Currencies.getData(senderID);
+    const userMoney = userData.money || 0;
+
+    let betAmount = 0;
+    if ((args[1] || '').toLowerCase() === 'all') {
+        betAmount = userMoney;
+    } else {
+        betAmount = parseInt(args[1]);
+    }
+
+    if (isNaN(betAmount) || betAmount < 50) {
+        return api.sendMessage("⚠️ Tiền cược tối thiểu là 50$ nha con bạc ơi!", threadID, messageID);
+    }
+
+    if (userMoney < betAmount) {
+        return api.sendMessage(`💸 Bạn không đủ tiền cược! Số dư hiện tại chỉ còn: ${userMoney.toLocaleString()}$`, threadID, messageID);
+    }
+
+    // Tung 3 xúc xắc
+    const d1 = Math.floor(Math.random() * 6) + 1;
+    const d2 = Math.floor(Math.random() * 6) + 1;
+    const d3 = Math.floor(Math.random() * 6) + 1;
+    const total = d1 + d2 + d3;
+
+    // Tam bảo (3 mặt giống nhau) -> Nhà cái ăn hết
+    const isTamBao = (d1 === d2 && d2 === d3);
+    const resultTai = total >= 11 && total <= 17;
+    const resultXiu = total >= 4 && total <= 10;
+
+    let isWin = false;
+    let resultText = '';
+
+    if (isTamBao) {
+        isWin = false;
+        resultText = `TAM BẢO (${d1}-${d2}-${d3}) - NHÀ CÁI ĂN HẾT`;
+    } else if (resultTai) {
+        resultText = 'TÀI';
+        isWin = isTai;
+    } else {
+        resultText = 'XỈU';
+        isWin = !isTai;
+    }
+
+    if (isWin) {
+        await Currencies.increaseMoney(senderID, betAmount);
+    } else {
+        await Currencies.decreaseMoney(senderID, betAmount);
+    }
+
+    const newBalance = isWin ? (userMoney + betAmount) : (userMoney - betAmount);
+    const userName = (await Users.getData(senderID)).name || "Con bạc";
+
+    // Vẽ Canvas Bàn Tài Xỉu
+    const width = 780;
+    const height = 450;
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Nền Sòng Casino Xanh Lục - Đen Đẳng Cấp
+    const grad = ctx.createLinearGradient(0, 0, width, height);
+    grad.addColorStop(0, '#064e3b');
+    grad.addColorStop(0.5, '#022c22');
+    grad.addColorStop(1, '#0f172a');
+    ctx.fillStyle = grad;
+    roundRect(ctx, 0, 0, width, height, 22);
+    ctx.fill();
+
+    // Viền vàng kim sòng bạc
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 6, 6, width - 12, height - 12, 18);
+    ctx.stroke();
+
+    // Tiêu đề
+    ctx.fillStyle = '#fde047';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🎲 SÒNG BẠC HOÀNG GIA - TÀI XỈU 3D 🎲', width / 2, 45);
+
+    ctx.fillStyle = '#a7f3d0';
+    ctx.font = 'italic 13px sans-serif';
+    ctx.fillText('CỜ BẠC NGƯỜI KHÔNG CHƠI LÀ NGƯỜI THẮNG - ĐÃ CHƠI LÀ PHẢI TẤT TAY', width / 2, 70);
+
+    // Vẽ Đĩa Đựng Xúc Xắc ở giữa
+    ctx.beginPath();
+    ctx.ellipse(width / 2, 175, 230, 80, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+    ctx.fill();
+    ctx.strokeStyle = '#eab308';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Vẽ 3 viên xúc xắc
+    const diceSize = 85;
+    drawDice(ctx, 230, 130, diceSize, d1);
+    drawDice(ctx, 345, 125, diceSize, d2);
+    drawDice(ctx, 465, 135, diceSize, d3);
+
+    // Box Kết Quả
+    ctx.textAlign = 'center';
+    roundRect(ctx, 160, 275, 460, 60, 14);
+    ctx.fillStyle = isTamBao ? '#ef4444' : (resultTai ? '#dc2626' : '#2563eb');
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillText(`${d1} + ${d2} + ${d3} = ${total} ➔ [ ${resultText} ]`, width / 2, 312);
+
+    // Box Thắng / Thua bên dưới
+    ctx.textAlign = 'left';
+    roundRect(ctx, 40, 355, width - 80, 75, 12);
+    ctx.fillStyle = isWin ? 'rgba(34, 197, 94, 0.18)' : 'rgba(239, 68, 68, 0.18)';
+    ctx.fill();
+    ctx.strokeStyle = isWin ? '#22c55e' : '#ef4444';
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText(`👤 Người chơi: ${userName.slice(0, 22)} | Bạn chọn: [ ${userBetChoice} ] - Cược: ${betAmount.toLocaleString()}$`, 55, 382);
+
+    if (isWin) {
+        ctx.fillStyle = '#4ade80';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(`🎉 THẮNG CƯỢC: +${betAmount.toLocaleString()}$ | Số dư ví: ${newBalance.toLocaleString()}$`, 55, 412);
+    } else {
+        ctx.fillStyle = '#f87171';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(`💀 THUA KÈO: -${betAmount.toLocaleString()}$ (Còn lại: ${newBalance.toLocaleString()}$) - Bán xe thôi!`, 55, 412);
+    }
+
+    if (isWin) {
+        drawRedStamp(ctx, 670, 320, 'SÒNG BẠC VIP', 'THẮNG LỚN', 0.15);
+    } else {
+        drawRedStamp(ctx, 670, 320, 'SÒNG BẠC VIP', 'CHÁY TÚI', -0.15);
+    }
+
+    const { stream, cleanup } = await canvasToStream(canvas);
+
+    const msg = `🎲 ───『 TÀI XỈU HOÀNG GIA 』─── 🎲\n\n` +
+        `🎲 Kết quả: ${d1} - ${d2} - ${d3} ➔ ${total} nút [ ${resultText} ]\n` +
+        `👤 ${userName} chọn [ ${userBetChoice} ] cược ${betAmount.toLocaleString()}$\n` +
+        (isWin ? `🎉 CHÚC MỪNG: Thắng +${betAmount.toLocaleString()}$!` : `💀 TOI ĐỜI: Trừ -${betAmount.toLocaleString()}$!`) + `\n` +
+        `💳 Số dư ví: ${newBalance.toLocaleString()}$`;
+
+    return api.sendMessage({ body: msg, attachment: stream }, threadID, cleanup, messageID);
+};

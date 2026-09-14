@@ -1,9 +1,11 @@
+const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp } = require('../../utils/canvasHelper');
+
 module.exports.config = {
     name: "solo",
-    version: "1.0.0",
+    version: "2.0.0",
     hasPermssion: 0,
-    credits: "Kilo",
-    description: "Thách đấu 1v1 so trình đấm nhau giật tiền cực bựa",
+    credits: "Remake with Canvas by Kilo",
+    description: "Thách đấu 1v1 so trình đấm nhau giật tiền xuất thẻ sàn đấu Boxing",
     commandCategory: "Trò Chơi",
     usages: "!solo @tag [tiền cược]",
     cooldowns: 10
@@ -33,7 +35,7 @@ module.exports.run = async function ({ api, event, args, Users, Currencies }) {
     const opponentName = mentions[opponentID].replace("@", "") || "Đối thủ";
 
     if (opponentID == botID) {
-        return api.sendMessage(`🤖 [BOT PHẢN DÒNG]:\n\nBạn dám to gan thách đấu cả Bot à?!\nBot tung tuyệt chiêu: 『 BAN NICK BẤT DIỆT CUỚC 』 đấm bạn văng khỏi khí quyển Trái Đất!\n\n💸 Phạt nóng bạn ${bet.toLocaleString()}$ nộp vào ngân quỹ bảo trì!`, threadID, async () => {
+        return api.sendMessage(`🤖 [BOT PHẢN DÒNG]:\n\nBạn dám to gan thách đấu cả Bot à?!\nBot tung tuyệt chiêu: 『 BAN NICK BẤT DIỆT CƯỚC 』 đấm bạn văng khỏi khí quyển Trái Đất!\n\n💸 Phạt nóng bạn ${bet.toLocaleString()}$ nộp vào ngân quỹ bảo trì!`, threadID, async () => {
             await Currencies.decreaseMoney(senderID, bet);
         }, messageID);
     }
@@ -49,13 +51,10 @@ module.exports.run = async function ({ api, event, args, Users, Currencies }) {
     }
 
     const moves = [
-        "tung một cú đá xoáy vào háng đối thủ làm đối phương thốn tận rốn",
-        "rút dép tổ ong ném thẳng vào mồm đối thủ với vận tốc âm thanh",
+        "tung cú đá xoáy vào háng làm đối phương thốn tận rốn",
+        "rút dép tổ ong ném thẳng vào mồm đối thủ cực gắt",
         "dùng thế võ cắn trộm vào mông khiến đối phương la oai oái",
-        "hét lớn tung chưởng làm đối thủ giật mình trượt chân ngã đập mặt xuống đất",
-        "gọi hội anh em xách gậy ra trợ chiến nhưng bị công an phường giải tán",
-        "thực hiện đòn quét trụ điêu luyện tiễn đối thủ đo ván",
-        "đang định đấm thì đau bụng té re phải xin đối thủ dừng trận",
+        "hét lớn tung chưởng làm đối thủ giật mình ngã dập mũi",
         "tung cú đấm móc hàm chuẩn chỉ phong cách Mike Tyson"
     ];
 
@@ -71,20 +70,118 @@ module.exports.run = async function ({ api, event, args, Users, Currencies }) {
     await Currencies.decreaseMoney(loserID, bet);
     await Currencies.increaseMoney(winnerID, bet);
 
+    // Vẽ Canvas Sàn Đấu 1v1
+    const width = 800;
+    const height = 460;
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Nền sàn đấu máu lửa
+    const grad = ctx.createLinearGradient(0, 0, width, height);
+    grad.addColorStop(0, '#1c1917');
+    grad.addColorStop(0.5, '#292524');
+    grad.addColorStop(1, '#0c0a09');
+    ctx.fillStyle = grad;
+    roundRect(ctx, 0, 0, width, height, 20);
+    ctx.fill();
+
+    // Viền đấu trường đỏ
+    ctx.strokeStyle = '#dc2626';
+    ctx.lineWidth = 4;
+    roundRect(ctx, 6, 6, width - 12, height - 12, 16);
+    ctx.stroke();
+
+    // Tiêu đề sàn đấu
+    ctx.fillStyle = '#facc15';
+    ctx.font = 'bold 22px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🥊 SÀN ĐẤU VÕ THUẬT TỔ DÂN PHỐ 1V1 🥊', width / 2, 45);
+
+    ctx.fillStyle = '#a8a29e';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(`KÈO CÁ CƯỢC: ${bet.toLocaleString()}$ | TRỌNG TÀI: BOT MSG`, width / 2, 70);
+
+    // Box Đấu sĩ bên trái (Sender)
+    ctx.textAlign = 'left';
+    roundRect(ctx, 35, 100, 320, 150, 14);
+    ctx.fillStyle = isSenderWin ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.12)';
+    ctx.fill();
+    ctx.strokeStyle = isSenderWin ? '#22c55e' : '#ef4444';
+    ctx.stroke();
+
+    ctx.fillStyle = '#60a5fa';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('GÓC XANH (FIGHTER 1):', 50, 130);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px sans-serif';
+    ctx.fillText(senderName.slice(0, 18), 50, 160);
+
+    ctx.fillStyle = '#facc15';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText(`HP: ${isSenderWin ? '85 / 100 [WIN]' : '0 / 100 [K.O]'}`, 50, 190);
+    drawProgressBar(ctx, 50, 200, 280, 14, isSenderWin ? 85 : 0, isSenderWin ? '#22c55e' : '#ef4444');
+
+    // Chữ VS ở giữa
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 38px sans-serif';
+    ctx.fillText('VS', width / 2, 185);
+    ctx.restore();
+
+    // Box Đấu sĩ bên phải (Opponent)
+    roundRect(ctx, 445, 100, 320, 150, 14);
+    ctx.fillStyle = !isSenderWin ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.12)';
+    ctx.fill();
+    ctx.strokeStyle = !isSenderWin ? '#22c55e' : '#ef4444';
+    ctx.stroke();
+
+    ctx.fillStyle = '#f87171';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('GÓC ĐỎ (FIGHTER 2):', 460, 130);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px sans-serif';
+    ctx.fillText(opponentName.slice(0, 18), 460, 160);
+
+    ctx.fillStyle = '#facc15';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText(`HP: ${!isSenderWin ? '70 / 100 [WIN]' : '0 / 100 [K.O]'}`, 460, 190);
+    drawProgressBar(ctx, 460, 200, 280, 14, !isSenderWin ? 70 : 0, !isSenderWin ? '#22c55e' : '#ef4444');
+
+    // Hộp diễn biến trận đấu
+    roundRect(ctx, 35, 275, width - 70, 155, 14);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.fill();
+
+    ctx.fillStyle = '#fde047';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('🔥 DIỄN BIẾN TRẬN SO TRÌNH:', 55, 305);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(`▪ Hiệp 1: ${senderName} ${round1.slice(0, 75)}`, 55, 335);
+    ctx.fillText(`▪ Hiệp 2: ${opponentName} ${round2.slice(0, 75)}`, 55, 365);
+
+    ctx.fillStyle = '#4ade80';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText(`🏆 CHIẾN THẮNG: ${winnerName} (+${bet.toLocaleString()}$) | K.O: ${loserName}`, 55, 405);
+
+    // Dấu K.O trên đầu người thua
+    const stampX = isSenderWin ? 620 : 180;
+    drawRedStamp(ctx, stampX, 175, 'HẠ ĐO VÁN', 'K.O', 0.2);
+
+    const { stream, cleanup } = await canvasToStream(canvas);
+
     const msg = `⚔️ ───『 ĐẤM NHAU 1V1 TỔ DÂN PHỐ 』─── ⚔️\n\n` +
         `🥊 Đấu sĩ: ${senderName} 🆚 ${opponentName}\n` +
-        `💰 Tiền cược kèo: ${bet.toLocaleString()}$\n\n` +
-        `⚡ Diễn biến trận đấu:\n` +
-        `▪️ Hiệp 1: ${senderName} ${round1}!\n` +
-        `▪️ Hiệp 2: ${opponentName} phản công, ${round2}!\n\n` +
-        `🏆 KẾT QUẢ CHUNG CUỘC:\n` +
-        `🎉 ${winnerName} đã giành chiến thắng ngoạn mục, cướp đoạt trọn vẹn ${bet.toLocaleString()}$ của ${loserName}!\n` +
-        `🚑 ${loserName} đang được chuyển viện cấp cứu bằng xe bò vì chấn thương vùng kín!`;
+        `💰 Tiền cược: ${bet.toLocaleString()}$\n` +
+        `🏆 Người thắng: ${winnerName} (ẵm trọn +${bet.toLocaleString()}$)\n` +
+        `🚑 ${loserName} đang được chuyển viện cấp cứu bằng xe bò!`;
 
     const tagMentions = [
         { id: senderID, tag: senderName },
         { id: opponentID, tag: opponentName }
     ];
 
-    return api.sendMessage({ body: msg, mentions: tagMentions }, threadID, messageID);
+    return api.sendMessage({ body: msg, mentions: tagMentions, attachment: stream }, threadID, cleanup, messageID);
 };
