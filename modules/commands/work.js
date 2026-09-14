@@ -1,4 +1,4 @@
-const { createCanvas, canvasToStream, roundRect, drawRedStamp } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawRedStamp, triggerTyping } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "work",
@@ -15,6 +15,7 @@ module.exports.config = {
 
 module.exports.run = async ({ event, api, Currencies, Users }) => {
     const { threadID, messageID, senderID } = event;
+    triggerTyping(api, threadID);
     const cooldown = (global.configModule && global.configModule["work"] && global.configModule["work"].cooldownTime) || 45000;
 
     let userCur = await Currencies.getData(senderID);

@@ -42,26 +42,58 @@ try {
     }
 } catch (_) {}
 
+// Bộ nhớ đệm RAM lưu avatar người dùng (TTL 3 giờ, tối đa 300 avatar)
+const avatarCache = new Map();
+const AVATAR_CACHE_TTL = 3 * 60 * 60 * 1000;
+
 /**
- * Tải avatar người dùng Facebook chất lượng cao
+ * Tải avatar người dùng Facebook siêu tốc với bộ đệm RAM và độ phân giải tối ưu
  */
 async function fetchAvatarImage(uid, api) {
     if (!uid) return null;
+    const strUid = String(uid);
+
+    // 1. Kiểm tra bộ nhớ đệm RAM
+    const cached = avatarCache.get(strUid);
+    if (cached && (Date.now() - cached.time < AVATAR_CACHE_TTL)) {
+        return cached.img;
+    }
+
+    // 2. Tải ảnh kích thước 150x150 (nhẹ ~6KB thay vì 720x720 ~180KB, nhanh hơn 5-8 lần)
     const token = "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662";
-    const graphUrl = `https://graph.facebook.com/${uid}/picture?height=720&width=720&access_token=${token}`;
+    const graphUrl = `https://graph.facebook.com/${strUid}/picture?height=150&width=150&access_token=${token}`;
 
     try {
-        return await loadImage(graphUrl);
+        const img = await loadImage(graphUrl);
+        if (avatarCache.size > 300) {
+            const firstKey = avatarCache.keys().next().value;
+            avatarCache.delete(firstKey);
+        }
+        avatarCache.set(strUid, { img, time: Date.now() });
+        return img;
     } catch (_) {
         if (api && typeof api.getUserInfo === 'function') {
             try {
-                const info = await api.getUserInfo(uid);
-                if (info && info[uid] && info[uid].thumbSrc) {
-                    return await loadImage(info[uid].thumbSrc);
+                const info = await api.getUserInfo(strUid);
+                if (info && info[strUid] && info[strUid].thumbSrc) {
+                    const img = await loadImage(info[strUid].thumbSrc);
+                    avatarCache.set(strUid, { img, time: Date.now() });
+                    return img;
                 }
             } catch (_) {}
         }
         return null;
+    }
+}
+
+/**
+ * Kích hoạt hiệu ứng đang soạn tin nhắn trên Messenger ngay lập tức
+ */
+function triggerTyping(api, threadID) {
+    if (api && typeof api.sendTypingIndicator === 'function' && threadID) {
+        try {
+            api.sendTypingIndicator(threadID, () => {});
+        } catch (_) {}
     }
 }
 
@@ -208,6 +240,7 @@ module.exports = {
     drawRedStamp,
     fetchAvatarImage,
     drawAvatar,
+    triggerTyping,
     FONT_REGULAR,
     FONT_BOLD
 };

@@ -1,4 +1,4 @@
-const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp, fetchAvatarImage, drawAvatar, FONT_REGULAR, FONT_BOLD } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp, fetchAvatarImage, drawAvatar, triggerTyping, FONT_REGULAR, FONT_BOLD } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "ghep",
@@ -13,6 +13,7 @@ module.exports.config = {
 
 module.exports.run = async function ({ api, event, Users, Threads }) {
     const { threadID, senderID, messageID } = event;
+    triggerTyping(api, threadID);
 
     if (!event.isGroup) {
         return api.sendMessage("💔 Lệnh này chỉ dùng được trong nhóm chat đông vui thôi bạn ơi!", threadID, messageID);

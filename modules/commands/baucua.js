@@ -1,4 +1,4 @@
-const { createCanvas, canvasToStream, roundRect, drawRedStamp } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawRedStamp, triggerTyping } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "baucua",
@@ -55,6 +55,7 @@ function drawBaucuaDice(ctx, x, y, size, item) {
 
 module.exports.run = async function ({ api, event, args, Currencies, Users }) {
     const { threadID, senderID, messageID } = event;
+    triggerTyping(api, threadID);
 
     const chosenKey = normalizeChoice(args[0]);
     if (!chosenKey) {

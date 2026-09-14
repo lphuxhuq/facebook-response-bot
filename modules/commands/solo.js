@@ -1,4 +1,4 @@
-const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp, fetchAvatarImage, drawAvatar, FONT_REGULAR, FONT_BOLD } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp, fetchAvatarImage, drawAvatar, triggerTyping, FONT_REGULAR, FONT_BOLD } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "solo",
@@ -13,6 +13,7 @@ module.exports.config = {
 
 module.exports.run = async function ({ api, event, args, Users, Currencies }) {
     const { threadID, senderID, messageID, mentions } = event;
+    triggerTyping(api, threadID);
     const botID = api.getCurrentUserID();
 
     const mentionIDs = Object.keys(mentions || {});

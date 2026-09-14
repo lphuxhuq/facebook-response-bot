@@ -1,4 +1,4 @@
-const { createCanvas, canvasToStream, roundRect, drawRedStamp } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawRedStamp, triggerTyping } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "taixiu",
@@ -63,6 +63,7 @@ function drawDice(ctx, x, y, size, value) {
 
 module.exports.run = async function ({ api, event, args, Currencies, Users }) {
     const { threadID, senderID, messageID } = event;
+    triggerTyping(api, threadID);
 
     const choose = (args[0] || '').toLowerCase().trim();
     if (!['tài', 'tai', 't', 'xỉu', 'xiu', 'x'].includes(choose)) {
