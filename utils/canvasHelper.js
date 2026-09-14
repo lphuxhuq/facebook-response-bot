@@ -7,8 +7,23 @@ if (!fs.existsSync(cacheDir)) {
     fs.mkdirpSync(cacheDir);
 }
 
+// Dọn dẹp các file ảnh canvas tạm cũ hơn 5 phút khi nạp helper
+try {
+    const oldFiles = fs.readdirSync(cacheDir);
+    const nowTs = Date.now();
+    for (const f of oldFiles) {
+        if (f.startsWith('canvas_')) {
+            const fp = path.join(cacheDir, f);
+            const stat = fs.statSync(fp);
+            if (nowTs - stat.mtimeMs > 5 * 60 * 1000) {
+                fs.unlinkSync(fp);
+            }
+        }
+    }
+} catch (_) {}
+
 /**
- * Lưu canvas ra file tạm và trả về stream cùng hàm dọn dẹp
+ * Lưu canvas ra file tạm và trả về stream cùng hàm dọn dẹp an toàn
  */
 async function canvasToStream(canvas) {
     const fileName = `canvas_${Date.now()}_${Math.floor(Math.random() * 100000)}.png`;
@@ -17,21 +32,14 @@ async function canvasToStream(canvas) {
     await fs.writeFile(filePath, buffer);
 
     const stream = fs.createReadStream(filePath);
-    let isCleaned = false;
-    const safeDelete = () => {
-        if (isCleaned) return;
-        isCleaned = true;
-        try {
-            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        } catch (_) {}
-    };
 
-    stream.on('close', safeDelete);
-    stream.on('end', safeDelete);
-    stream.on('error', safeDelete);
-
+    // Giữ file trên đĩa 30 giây để uploadAttachment đọc và gửi xong mà không bị lỗi ENOENT
     const cleanup = () => {
-        setTimeout(safeDelete, 5000);
+        setTimeout(() => {
+            try {
+                if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+            } catch (_) {}
+        }, 30000);
     };
 
     return { stream, filePath, cleanup };
