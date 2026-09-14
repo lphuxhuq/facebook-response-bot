@@ -20,6 +20,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
     var { body, senderID, threadID, messageID } = event;
     var senderID = String(senderID),
       threadID = String(threadID);
+    if (global.client) global.client._activeThreadID = threadID;
     const threadSetting = threadData.get(threadID) || {}
     const activePrefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : PREFIX;
     const prefixRegex = new RegExp(`^(<@!?${senderID}>|${escapeRegex(activePrefix)}|[!/])\\s*`);

@@ -36,7 +36,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                 const quoteLower = messageReply.body.toLowerCase();
                 for (let i = handleReply.length - 1; i >= 0; i--) {
                     const item = handleReply[i];
-                    if (item.threadID != threadID) continue;
+                    if (item.threadID && item.threadID != threadID) continue;
                     // Nếu quote tin nhắn danh sách chuyên mục tổng (Menu chính):
                     if (item.type === "category_list" && (
                         quoteLower.includes("danh sách lệnh hiện có") || 
@@ -64,12 +64,26 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
                     }
                 }
             }
+            // 3. Khớp theo tác giả (author) và nhóm của handler gần nhất khi quote bot
+            if (indexOfHandle < 0) {
+                for (let i = handleReply.length - 1; i >= 0; i--) {
+                    const item = handleReply[i];
+                    const matchThread = !item.threadID || String(item.threadID) === String(threadID);
+                    const matchAuthor = !item.author || String(item.author) === String(event.senderID);
+                    if (matchThread && matchAuthor && isRecent(item)) {
+                        indexOfHandle = i;
+                        break;
+                    }
+                }
+            }
         }
-        // 3. Fallback (do MQTT trả messageID là otid nên exact-match thường fail):
-        //    chỉ khớp handler GẦN NHẤT của đúng nhóm trong 10 phút, tránh nhảy nhầm lệnh cũ
+        // 4. Fallback khi người dùng chỉ gõ số mà không quote tin nhắn:
         if (indexOfHandle < 0 && (isPureNumber || isQuoting)) {
             for (let i = handleReply.length - 1; i >= 0; i--) {
-                if (handleReply[i].threadID == threadID && isRecent(handleReply[i])) {
+                const item = handleReply[i];
+                const matchThread = !item.threadID || String(item.threadID) === String(threadID);
+                const matchAuthor = !item.author || String(item.author) === String(event.senderID);
+                if (matchThread && matchAuthor && isRecent(item)) {
                     indexOfHandle = i;
                     break;
                 }
@@ -107,7 +121,10 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
             Obj.getText = getText2;
             console.log(`[HANDLE REPLY]: Executing ${indexOfMessage.name} for thread ${threadID}`);
             if (typeof handleNeedExec.handleReply === 'function') {
-                handleNeedExec.handleReply(Obj);
+                Promise.resolve(handleNeedExec.handleReply(Obj)).catch(err => {
+                    console.error(`[HANDLE REPLY ERROR in ${indexOfMessage.name}]:`, err);
+                    api.sendMessage(global.getText('handleReply', 'executeError', err), threadID, messageID);
+                });
             }
             return;
         } catch (error) {

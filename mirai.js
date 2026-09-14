@@ -19,6 +19,20 @@ process.on('uncaughtException', (err) => {
     console.error('[UNCAUGHT EXCEPTION]:', (err && err.message) || err);
 });
 
+class HandleReplyList extends Array {
+    push(...items) {
+        for (const it of items) {
+            if (it && typeof it === 'object') {
+                if (!it._registeredAt) it._registeredAt = Date.now();
+                if (!it.threadID && global.client && global.client._activeThreadID) {
+                    it.threadID = global.client._activeThreadID;
+                }
+            }
+        }
+        return super.push(...items);
+    }
+}
+
 global.client = new Object({
     commands: new Map(),
     events: new Map(),
@@ -26,7 +40,7 @@ global.client = new Object({
     eventRegistered: new Array(),
     handleSchedule: new Array(),
     handleReaction: new Array(),
-    handleReply: new Array(),
+    handleReply: new HandleReplyList(),
     mainPath: process.cwd(),
     configPath: new String(),
   getTime: function (option) {
