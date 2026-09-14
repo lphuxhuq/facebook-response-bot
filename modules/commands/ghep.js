@@ -1,11 +1,11 @@
-const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp, fetchAvatarImage, drawAvatar, FONT_REGULAR, FONT_BOLD } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "ghep",
     version: "2.0.0",
     hasPermssion: 0,
     credits: "Remake with Canvas by Kilo",
-    description: "Ghép đôi ngẫu nhiên xuất Giấy Chứng Nhận Kết Hôn độc lạ",
+    description: "Ghép đôi ngẫu nhiên xuất Giấy Chứng Nhận Kết Hôn kèm Avatar 2 người",
     commandCategory: "Trò Chơi",
     usages: "ghep",
     cooldowns: 15
@@ -50,6 +50,12 @@ module.exports.run = async function ({ api, event, Users, Threads }) {
     const gf = greenFlags[Math.floor(Math.random() * greenFlags.length)];
     const rf = redFlags[Math.floor(Math.random() * redFlags.length)];
 
+    // Tải avatar của cả 2 bạn
+    const [senderAvt, targetAvt] = await Promise.all([
+        fetchAvatarImage(senderID, api),
+        fetchAvatarImage(targetID, api)
+    ]);
+
     // Vẽ Canvas Giấy Kết Hôn
     const width = 800;
     const height = 480;
@@ -78,79 +84,84 @@ module.exports.run = async function ({ api, event, Users, Threads }) {
 
     // Tiêu đề
     ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 24px sans-serif';
+    ctx.font = `bold 24px ${FONT_BOLD}`;
     ctx.textAlign = 'center';
-    ctx.fillText('💍 GIẤY CHỨNG NHẬN KẾT HÔN TẠM THỜI 💍', width / 2, 55);
+    ctx.fillText('💍 GIẤY CHỨNG NHẬN KẾT HÔN TẠM THỜI 💍', width / 2, 52);
 
     ctx.fillStyle = '#fbcfe8';
-    ctx.font = 'italic 13px sans-serif';
-    ctx.fillText('ỦY BAN NHÂN DÂN TỔ DÂN PHỐ MẠNG XÃ HỘI', width / 2, 80);
+    ctx.font = `italic 13px ${FONT_REGULAR}`;
+    ctx.fillText('ỦY BAN NHÂN DÂN TỔ DÂN PHỐ MẠNG XÃ HỘI', width / 2, 75);
 
     // Box Nhà Trai & Nhà Gái
     ctx.textAlign = 'left';
+    const boxY = 100;
+    const boxH = 125;
+
     // Bên trái: Sender
-    roundRect(ctx, 40, 110, 320, 110, 14);
+    roundRect(ctx, 40, boxY, 320, boxH, 14);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
     ctx.fill();
     ctx.strokeStyle = '#ec4899';
     ctx.stroke();
 
+    drawAvatar(ctx, senderAvt, 55, boxY + 20, 85, senderName[0] || 'A', '#ec4899');
     ctx.fillStyle = '#f472b6';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText('CHỦ HỘ 1 (BÊN A):', 55, 140);
+    ctx.font = `bold 13px ${FONT_BOLD}`;
+    ctx.fillText('BÊN A (CHỦ HỘ):', 155, boxY + 45);
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 20px sans-serif';
-    ctx.fillText(senderName.slice(0, 20), 55, 175);
+    ctx.font = `bold 18px ${FONT_BOLD}`;
+    ctx.fillText(senderName.slice(0, 16), 155, boxY + 75);
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '12px sans-serif';
-    ctx.fillText(`ID: ${senderID.slice(0, 15)}...`, 55, 200);
+    ctx.font = `12px ${FONT_REGULAR}`;
+    ctx.fillText(`ID: ${senderID.slice(0, 11)}...`, 155, boxY + 100);
 
     // Trái tim ở giữa
     ctx.save();
     ctx.fillStyle = '#ef4444';
-    ctx.font = 'bold 36px sans-serif';
+    ctx.font = `bold 36px ${FONT_BOLD}`;
     ctx.textAlign = 'center';
-    ctx.fillText('❤️', width / 2, 175);
+    ctx.fillText('❤️', width / 2, boxY + 68);
     ctx.restore();
 
     // Bên phải: Target
-    roundRect(ctx, 440, 110, 320, 110, 14);
+    roundRect(ctx, 440, boxY, 320, boxH, 14);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
     ctx.fill();
     ctx.strokeStyle = '#a855f7';
     ctx.stroke();
 
+    drawAvatar(ctx, targetAvt, 455, boxY + 20, 85, targetName[0] || 'B', '#a855f7');
     ctx.fillStyle = '#c084fc';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText('CHỦ HỘ 2 (BÊN B):', 455, 140);
+    ctx.font = `bold 13px ${FONT_BOLD}`;
+    ctx.fillText('BÊN B (PHỐI NGẪU):', 555, boxY + 45);
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 20px sans-serif';
-    ctx.fillText(targetName.slice(0, 20), 455, 175);
+    ctx.font = `bold 18px ${FONT_BOLD}`;
+    ctx.fillText(targetName.slice(0, 16), 555, boxY + 75);
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '12px sans-serif';
-    ctx.fillText(`ID: ${targetID.slice(0, 15)}...`, 455, 200);
+    ctx.font = `12px ${FONT_REGULAR}`;
+    ctx.fillText(`ID: ${targetID.slice(0, 11)}...`, 555, boxY + 100);
 
     // Thanh phần trăm hợp nhau
     ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 15px sans-serif';
+    ctx.font = `bold 15px ${FONT_BOLD}`;
     ctx.fillText(`📊 TỈ LỆ TÂM ĐẦU Ý HỢP: ${percent}%`, 40, 260);
     drawProgressBar(ctx, 40, 275, 460, 16, percent, percent > 50 ? '#ec4899' : '#eab308');
 
     // Box Đánh giá
-    roundRect(ctx, 40, 320, 460, 130, 14);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+    roundRect(ctx, 40, 315, 460, 130, 14);
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
     ctx.fill();
 
     ctx.fillStyle = '#4ade80';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText(`🟢 Green Flag: ${gf.slice(0, 42)}`, 55, 355);
+    ctx.font = `bold 14px ${FONT_BOLD}`;
+    ctx.fillText(`🟢 Green Flag: ${gf.slice(0, 42)}`, 55, 348);
 
     ctx.fillStyle = '#f87171';
-    ctx.fillText(`🔴 Red Flag: ${rf.slice(0, 42)}`, 55, 390);
+    ctx.fillText(`🔴 Red Flag: ${rf.slice(0, 42)}`, 55, 382);
 
     ctx.fillStyle = '#e2e8f0';
-    ctx.font = 'italic 13px sans-serif';
-    ctx.fillText('Lời chúc: Mong 2 bạn sống trọn đời... đến khi cãi nhau!', 55, 425);
+    ctx.font = `italic 13px ${FONT_REGULAR}`;
+    ctx.fillText('Lời chúc: Mong 2 bạn hạnh phúc... đến khi cãi nhau!', 55, 418);
 
     // Con dấu đỏ ông tơ bà nguyệt
     drawRedStamp(ctx, 650, 350, 'ÔNG TƠ BÀ NGUYỆT', 'ĐÃ DUYỆT', -0.15);

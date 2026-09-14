@@ -1,11 +1,11 @@
-const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp, fetchAvatarImage, drawAvatar, FONT_REGULAR, FONT_BOLD } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "soi",
     version: "2.0.0",
     hasPermssion: 0,
     credits: "Remake with Canvas by Kilo",
-    description: "Soi độ dâm ngầm, độ xạo lìn và xuất giấy chứng nhận tâm thần",
+    description: "Soi độ dâm ngầm, độ xạo lìn và xuất giấy chứng nhận tâm thần kèm avatar thật",
     commandCategory: "Giải Trí",
     usages: "!soi hoặc !soi @tag",
     cooldowns: 5
@@ -41,9 +41,12 @@ module.exports.run = async function ({ api, event, Users }) {
 
     const comment = judgments[seed % judgments.length];
 
+    // Tải avatar thật của đối tượng
+    const avatarImg = await fetchAvatarImage(targetID, api);
+
     // Vẽ Canvas Giấy Khám Bệnh Tâm Thần
-    const width = 780;
-    const height = 480;
+    const width = 800;
+    const height = 490;
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
 
@@ -63,49 +66,57 @@ module.exports.run = async function ({ api, event, Users }) {
 
     // Header bệnh viện
     ctx.fillStyle = '#ef4444';
-    ctx.font = 'bold 22px sans-serif';
-    ctx.fillText('🏥 BỆNH VIỆN TÂM THẦN TRUNG ƯƠNG', 40, 50);
+    ctx.font = `bold 22px ${FONT_BOLD}`;
+    ctx.fillText('🏥 BỆNH VIỆN TÂM THẦN TRUNG ƯƠNG', 40, 48);
 
     ctx.fillStyle = '#9ca3af';
-    ctx.font = '13px sans-serif';
-    ctx.fillText(`MÃ HỒ SƠ: #TT-${seed} | NGÀY KHÁM: ${new Date().toLocaleDateString('vi-VN')}`, 40, 75);
+    ctx.font = `13px ${FONT_REGULAR}`;
+    ctx.fillText(`MÃ HỒ SƠ: #TT-${seed} | NGÀY KHÁM: ${new Date().toLocaleDateString('vi-VN')}`, 40, 72);
 
-    // Tên bệnh nhân
+    // Vẽ Avatar bệnh nhân
+    const avtSize = 90;
+    drawAvatar(ctx, avatarImg, 40, 95, avtSize, targetName[0] || '👤', '#ef4444');
+
+    // Tên bệnh nhân bên cạnh avatar
     ctx.fillStyle = '#f9fafb';
-    ctx.font = 'bold 24px sans-serif';
-    ctx.fillText(`BỆNH NHÂN: ${targetName.toUpperCase().slice(0, 28)}`, 40, 120);
+    ctx.font = `bold 22px ${FONT_BOLD}`;
+    ctx.fillText(`BỆNH NHÂN: ${targetName.toUpperCase().slice(0, 26)}`, 145, 135);
+
+    ctx.fillStyle = '#a5b4fc';
+    ctx.font = `italic 13px ${FONT_REGULAR}`;
+    ctx.fillText(`Chẩn đoán ban đầu: Rối loạn đa nhân cách & Ảo tưởng sức mạnh`, 145, 162);
 
     // 4 Thanh tiến trình đo chỉ số
-    const startY = 160;
-    const barW = 420;
+    const startY = 205;
+    const barW = 430;
     const barH = 14;
 
     // 1. Độ dâm ngầm
     ctx.fillStyle = '#f43f5e';
-    ctx.font = 'bold 15px sans-serif';
+    ctx.font = `bold 14px ${FONT_BOLD}`;
     ctx.fillText('🔞 Độ Dâm Ngầm:', 40, startY);
-    drawProgressBar(ctx, 40, startY + 12, barW, barH, dam, '#f43f5e', 'rgba(255,255,255,0.08)', `${dam}%`);
+    drawProgressBar(ctx, 40, startY + 10, barW, barH, dam, '#f43f5e', 'rgba(255,255,255,0.08)', `${dam}%`);
 
     // 2. Độ xạo lìn
     ctx.fillStyle = '#eab308';
-    ctx.font = 'bold 15px sans-serif';
-    ctx.fillText('🐍 Độ Xạo Lìn / Bốc Phét:', 40, startY + 55);
-    drawProgressBar(ctx, 40, startY + 67, barW, barH, luon, '#eab308', 'rgba(255,255,255,0.08)', `${luon}%`);
+    ctx.font = `bold 14px ${FONT_BOLD}`;
+    ctx.fillText('🐍 Độ Xạo Lìn / Bốc Phét:', 40, startY + 48);
+    drawProgressBar(ctx, 40, startY + 58, barW, barH, luon, '#eab308', 'rgba(255,255,255,0.08)', `${luon}%`);
 
     // 3. Khả năng ế
     ctx.fillStyle = '#06b6d4';
-    ctx.font = 'bold 15px sans-serif';
-    ctx.fillText('💔 Khả Năng Ế Cả Đời:', 40, startY + 110);
-    drawProgressBar(ctx, 40, startY + 122, barW, barH, e, '#06b6d4', 'rgba(255,255,255,0.08)', `${e}%`);
+    ctx.font = `bold 14px ${FONT_BOLD}`;
+    ctx.fillText('💔 Khả Năng Ế Cả Đời:', 40, startY + 96);
+    drawProgressBar(ctx, 40, startY + 106, barW, barH, e, '#06b6d4', 'rgba(255,255,255,0.08)', `${e}%`);
 
     // 4. Chỉ số Simp
     ctx.fillStyle = '#a855f7';
-    ctx.font = 'bold 15px sans-serif';
-    ctx.fillText('🥺 Chỉ Số Simp Lụy Tình:', 40, startY + 165);
-    drawProgressBar(ctx, 40, startY + 177, barW, barH, simp, '#a855f7', 'rgba(255,255,255,0.08)', `${simp}%`);
+    ctx.font = `bold 14px ${FONT_BOLD}`;
+    ctx.fillText('🥺 Chỉ Số Simp Lụy Tình:', 40, startY + 144);
+    drawProgressBar(ctx, 40, startY + 154, barW, barH, simp, '#a855f7', 'rgba(255,255,255,0.08)', `${simp}%`);
 
     // Hộp kết luận của bác sĩ
-    roundRect(ctx, 40, 385, width - 80, 65, 10);
+    roundRect(ctx, 40, 395, width - 80, 68, 10);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.fill();
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
@@ -113,15 +124,15 @@ module.exports.run = async function ({ api, event, Users }) {
     ctx.stroke();
 
     ctx.fillStyle = '#38bdf8';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText('📋 KẾT LUẬN BÁC SĨ ĐIỀU TRỊ:', 55, 410);
+    ctx.font = `bold 14px ${FONT_BOLD}`;
+    ctx.fillText('📋 KẾT LUẬN BÁC SĨ ĐIỀU TRỊ:', 55, 420);
 
     ctx.fillStyle = '#e2e8f0';
-    ctx.font = 'italic 14px sans-serif';
-    ctx.fillText(`"${comment.slice(0, 75)}"`, 55, 435);
+    ctx.font = `italic 14px ${FONT_REGULAR}`;
+    ctx.fillText(`"${comment.slice(0, 75)}"`, 55, 445);
 
     // Con dấu mộc đỏ
-    drawRedStamp(ctx, 620, 240, 'HỘI ĐỒNG GIÁM ĐỊNH', 'TỪ CHỐI CỨU', -0.18);
+    drawRedStamp(ctx, 630, 260, 'HỘI ĐỒNG GIÁM ĐỊNH', 'TỪ CHỐI CỨU', -0.18);
 
     const { stream, cleanup } = await canvasToStream(canvas);
 

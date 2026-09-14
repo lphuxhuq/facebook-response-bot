@@ -1,11 +1,11 @@
-const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp, fetchAvatarImage, drawAvatar, FONT_REGULAR, FONT_BOLD } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "rank",
     version: "2.0.0",
     hasPermssion: 0,
     credits: "Remake with Native Canvas by Kilo",
-    description: "Xem cấp độ, thứ hạng và xuất thẻ căn cước hội viên VIP Cyberpunk",
+    description: "Xem cấp độ, thứ hạng và xuất thẻ căn cước hội viên VIP kèm Avatar thật",
     commandCategory: "Box Chat",
     usages: "!rank hoặc !rank @tag",
     cooldowns: 5
@@ -30,7 +30,7 @@ function getRankTitle(level) {
     return "👻 TÀN HỒN NÚP LÙM";
 }
 
-async function renderRankCard({ id, name, rank, level, expCurrent, expNextLevel, money }) {
+async function renderRankCard({ id, name, rank, level, expCurrent, expNextLevel, money, avatarImg }) {
     const width = 880;
     const height = 300;
     const canvas = createCanvas(width, height);
@@ -54,64 +54,54 @@ async function renderRankCard({ id, name, rank, level, expCurrent, expNextLevel,
     roundRect(ctx, 4, 4, width - 8, height - 8, 18);
     ctx.stroke();
 
-    // Avatar Badge giả lập bằng Icon Vàng
-    roundRect(ctx, 40, 50, 150, 150, 16);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-    ctx.fill();
-    ctx.strokeStyle = '#06b6d4';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    ctx.font = 'bold 50px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#06b6d4';
-    ctx.fillText('⚡', 115, 125);
+    // Vẽ Avatar hình tròn
+    const avtSize = 140;
+    drawAvatar(ctx, avatarImg, 45, 55, avtSize, name[0] || '👤', '#06b6d4');
 
     // Tên người dùng & Danh hiệu
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 26px sans-serif';
+    ctx.font = `bold 26px ${FONT_BOLD}`;
     ctx.fillText(name.slice(0, 22), 220, 85);
 
     const title = getRankTitle(level);
     ctx.fillStyle = '#38bdf8';
-    ctx.font = 'bold 14px sans-serif';
+    ctx.font = `bold 14px ${FONT_BOLD}`;
     ctx.fillText(title, 220, 115);
 
     // Thứ hạng Top & Level bên phải
     ctx.textAlign = 'right';
     ctx.fillStyle = '#facc15';
-    ctx.font = 'bold 36px sans-serif';
+    ctx.font = `bold 36px ${FONT_BOLD}`;
     ctx.fillText(`#${rank}`, width - 40, 85);
 
     ctx.fillStyle = '#94a3b8';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText('RANK', width - 40, 50);
+    ctx.font = `bold 14px ${FONT_BOLD}`;
+    ctx.fillText('HẠNG', width - 40, 50);
 
     ctx.fillStyle = '#a855f7';
-    ctx.font = 'bold 22px sans-serif';
-    ctx.fillText(`Lv. ${level}`, width - 40, 120);
+    ctx.font = `bold 22px ${FONT_BOLD}`;
+    ctx.fillText(`Cấp ${level}`, width - 40, 120);
 
     // Thanh EXP
     ctx.textAlign = 'left';
     const percent = Math.min(100, Math.max(0, Math.floor((expCurrent / expNextLevel) * 100))) || 0;
 
     ctx.fillStyle = '#cbd5e1';
-    ctx.font = '13px sans-serif';
-    ctx.fillText(`EXP: ${expCurrent.toLocaleString()} / ${expNextLevel.toLocaleString()} (${percent}%)`, 220, 160);
+    ctx.font = `13px ${FONT_REGULAR}`;
+    ctx.fillText(`Kinh nghiệm: ${expCurrent.toLocaleString()} / ${expNextLevel.toLocaleString()} EXP (${percent}%)`, 220, 160);
 
     ctx.fillStyle = '#f59e0b';
-    ctx.font = 'bold 14px sans-serif';
+    ctx.font = `bold 14px ${FONT_BOLD}`;
     ctx.fillText(`💰 Tài sản: ${money.toLocaleString()}$`, 220, 185);
 
     drawProgressBar(ctx, 220, 205, width - 260, 18, percent, '#06b6d4', 'rgba(255, 255, 255, 0.1)');
 
     // Footer info
     ctx.fillStyle = '#64748b';
-    ctx.font = 'italic 12px sans-serif';
+    ctx.font = `italic 12px ${FONT_REGULAR}`;
     ctx.fillText(`UID: ${id} | HỆ THỐNG PHONG THẦN BOT MSG V2`, 220, 260);
 
     // Dấu mộc thẩm định VIP
@@ -143,6 +133,9 @@ module.exports.run = async function ({ event, api, args, Currencies, Users }) {
     const expCurrent = Math.max(0, expTotal - baseExp);
     const expNextLevel = Math.max(1, nextExp - baseExp);
 
+    // Tải avatar thật của người dùng
+    const avatarImg = await fetchAvatarImage(targetID, api);
+
     const { stream, cleanup } = await renderRankCard({
         id: targetID,
         name: targetName,
@@ -150,7 +143,8 @@ module.exports.run = async function ({ event, api, args, Currencies, Users }) {
         level,
         expCurrent,
         expNextLevel,
-        money
+        money,
+        avatarImg
     });
 
     const msg = `👑 ───『 BẢNG PHONG THẦN 』─── 👑\n\n` +

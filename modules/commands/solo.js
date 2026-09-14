@@ -1,11 +1,11 @@
-const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp } = require('../../utils/canvasHelper');
+const { createCanvas, canvasToStream, roundRect, drawProgressBar, drawRedStamp, fetchAvatarImage, drawAvatar, FONT_REGULAR, FONT_BOLD } = require('../../utils/canvasHelper');
 
 module.exports.config = {
     name: "solo",
     version: "2.0.0",
     hasPermssion: 0,
     credits: "Remake with Canvas by Kilo",
-    description: "Thách đấu 1v1 so trình đấm nhau giật tiền xuất thẻ sàn đấu Boxing",
+    description: "Thách đấu 1v1 so trình đấm nhau giật tiền xuất thẻ sàn đấu Boxing kèm Avatar",
     commandCategory: "Trò Chơi",
     usages: "!solo @tag [tiền cược]",
     cooldowns: 10
@@ -70,6 +70,12 @@ module.exports.run = async function ({ api, event, args, Users, Currencies }) {
     await Currencies.decreaseMoney(loserID, bet);
     await Currencies.increaseMoney(winnerID, bet);
 
+    // Tải avatar 2 võ sĩ
+    const [senderAvt, opponentAvt] = await Promise.all([
+        fetchAvatarImage(senderID, api),
+        fetchAvatarImage(opponentID, api)
+    ]);
+
     // Vẽ Canvas Sàn Đấu 1v1
     const width = 800;
     const height = 460;
@@ -93,60 +99,64 @@ module.exports.run = async function ({ api, event, args, Users, Currencies }) {
 
     // Tiêu đề sàn đấu
     ctx.fillStyle = '#facc15';
-    ctx.font = 'bold 22px sans-serif';
+    ctx.font = `bold 22px ${FONT_BOLD}`;
     ctx.textAlign = 'center';
     ctx.fillText('🥊 SÀN ĐẤU VÕ THUẬT TỔ DÂN PHỐ 1V1 🥊', width / 2, 45);
 
     ctx.fillStyle = '#a8a29e';
-    ctx.font = '13px sans-serif';
+    ctx.font = `13px ${FONT_REGULAR}`;
     ctx.fillText(`KÈO CÁ CƯỢC: ${bet.toLocaleString()}$ | TRỌNG TÀI: BOT MSG`, width / 2, 70);
 
     // Box Đấu sĩ bên trái (Sender)
     ctx.textAlign = 'left';
-    roundRect(ctx, 35, 100, 320, 150, 14);
+    roundRect(ctx, 35, 95, 330, 155, 14);
     ctx.fillStyle = isSenderWin ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.12)';
     ctx.fill();
     ctx.strokeStyle = isSenderWin ? '#22c55e' : '#ef4444';
     ctx.stroke();
 
+    drawAvatar(ctx, senderAvt, 50, 115, 80, senderName[0] || '1', isSenderWin ? '#22c55e' : '#ef4444');
+
     ctx.fillStyle = '#60a5fa';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.fillText('GÓC XANH (FIGHTER 1):', 50, 130);
+    ctx.font = `bold 12px ${FONT_BOLD}`;
+    ctx.fillText('GÓC XANH (FIGHTER 1):', 145, 130);
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 20px sans-serif';
-    ctx.fillText(senderName.slice(0, 18), 50, 160);
+    ctx.font = `bold 18px ${FONT_BOLD}`;
+    ctx.fillText(senderName.slice(0, 14), 145, 158);
 
     ctx.fillStyle = '#facc15';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.fillText(`HP: ${isSenderWin ? '85 / 100 [WIN]' : '0 / 100 [K.O]'}`, 50, 190);
-    drawProgressBar(ctx, 50, 200, 280, 14, isSenderWin ? 85 : 0, isSenderWin ? '#22c55e' : '#ef4444');
+    ctx.font = `bold 12px ${FONT_BOLD}`;
+    ctx.fillText(`HP: ${isSenderWin ? '85 / 100 [WIN]' : '0 / 100 [K.O]'}`, 145, 185);
+    drawProgressBar(ctx, 50, 215, 300, 14, isSenderWin ? 85 : 0, isSenderWin ? '#22c55e' : '#ef4444');
 
     // Chữ VS ở giữa
     ctx.save();
     ctx.textAlign = 'center';
     ctx.fillStyle = '#ef4444';
-    ctx.font = 'bold 38px sans-serif';
-    ctx.fillText('VS', width / 2, 185);
+    ctx.font = `bold 38px ${FONT_BOLD}`;
+    ctx.fillText('VS', width / 2, 180);
     ctx.restore();
 
     // Box Đấu sĩ bên phải (Opponent)
-    roundRect(ctx, 445, 100, 320, 150, 14);
+    roundRect(ctx, 435, 95, 330, 155, 14);
     ctx.fillStyle = !isSenderWin ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.12)';
     ctx.fill();
     ctx.strokeStyle = !isSenderWin ? '#22c55e' : '#ef4444';
     ctx.stroke();
 
+    drawAvatar(ctx, opponentAvt, 450, 115, 80, opponentName[0] || '2', !isSenderWin ? '#22c55e' : '#ef4444');
+
     ctx.fillStyle = '#f87171';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.fillText('GÓC ĐỎ (FIGHTER 2):', 460, 130);
+    ctx.font = `bold 12px ${FONT_BOLD}`;
+    ctx.fillText('GÓC ĐỎ (FIGHTER 2):', 545, 130);
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 20px sans-serif';
-    ctx.fillText(opponentName.slice(0, 18), 460, 160);
+    ctx.font = `bold 18px ${FONT_BOLD}`;
+    ctx.fillText(opponentName.slice(0, 14), 545, 158);
 
     ctx.fillStyle = '#facc15';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.fillText(`HP: ${!isSenderWin ? '70 / 100 [WIN]' : '0 / 100 [K.O]'}`, 460, 190);
-    drawProgressBar(ctx, 460, 200, 280, 14, !isSenderWin ? 70 : 0, !isSenderWin ? '#22c55e' : '#ef4444');
+    ctx.font = `bold 12px ${FONT_BOLD}`;
+    ctx.fillText(`HP: ${!isSenderWin ? '70 / 100 [WIN]' : '0 / 100 [K.O]'}`, 545, 185);
+    drawProgressBar(ctx, 450, 215, 300, 14, !isSenderWin ? 70 : 0, !isSenderWin ? '#22c55e' : '#ef4444');
 
     // Hộp diễn biến trận đấu
     roundRect(ctx, 35, 275, width - 70, 155, 14);
@@ -154,20 +164,20 @@ module.exports.run = async function ({ api, event, args, Users, Currencies }) {
     ctx.fill();
 
     ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 15px sans-serif';
+    ctx.font = `bold 15px ${FONT_BOLD}`;
     ctx.fillText('🔥 DIỄN BIẾN TRẬN SO TRÌNH:', 55, 305);
 
     ctx.fillStyle = '#e2e8f0';
-    ctx.font = '13px sans-serif';
-    ctx.fillText(`▪ Hiệp 1: ${senderName} ${round1.slice(0, 75)}`, 55, 335);
-    ctx.fillText(`▪ Hiệp 2: ${opponentName} ${round2.slice(0, 75)}`, 55, 365);
+    ctx.font = `13px ${FONT_REGULAR}`;
+    ctx.fillText(`▪ Hiệp 1: ${senderName} ${round1.slice(0, 70)}`, 55, 335);
+    ctx.fillText(`▪ Hiệp 2: ${opponentName} ${round2.slice(0, 70)}`, 55, 365);
 
     ctx.fillStyle = '#4ade80';
-    ctx.font = 'bold 15px sans-serif';
+    ctx.font = `bold 15px ${FONT_BOLD}`;
     ctx.fillText(`🏆 CHIẾN THẮNG: ${winnerName} (+${bet.toLocaleString()}$) | K.O: ${loserName}`, 55, 405);
 
     // Dấu K.O trên đầu người thua
-    const stampX = isSenderWin ? 620 : 180;
+    const stampX = isSenderWin ? 640 : 160;
     drawRedStamp(ctx, stampX, 175, 'HẠ ĐO VÁN', 'K.O', 0.2);
 
     const { stream, cleanup } = await canvasToStream(canvas);
