@@ -104,6 +104,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
       }, messageID);
     var threadInfoo = threadInf || {};
     const find = (Array.isArray(threadInfoo.adminIDs)) ? threadInfoo.adminIDs.find(el => el && el.id == senderID) : false;
+    var permssion = 0;
     if (NDH.includes(senderID.toString())) permssion = 2;
     if (ADMINBOT.includes(senderID.toString())) permssion = 3;
     else if (!ADMINBOT.includes(senderID) && !NDH.includes(senderID) && find) permssion = 1;
