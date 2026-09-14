@@ -306,6 +306,11 @@ function onBot({ models: botModel }) {
                                 console.log(`[MQTT đang kết nối lại, thử lại sau ${delay}ms... lần ${attempt}/3]`);
                                 return setTimeout(() => sendViaMqtt(attempt + 1), delay);
                             }
+                            if (normMsg.attachment && normMsg.body) {
+                                console.log(`[ATTACHMENT FAILED]: Lỗi tải tệp (${errStr}), tự động fallback gửi văn bản...`);
+                                const textOnly = { body: normMsg.body };
+                                return loginApiData.sendMessageMqtt(textOnly, threadID, cb, replyMsg);
+                            }
                             console.error(`[MQTT SEND FAILED]: threadID=${threadID}, err=${errStr}`);
                             return cb(err);
                         }
