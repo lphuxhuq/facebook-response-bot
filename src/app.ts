@@ -12,6 +12,7 @@ import { MessageHistoryRepository } from './repositories/message-history.reposit
 import { ScheduledJobRepository } from './repositories/scheduled-job.repository.js';
 import { ProcessedEventRepository } from './repositories/processed-event.repository.js';
 import { InboundPipeline } from './pipeline/inbound-pipeline.js';
+import { OutboundDispatcher } from './pipeline/outbound-dispatcher.js';
 import { BotCore } from './core/bot.js';
 import { SessionManager } from './core/session-manager.js';
 import { FacebookAdapter } from './platform/facebook/adapter.js';
@@ -108,7 +109,22 @@ export async function createServer(
     appSecret: env.FACEBOOK_APP_SECRET,
     verifyToken: env.FACEBOOK_VERIFY_TOKEN,
   });
-  fbAdapter.registerRoutes(app, (ctx) => inboundPipeline.accept(ctx));
+
+  // 4c. Outbound dispatcher: reliability layer (priority queue + rate limit
+  // + circuit breaker + kill-switch gate) in front of the transport sender.
+  // Admin alerts use the RAW sender so they still deliver while paused.
+  const outbound = new OutboundDispatcher(fbAdapter.sender, healthMonitor, {
+    adminNotifier: async (text) => {
+      try {
+        await fbAdapter.sender.send(env.BOT_OWNER_ID, text);
+      } catch {
+        logger.error('Failed to deliver admin alert (owner may not have messaged the bot yet)');
+      }
+    },
+  });
+  services.outbound = outbound;
+
+  fbAdapter.registerRoutes(app, (ctx) => inboundPipeline.accept(ctx), outbound);
 
   // 5. Initialize & Load Plugins
   const pluginLoader = new PluginLoader(botCore, services, repositories);
@@ -218,12 +234,12 @@ export async function createServer(
   });
 
   app.get('/queue', async (_, reply) => {
-    const hs = healthMonitor.getStatus();
-    const stats = fbAdapter.sender.getQueueStats();
+    const stats = outbound.getStats();
     return reply.status(200).send({
       queueSize: stats.queued,
       activeJobs: stats.active,
-      status: hs.status === 'PAUSED' || hs.status === 'AUTH_ERROR' ? 'PAUSED' : 'HEALTHY',
+      circuit: stats.circuit,
+      status: stats.paused ? 'PAUSED' : stats.circuit === 'OPEN' ? 'DEGRADED' : 'HEALTHY',
     });
   });
 

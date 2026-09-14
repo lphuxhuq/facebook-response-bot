@@ -9,39 +9,62 @@ export interface FacebookSenderConfig {
   pageId?: string;
   apiVersion?: string;
   baseUrl?: string;
+  /**
+   * When false, send() executes immediately without the internal queue.
+   * Used when the OutboundDispatcher (priority queue + rate limit + circuit
+   * breaker) sits in front of this sender, to avoid double-queueing.
+   */
+  useInternalQueue?: boolean;
+  /**
+   * When false, transport-level exponential-backoff retry is disabled —
+   * the OutboundDispatcher becomes the single retry owner (bounded by
+   * RequestQueue maxAttempts), preventing compounding retry storms.
+   */
+  transportRetry?: boolean;
 }
 
-export class FacebookSender {
+/** Minimal callable send contract shared by FacebookSender and OutboundDispatcher. */
+export interface MessageSender {
+  send(recipientId: string, message: OutgoingMessage | string): Promise<SendResult>;
+}
+
+export class FacebookSender implements MessageSender {
   private pageAccessToken: string;
   private pageId?: string;
   private apiVersion: string;
   private baseUrl: string;
   private queue: OutgoingMessageQueue;
+  private useInternalQueue: boolean;
+  private transportRetry: boolean;
 
   constructor(config: FacebookSenderConfig) {
     this.pageAccessToken = config.pageAccessToken;
     this.pageId = config.pageId;
     this.apiVersion = config.apiVersion || 'v21.0';
     this.baseUrl = config.baseUrl || 'https://graph.facebook.com';
+    this.useInternalQueue = config.useInternalQueue ?? true;
+    this.transportRetry = config.transportRetry ?? true;
     this.queue = new OutgoingMessageQueue(5, 50);
   }
 
   async send(recipientId: string, message: OutgoingMessage | string): Promise<SendResult> {
     const outgoing = typeof message === 'string' ? { text: message } : message;
 
-    return this.queue.enqueue(() =>
-      withExponentialBackoff(async () => {
-        // If message contains binary data attachments, use multipart send
-        const hasDataAttachment =
-          outgoing.attachments?.some((att) => isDataAttachment(att)) ?? false;
+    const dispatch = async (): Promise<SendResult> => {
+      // If message contains binary data attachments, use multipart send
+      const hasDataAttachment =
+        outgoing.attachments?.some((att) => isDataAttachment(att)) ?? false;
 
-        if (hasDataAttachment) {
-          return this.sendMultipart(recipientId, outgoing);
-        }
+      return hasDataAttachment
+        ? this.sendMultipart(recipientId, outgoing)
+        : this.sendJson(recipientId, outgoing);
+    };
 
-        return this.sendJson(recipientId, outgoing);
-      })
-    );
+    if (!this.useInternalQueue) {
+      return this.transportRetry ? withExponentialBackoff(dispatch) : dispatch();
+    }
+
+    return this.queue.enqueue(() => withExponentialBackoff(dispatch));
   }
 
   /**

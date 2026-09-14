@@ -68,6 +68,7 @@ export interface MessageContext {
   readonly attachments: Attachment[];
   readonly isGroup: boolean;
   readonly timestamp: number;
+  readonly replyToMessageId?: string;
 
   reply(message: OutgoingMessage | string): Promise<SendResult>;
   send(message: OutgoingMessage | string): Promise<SendResult>;

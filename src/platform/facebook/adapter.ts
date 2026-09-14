@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { FacebookSender } from './sender.js';
+import { FacebookSender, MessageSender } from './sender.js';
 import { FacebookParser } from './parser.js';
 import { registerFacebookWebhook, InboundHandler } from './webhook.js';
 
@@ -22,17 +22,29 @@ export class FacebookAdapter {
       pageAccessToken: config.pageAccessToken,
       apiVersion: config.apiVersion,
       baseUrl: config.baseUrl,
+      // The OutboundDispatcher provides priority queueing, per-thread
+      // serialization, rate pacing, circuit breaking and bounded retries.
+      // Disable the sender's own queue + backoff to avoid double-processing.
+      useInternalQueue: false,
+      transportRetry: false,
     });
     this.parser = new FacebookParser(this.sender);
     this.appSecret = config.appSecret;
     this.verifyToken = config.verifyToken;
   }
 
-  registerRoutes(fastify: FastifyInstance, onMessage: InboundHandler): void {
+  /**
+   * @param onMessage inbound handler (normally InboundPipeline.accept)
+   * @param outbound  send path for created contexts; when a reliability
+   *                  dispatcher is provided, it replaces the raw sender
+   *                  inside every MessageContext closure.
+   */
+  registerRoutes(fastify: FastifyInstance, onMessage: InboundHandler, outbound?: MessageSender): void {
+    const parser = outbound ? new FacebookParser(outbound) : this.parser;
     registerFacebookWebhook(fastify, {
       verifyToken: this.verifyToken,
       appSecret: this.appSecret,
-      parser: this.parser,
+      parser,
       onMessage,
     });
   }

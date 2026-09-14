@@ -1,44 +1,10 @@
 import { Attachment, MessageContext, OutgoingMessage, SendResult } from '../../core/context.js';
 import { WebhookMessagingEvent, WebhookPayload } from './types.js';
-import { FacebookSender } from './sender.js';
+import { MessageSender } from './sender.js';
 import { logger } from '../../utils/logger.js';
 
-export class MessageDeduplicator {
-  private seenIds = new Map<string, number>();
-  private readonly ttlMs: number;
-
-  constructor(ttlMs: number = 300000) {
-    // Default 5 minutes
-    this.ttlMs = ttlMs;
-  }
-
-  isDuplicate(id: string): boolean {
-    const now = Date.now();
-    const seenAt = this.seenIds.get(id);
-
-    if (seenAt && now - seenAt < this.ttlMs) {
-      return true;
-    }
-
-    this.seenIds.set(id, now);
-
-    // Periodic sweep
-    if (this.seenIds.size > 2000) {
-      for (const [key, time] of this.seenIds.entries()) {
-        if (now - time >= this.ttlMs) {
-          this.seenIds.delete(key);
-        }
-      }
-    }
-
-    return false;
-  }
-}
-
 export class FacebookParser {
-  private deduplicator = new MessageDeduplicator();
-
-  constructor(private sender: FacebookSender) {}
+  constructor(private sender: MessageSender) {}
 
   parseWebhookPayload(payload: WebhookPayload): MessageContext[] {
     if (payload.object !== 'page' || !payload.entry) {
@@ -53,11 +19,6 @@ export class FacebookParser {
       for (const event of entry.messaging) {
         const ctx = this.parseMessagingEvent(event);
         if (ctx) {
-          // Idempotency check: ignore duplicate deliveries from Facebook
-          if (this.deduplicator.isDuplicate(ctx.messageId)) {
-            logger.info({ messageId: ctx.messageId }, 'Duplicate Facebook webhook message ignored');
-            continue;
-          }
           contexts.push(ctx);
         }
       }
@@ -94,6 +55,8 @@ export class FacebookParser {
       }
     }
 
+    const replyToMessageId = event.message?.reply_to?.mid;
+
     const sender = this.sender;
 
     const ctx: MessageContext = {
@@ -105,6 +68,7 @@ export class FacebookParser {
       attachments,
       isGroup: false,
       timestamp: event.timestamp || Date.now(),
+      ...(replyToMessageId ? { replyToMessageId } : {}),
 
       async reply(msg: OutgoingMessage | string): Promise<SendResult> {
         return sender.send(conversationId, msg);
