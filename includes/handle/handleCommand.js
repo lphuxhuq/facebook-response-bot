@@ -102,16 +102,7 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
         await new Promise(resolve => setTimeout(resolve, 5 * 1000))
         return api.unsendMessage(info.messageID);
       }, messageID);
-    var threadInfo2;
-    if (event.isGroup == !![]) {
-      threadInfo2 = await getThreadInfoCached(threadID);
-      if (!threadInfo2 || Object.keys(threadInfo2).length == 0) {
-        threadInfo2 = null;
-        logger(global.getText("handleCommand", "cantGetInfoThread", "error"));
-      }
-    }
-    var permssion = 0;
-    var threadInfoo = threadInfo2 || threadInfo.get(threadID) || threadInf || {};
+    var threadInfoo = threadInf || {};
     const find = (Array.isArray(threadInfoo.adminIDs)) ? threadInfoo.adminIDs.find(el => el && el.id == senderID) : false;
     if (NDH.includes(senderID.toString())) permssion = 2;
     if (ADMINBOT.includes(senderID.toString())) permssion = 3;
@@ -154,13 +145,17 @@ module.exports = function ({ api, models, Users, Threads, Currencies }) {
         usages[senderID].usages -= 1;
         usagesStore.touch();
       }
-      command.run(Obj);
       timestamps.set(senderID, dateNow);
+      Promise.resolve(command.run(Obj)).catch(e => {
+        console.error(`[COMMAND ERROR in ${commandName}]:`, (e && e.message) || e);
+        api.sendMessage(global.getText("handleCommand", "commandError", commandName, (e && e.message) || e), threadID, messageID);
+      });
       if (DeveloperMode == !![])
         logger(global.getText("handleCommand", "executeCommand", time, commandName, senderID, threadID, args.join(" "), (Date.now()) - dateNow), "[ DEV MODE ]");
       return;
     } catch (e) {
-      return api.sendMessage(global.getText("handleCommand", "commandError", commandName, e), threadID);
+      console.error(`[COMMAND ERROR in ${commandName}]:`, (e && e.message) || e);
+      return api.sendMessage(global.getText("handleCommand", "commandError", commandName, (e && e.message) || e), threadID, messageID);
     }
   };
 };

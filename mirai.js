@@ -174,6 +174,9 @@ global.getText = function (...args) {
 try {
     var appStateFile = resolve(join(global.client.mainPath, global.config.APPSTATEPATH || "appstate.json"));
     var appState = require(appStateFile);
+    if (appState && !Array.isArray(appState) && Array.isArray(appState.cookies)) {
+        appState = appState.cookies;
+    }
     logger.loader(global.getText("mirai", "foundPathAppstate"))
 }
 catch {
@@ -265,8 +268,7 @@ function onBot({ models: botModel }) {
         if (loginError) return logger(JSON.stringify(loginError), `ERROR`);
         loginApiData.setOptions(global.config.FCAOption);
 
-        // Ghi đè api.sendMessage để tự động định tuyến qua MQTT sendMessageMqtt (tránh lỗi 404 HTTP endpoint /messaging/send/ của Facebook)
-        const rawSendMessage = loginApiData.sendMessage;
+        // Ghi đè api.sendMessage để tự động định tuyến toàn bộ qua MQTT sendMessageMqtt (tránh lỗi 404 HTTP endpoint /messaging/send/ của Facebook)
         loginApiData.sendMessage = function (msg, threadID, callback, replyToMessage) {
             let cb = callback;
             let replyMsg = replyToMessage;
@@ -288,27 +290,38 @@ function onBot({ models: botModel }) {
                 normMsg.replyToMessage = replyMsg;
             }
 
-            console.log('[API SEND MESSAGE]: threadID=' + threadID + ', preview=' + ((normMsg && normMsg.body) ? normMsg.body.slice(0, 60).replace(/\n/g, ' ') : '(media)'));
+            const preview = (normMsg && normMsg.body) ? normMsg.body.slice(0, 60).replace(/\n/g, ' ') : (normMsg && normMsg.attachment ? '(attachment)' : '(sticker/media)');
+            console.log(`[API SEND MESSAGE]: threadID=${threadID}, preview=${preview}`);
 
             const otid = (Date.now().toString() + Math.floor(Math.random() * 1000000).toString()).slice(0, 16);
 
-            if (!normMsg.attachment && !normMsg.sticker && typeof loginApiData.sendMessageMqtt === 'function') {
-                return loginApiData.sendMessageMqtt(normMsg, threadID, (err, res) => {
-                    if (err) {
-                        console.log('[MQTT sendMessageMqtt error, thử fallback HTTP]:', (err && err.error) || err);
-                        return rawSendMessage.call(loginApiData, normMsg, threadID, cb, replyMsg);
-                    }
-                    console.log('[MQTT SEND SUCCESS]: threadID=' + threadID);
-                    const info = Object.assign({ messageID: otid, threadID: String(threadID) }, res || {});
-                    try {
-                        cb(null, info);
-                    } catch (cbErr) {
-                        console.error('[sendMessage callback error]:', cbErr);
-                    }
-                });
+            function sendViaMqtt(attempt = 1) {
+                if (typeof loginApiData.sendMessageMqtt === 'function') {
+                    return loginApiData.sendMessageMqtt(normMsg, threadID, (err, res) => {
+                        if (err) {
+                            const errStr = String(err.error || err.message || err);
+                            if (attempt <= 3 && (/not connected/i.test(errStr) || /timeout/i.test(errStr))) {
+                                const delay = attempt * 600;
+                                console.log(`[MQTT đang kết nối lại, thử lại sau ${delay}ms... lần ${attempt}/3]`);
+                                return setTimeout(() => sendViaMqtt(attempt + 1), delay);
+                            }
+                            console.error(`[MQTT SEND FAILED]: threadID=${threadID}, err=${errStr}`);
+                            return cb(err);
+                        }
+                        console.log(`[MQTT SEND SUCCESS]: threadID=${threadID}`);
+                        const info = Object.assign({ messageID: otid, threadID: String(threadID) }, res || {});
+                        try {
+                            cb(null, info);
+                        } catch (cbErr) {
+                            console.error('[sendMessage callback error]:', cbErr);
+                        }
+                    }, replyMsg);
+                }
+                console.error('[ERROR]: sendMessageMqtt không khả dụng');
+                return cb(new Error('sendMessageMqtt is not available'));
             }
 
-            return rawSendMessage.call(loginApiData, normMsg, threadID, cb, replyMsg);
+            return sendViaMqtt();
         };
 
         writeFileSync(appStateFile, JSON.stringify(loginApiData.getAppState(), null, '\x09'))

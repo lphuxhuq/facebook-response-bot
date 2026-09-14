@@ -16,7 +16,7 @@ module.exports.run = async function({ api, event,Threads, Users }) {
         var tle = Math.floor(Math.random() * 101);
         var namee = (await Users.getData(event.senderID)).name
         const botID = api.getCurrentUserID();
-        const listUserID = event.participantIDs.filter(ID => ID != botID && ID != event.senderID);
+        const listUserID = (participantIDs || []).filter(ID => ID != botID && ID != event.senderID);
         var id = listUserID[Math.floor(Math.random() * listUserID.length)];
         var name = (await Users.getData(id)).name
         var arraytag = [];

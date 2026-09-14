@@ -12,8 +12,13 @@ module.exports.config = {
 module.exports.run = async function({ api, event, args }) {
 	try {
 		const botID = api.getCurrentUserID();
-		const listUserID = event.participantIDs.filter(ID => ID != botID && ID != event.senderID);
-		var body = (args.length != 0) ? args.join(" ") : "️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️ ️️️️️️️️️️️️️️️️️️️️️️️️️️️", mentions = [], index = 0;
+		let participantIDs = event.participantIDs;
+		if (!participantIDs) {
+			const threadInfo = global.data.threadInfo.get(event.threadID) || await api.getThreadInfo(event.threadID);
+			participantIDs = (threadInfo && threadInfo.participantIDs) || [];
+		}
+		const listUserID = participantIDs.filter(ID => ID != botID && ID != event.senderID);
+		var body = (args.length != 0) ? args.join(" ") : "Dậy tương tác nào mọi người ơi!", mentions = [], index = 0;
 		
 		for(const idUser of listUserID) {
 			body = "‎" + body;

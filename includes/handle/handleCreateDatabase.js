@@ -9,13 +9,13 @@ module.exports = function ({ Users, Threads, Currencies }) {
         var threadID = String(threadID);
         try {
             if (!allThreadID.includes(threadID) && event.isGroup == !![]) {
+                allThreadID.push(threadID);
                 const threadIn4 = await Threads.getInfo(threadID);
                 const setting = {};
                 setting.threadName = threadIn4.threadName
                 setting.adminIDs = threadIn4.adminIDs
                 setting.nicknames = threadIn4.nicknames;
                 const dataThread = setting;
-                allThreadID.push(threadID)
                 threadInfo.set(threadID, dataThread);
                 const setting2 = {};
                 setting2.threadInfo = dataThread

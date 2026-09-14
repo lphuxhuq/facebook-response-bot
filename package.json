@@ -1,7 +1,6 @@
 {
     "name": "MiraiBypassD-Jukie",
     "version": "2.0.0",
-    "type": "module",
     "description": "Facebook Response Bot V2 - Clean, Modern TypeScript Architecture",
     "main": "dist/app.js",
     "scripts": {
