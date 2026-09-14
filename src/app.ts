@@ -10,6 +10,8 @@ import { AuditLogRepository } from './repositories/audit-log.repository.js';
 import { ThreadSettingsRepository } from './repositories/thread-settings.repository.js';
 import { MessageHistoryRepository } from './repositories/message-history.repository.js';
 import { ScheduledJobRepository } from './repositories/scheduled-job.repository.js';
+import { ProcessedEventRepository } from './repositories/processed-event.repository.js';
+import { InboundPipeline } from './pipeline/inbound-pipeline.js';
 import { BotCore } from './core/bot.js';
 import { SessionManager } from './core/session-manager.js';
 import { FacebookAdapter } from './platform/facebook/adapter.js';
@@ -62,11 +64,12 @@ export async function createServer(
       : new MockAIProvider();
   const weatherService = new WeatherService(env.OPENWEATHER_API_KEY);
 
-  const services = {
+  const services: Record<string, any> = {
     aiProvider,
     weatherService,
     healthMonitor,
-    commandRouter: null as any,
+    commandRouter: null,
+    inboundPipeline: null,
   };
 
   const repositories = {
@@ -90,13 +93,22 @@ export async function createServer(
   });
   services.commandRouter = botCore.commandRouter;
 
-  // 4. Initialize Facebook Transport Adapter
+  // 4. Inbound pipeline (dedup -> persist -> bot core) + transport adapters
+  const processedEvents = new ProcessedEventRepository(db);
+  const inboundPipeline = new InboundPipeline({
+    botCore,
+    processedEvents,
+    messageHistory: messageHistoryRepo,
+  });
+  services.inboundPipeline = inboundPipeline;
+
+  // 4b. Facebook Transport Adapter (Page)
   const fbAdapter = new FacebookAdapter({
     pageAccessToken: env.FACEBOOK_PAGE_ACCESS_TOKEN,
     appSecret: env.FACEBOOK_APP_SECRET,
     verifyToken: env.FACEBOOK_VERIFY_TOKEN,
   });
-  fbAdapter.registerRoutes(app, botCore);
+  fbAdapter.registerRoutes(app, (ctx) => inboundPipeline.accept(ctx));
 
   // 5. Initialize & Load Plugins
   const pluginLoader = new PluginLoader(botCore, services, repositories);

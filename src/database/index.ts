@@ -48,6 +48,18 @@ export function closeDatabase(): void {
 }
 
 export function initializeSchema(db: DatabaseSync): void {
+  // Schema versioning for future migrations (audit gap: no versioned migrations)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS schema_meta (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+  `);
+  const metaRow = db.prepare('SELECT value FROM schema_meta WHERE key = ?').get('version') as any;
+  if (!metaRow) {
+    db.prepare('INSERT INTO schema_meta (key, value) VALUES (?, ?)').run('version', '2');
+  }
+
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -112,6 +124,31 @@ export function initializeSchema(db: DatabaseSync): void {
     );
 
     CREATE INDEX IF NOT EXISTS idx_messages_thread ON messages(thread_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_messages_sender ON messages(sender_id);
+
+    CREATE TABLE IF NOT EXISTS processed_events (
+      platform TEXT NOT NULL,
+      message_id TEXT NOT NULL,
+      received_at INTEGER NOT NULL,
+      PRIMARY KEY (platform, message_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS threads (
+      id TEXT PRIMARY KEY,
+      platform TEXT NOT NULL DEFAULT 'facebook',
+      type TEXT NOT NULL DEFAULT 'UNKNOWN',
+      name TEXT,
+      metadata TEXT,
+      updated_at INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS thread_participants (
+      thread_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'MEMBER',
+      joined_at INTEGER,
+      PRIMARY KEY (thread_id, user_id)
+    );
 
     CREATE TABLE IF NOT EXISTS scheduled_jobs (
       id TEXT PRIMARY KEY,

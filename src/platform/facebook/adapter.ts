@@ -1,8 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { FacebookSender } from './sender.js';
 import { FacebookParser } from './parser.js';
-import { registerFacebookWebhook } from './webhook.js';
-import { BotCore } from '../../core/bot.js';
+import { registerFacebookWebhook, InboundHandler } from './webhook.js';
 
 export interface FacebookAdapterConfig {
   pageAccessToken: string;
@@ -29,12 +28,12 @@ export class FacebookAdapter {
     this.verifyToken = config.verifyToken;
   }
 
-  registerRoutes(fastify: FastifyInstance, botCore: BotCore): void {
+  registerRoutes(fastify: FastifyInstance, onMessage: InboundHandler): void {
     registerFacebookWebhook(fastify, {
       verifyToken: this.verifyToken,
       appSecret: this.appSecret,
       parser: this.parser,
-      botCore,
+      onMessage,
     });
   }
 }

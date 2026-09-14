@@ -1,19 +1,25 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { FacebookParser } from './parser.js';
 import { assertValidSignature } from './signature.js';
-import { BotCore } from '../../core/bot.js';
+import { MessageContext } from '../../core/context.js';
 import { WebhookPayload } from './types.js';
 import { logger } from '../../utils/logger.js';
+
+/**
+ * Transport hands normalized contexts to the inbound pipeline.
+ * Returning false means the message was ignored (e.g. duplicate).
+ */
+export type InboundHandler = (ctx: MessageContext) => Promise<boolean>;
 
 export interface WebhookRouteOptions {
   verifyToken: string;
   appSecret: string;
   parser: FacebookParser;
-  botCore: BotCore;
+  onMessage: InboundHandler;
 }
 
 export function registerFacebookWebhook(fastify: FastifyInstance, options: WebhookRouteOptions): void {
-  const { verifyToken, appSecret, parser, botCore } = options;
+  const { verifyToken, appSecret, parser, onMessage } = options;
 
   // 1. Webhook Verification Endpoint (Meta Handshake)
   fastify.get('/webhook', async (req: FastifyRequest, reply: FastifyReply) => {
@@ -58,7 +64,7 @@ export function registerFacebookWebhook(fastify: FastifyInstance, options: Webho
       const contexts = parser.parseWebhookPayload(payload);
 
       for (const ctx of contexts) {
-        botCore.processMessage(ctx).catch((err) => {
+        onMessage(ctx).catch((err) => {
           logger.error({ err, messageId: ctx.messageId }, 'Unhandled error processing webhook message');
         });
       }
