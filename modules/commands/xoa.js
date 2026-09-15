@@ -22,6 +22,6 @@ module.exports.run = async({ api, event, Threads, global }) => {
    var mention = Object.keys(event.mentions);
      let tag = event.mentions[mention].replace("@", "");
     if (!mention) return api.sendMessage("Vui lòng tag 1 người", threadID, messageID);
-   var callback = () => api.sendMessage({body:`${tag}` + ` 𝐍𝐠𝐨𝐚𝐧 𝐥𝐚̆́𝐦 𝐛𝐞́ 𝐢𝐮𝐮 ><`,mentions: [{tag: tag,id: Object.keys(event.mentions)[0]}],attachment: fs.createReadStream(__dirname + "/cache/xoa.gif")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/xoa.gif"));  
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/xoa.gif")).on("close",() => callback());
+   var callback = () => api.sendMessage({body:`${tag}` + ` 𝐍𝐠𝐨𝐚𝐧 𝐥𝐚̆́𝐦 𝐛𝐞́ 𝐢𝐮𝐮 ><`,mentions: [{tag: tag,id: Object.keys(event.mentions)[0]}],attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_xoa.gif")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_xoa.gif"));  
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_xoa.gif")).on("close",() => callback());
    }

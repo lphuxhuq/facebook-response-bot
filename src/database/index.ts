@@ -160,5 +160,11 @@ export function initializeSchema(db: DatabaseSync): void {
       status TEXT NOT NULL DEFAULT 'PENDING',
       attempt INTEGER NOT NULL DEFAULT 0
     );
+
+    CREATE TABLE IF NOT EXISTS plugin_kv (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
   `);
 }

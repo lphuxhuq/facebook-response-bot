@@ -8,7 +8,14 @@ const { join, resolve } = require("path");
 const { execSync } = require('child_process');
 const logger = require("./utils/log.js");
 const login = require("fca-horizon-remake"), moment = require("moment-timezone");
+require("dotenv").config();
 const axios = require("axios");
+axios.defaults.timeout = 8000;
+
+const { getTempCachePath, safeUnlink } = require("./utils/cacheHelper.js");
+global.getTempCachePath = getTempCachePath;
+global.safeUnlink = safeUnlink;
+
 const listPackage = JSON.parse(readFileSync('./package.json')).dependencies;
 const listbuiltinModules = require("module").builtinModules;
 
@@ -150,6 +157,22 @@ catch {
 
 try {
     for (const key in configValue) global.config[key] = configValue[key];
+    if (process.env.WOLFRAM_API_KEY) {
+        if (!global.config.math) global.config.math = {};
+        global.config.math.WOLFRAM = process.env.WOLFRAM_API_KEY;
+    }
+    if (process.env.OPENWEATHER_API_KEY) {
+        if (!global.config.weather) global.config.weather = {};
+        global.config.weather.OPEN_WEATHER = process.env.OPENWEATHER_API_KEY;
+    }
+    if (process.env.TENOR_API_KEY) {
+        if (!global.config.gif) global.config.gif = {};
+        global.config.gif.TENOR = process.env.TENOR_API_KEY;
+    }
+    if (process.env.RAPIDAPI_KEY) {
+        if (!global.config.instagram) global.config.instagram = {};
+        global.config.instagram.APIKEY = process.env.RAPIDAPI_KEY;
+    }
     logger.loader("Config Loaded!");
 }
 catch {

@@ -86,7 +86,7 @@ var min = Math.floor(Math.random() * 2);
       if(money < 100) api.sendMessage("Bạn cần 100 đô để xem ảnh ?",event.threadID,event.messageID)
           else {
    Currencies.setData(event.senderID, options = {money: money - 10})
-   var callback = () => api.sendMessage({body:`𝗛𝗶̀𝗻𝗵 𝘁𝗼𝗸𝘆𝗼 𝗿𝗲𝘃𝗲𝗻𝗴𝗲𝗿𝘀\n𝗦𝗼̂́ 𝗔̉𝗻𝗵: ${link.length}\n-100 đô !`,attachment: fs.createReadStream(__dirname + "/cache/28.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/28.jpg"), event.messageID); 
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)] + (max - min))).pipe(fs.createWriteStream(__dirname+"/cache/28.jpg")).on("close",() => callback());
+   var callback = () => api.sendMessage({body:`𝗛𝗶̀𝗻𝗵 𝘁𝗼𝗸𝘆𝗼 𝗿𝗲𝘃𝗲𝗻𝗴𝗲𝗿𝘀\n𝗦𝗼̂́ 𝗔̉𝗻𝗵: ${link.length}\n-100 đô !`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_28.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_28.jpg"), event.messageID); 
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)] + (max - min))).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_28.jpg")).on("close",() => callback());
      }
    };

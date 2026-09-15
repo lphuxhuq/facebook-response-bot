@@ -342,7 +342,7 @@ const fs = global.nodemodule["fs-extra"];
       if(money < 100) api.sendMessage("𝗕𝗮̣𝗻 𝗰𝗮̂̀𝗻 𝟭𝟬𝟬 đ𝗼̂ đ𝗲̂̉ 𝘅𝗲𝗺 𝗮̉𝗻𝗵 ?",event.threadID,event.messageID)
           else {
    Currencies.setData(event.senderID, options = {money: money - 100})
-   var callback = () => api.sendMessage({body:`𝗕𝗼̂̉ 𝗺𝗮̆́𝘁 𝗻𝗵𝗲́ 🍑\n» 𝗦𝗼̂́ 𝗱𝘂̛: -𝟭𝟬𝟬 đô «`,attachment: fs.createReadStream(__dirname + "/cache/5.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/5.jpg")); 
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/5.jpg")).on("close",() => callback());
+   var callback = () => api.sendMessage({body:`𝗕𝗼̂̉ 𝗺𝗮̆́𝘁 𝗻𝗵𝗲́ 🍑\n» 𝗦𝗼̂́ 𝗱𝘂̛: -𝟭𝟬𝟬 đô «`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")); 
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")).on("close",() => callback());
    }
 };

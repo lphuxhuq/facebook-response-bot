@@ -162,6 +162,6 @@ const fs = global.nodemodule["fs-extra"];
     "https://i.imgur.com/JRFIXvz.jpg",
     "https://i.imgur.com/txidmDD.jpg",
      ];
-     var callback = () => api.sendMessage({body:`Ghệ đích bự đây <3\nSố ảnh: ${link.length}`,attachment: fs.createReadStream(__dirname + "/cache/gai.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/gai.jpg"));  
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/gai.jpg")).on("close",() => callback());
+     var callback = () => api.sendMessage({body:`Ghệ đích bự đây <3\nSố ảnh: ${link.length}`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_gai.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_gai.jpg"));  
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_gai.jpg")).on("close",() => callback());
    };

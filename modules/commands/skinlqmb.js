@@ -559,6 +559,6 @@ const fs = global.nodemodule["fs-extra"];
 "https://i.ibb.co/bBrNxYF/fec52948b2886e191fa03b45047ae6e45bc98f982cf5d.jpg",
 "https://i.ibb.co/2W3WrgM/ff16760bce9bf99298ece3da2384c9445e413ddbae437.jpg",
      ];
-     var callback = () => api.sendMessage({body:`𝗦𝗸𝗶𝗻 𝗟𝗶𝗲̂𝗻 𝗤𝘂𝗮̂𝗻 𝗠𝗼𝗯𝗶𝗹𝗲 𝗡𝗲̀\n𝗦𝗼̂́ 𝗮̉𝗻𝗵: ${link.length}`,attachment: fs.createReadStream(__dirname + "/cache/AOV.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/AOV.jpg"));  
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/AOV.jpg")).on("close",() => callback());
+     var callback = () => api.sendMessage({body:`𝗦𝗸𝗶𝗻 𝗟𝗶𝗲̂𝗻 𝗤𝘂𝗮̂𝗻 𝗠𝗼𝗯𝗶𝗹𝗲 𝗡𝗲̀\n𝗦𝗼̂́ 𝗮̉𝗻𝗵: ${link.length}`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_AOV.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_AOV.jpg"));  
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_AOV.jpg")).on("close",() => callback());
    };

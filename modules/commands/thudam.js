@@ -25,6 +25,6 @@ module.exports.run = async({api,event,args,client,Users,Threads,__GLOBAL,Currenc
           "https://i.imgur.com/QOCIyBZ.gif",
              ];
    var callback = () => api.sendMessage({body:`𝗧𝗵𝗮̂̉𝗺 𝗗𝘂 𝗠𝗼̣̂𝘁 𝗠𝗶̀𝗻𝗵 𝗔̀ 𝗘𝗺 😳`
-  ,attachment: fs.createReadStream(__dirname + "/cache/thudam.gif")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/thudam.gif"));
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/thudam.gif")).on("close",() => callback());
+  ,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_thudam.gif")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_thudam.gif"));
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_thudam.gif")).on("close",() => callback());
    };

@@ -29,7 +29,7 @@ try {
   const request = global.nodemodule["node-superfetch"];
   const jimp = global.nodemodule["jimp"];
   const fs = global.nodemodule["fs-extra"];
-  var path_toilet = __dirname+'/cache/tet.jpg'; 
+  var path_toilet = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_tet.jpg"; 
   var id = Object.keys(event.mentions)[0] || event.senderID;
   const canvas = Canvas.createCanvas(500, 670);
 	const ctx = canvas.getContext('2d');

@@ -12,7 +12,7 @@ module.exports.config = {
 		"request": ""
 	},
 	envConfig: {
-		"OPEN_WEATHER": "081c82065cfee62cb7988ddf90914bdd"
+		"OPEN_WEATHER": ""
 	}
 };
 
@@ -35,7 +35,8 @@ module.exports.run = async ({ api, event, args, getText }) => {
 	
 	var city = args.join(" ");
 	if (city.length == 0) return throwError(this.config.name, threadID, messageID);
-	return request(encodeURI("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + global.configModule[this.config.name].OPEN_WEATHER + "&units=metric&lang=" + global.config.language), (err, response, body) => {
+	const weatherApiKey = process.env.OPENWEATHER_API_KEY || (global.configModule[this.config.name] && global.configModule[this.config.name].OPEN_WEATHER) || "";
+	return request(encodeURI("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + weatherApiKey + "&units=metric&lang=" + (global.config ? global.config.language : "vi")), (err, response, body) => {
 		if (err) throw err;
 		var weatherData = JSON.parse(body);
 		if (weatherData.cod !== 200) return api.sendMessage(getText("locationNotExist", city), threadID, messageID);

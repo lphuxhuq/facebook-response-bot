@@ -2,18 +2,21 @@ import { MessageContext } from '../core/context.js';
 import { BotCore } from '../core/bot.js';
 import { ProcessedEventRepository } from '../repositories/processed-event.repository.js';
 import { MessageHistoryRepository } from '../repositories/message-history.repository.js';
+import { TokenBucketRateLimiter } from '../core/cooldown-manager.js';
 import { logger } from '../utils/logger.js';
 
 export interface InboundPipelineDeps {
   botCore: BotCore;
   processedEvents: ProcessedEventRepository;
   messageHistory: MessageHistoryRepository;
+  rateLimiter?: TokenBucketRateLimiter;
 }
 
 /**
  * Phase 9+10 inbound pipeline (transport-agnostic):
  *
  *   NormalizedMessage(ctx)
+ *     -> Inbound Rate Limiter (Token bucket per sender)
  *     -> DB deduplication (processed_events, survives restarts)
  *     -> message persistence (messages table)
  *     -> BotCore (CommandRouter / EventRouter)
@@ -25,11 +28,13 @@ export class InboundPipeline {
   private readonly botCore: BotCore;
   private readonly processedEvents: ProcessedEventRepository;
   private readonly messageHistory: MessageHistoryRepository;
+  private readonly rateLimiter?: TokenBucketRateLimiter;
 
   constructor(deps: InboundPipelineDeps) {
     this.botCore = deps.botCore;
     this.processedEvents = deps.processedEvents;
     this.messageHistory = deps.messageHistory;
+    this.rateLimiter = deps.rateLimiter;
   }
 
   /**
@@ -38,6 +43,15 @@ export class InboundPipeline {
    * and are NOT executed a second time.
    */
   async accept(ctx: MessageContext): Promise<boolean> {
+    // 0. Rate limiting (protection against flood/spam)
+    if (this.rateLimiter) {
+      const allowed = this.rateLimiter.consume(`${ctx.platform}:${ctx.userId}`);
+      if (!allowed) {
+        logger.warn({ userId: ctx.userId, platform: ctx.platform }, 'Inbound message dropped: sender rate limit exceeded');
+        return false;
+      }
+    }
+
     // 1. DB-backed deduplication (platform + message_id unique)
     let isNew: boolean;
     try {

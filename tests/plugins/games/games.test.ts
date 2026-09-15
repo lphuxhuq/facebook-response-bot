@@ -2,6 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { dhbcCommand } from '../../../src/plugins/games/commands/dhbc.js';
 import { taixiuCommand } from '../../../src/plugins/games/commands/taixiu.js';
 import { bocthamCommand } from '../../../src/plugins/games/commands/boctham.js';
+import { baucuaCommand } from '../../../src/plugins/games/commands/baucua.js';
+import { altpCommand, ALTP_QUESTION_BANK } from '../../../src/plugins/games/commands/altp.js';
+import { baicaoCommand, evaluateHand, compareHands } from '../../../src/plugins/games/commands/baicao.js';
 import { SessionManager, InMemorySessionStore } from '../../../src/core/session-manager.js';
 import { CommandContext, Role } from '../../../src/core/context.js';
 
@@ -148,3 +151,176 @@ describe('Games Plugin - Boctham', () => {
     expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('THỬ THÁCH'));
   });
 });
+
+
+describe('Games Plugin - Baucua', () => {
+  it('should show guide if arguments are missing', async () => {
+    const ctx = makeCtx({ commandName: 'baucua', args: [] });
+    await baucuaCommand.execute(ctx);
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('BẦU CUA TÔM CÁ - LUẬT CHƠI'));
+  });
+
+  it('should reject invalid choice', async () => {
+    const ctx = makeCtx({ commandName: 'baucua', args: ['cho', '500'] });
+    await baucuaCommand.execute(ctx);
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('không hợp lệ'));
+  });
+
+  it('should reject when balance is insufficient', async () => {
+    const ctx = makeCtx({
+      commandName: 'baucua',
+      args: ['cua', '1000'],
+      repositories: { user: { getBalance: vi.fn().mockResolvedValue(200) } },
+    });
+    await baucuaCommand.execute(ctx);
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('không có đủ'));
+  });
+
+  it('should roll dice and update balance when bet is valid', async () => {
+    const updateBalance = vi.fn().mockResolvedValue(9500);
+    const ctx = makeCtx({
+      commandName: 'baucua',
+      args: ['bầu', '500'],
+      repositories: { user: { getBalance: vi.fn().mockResolvedValue(10000), updateBalance } },
+    });
+    await baucuaCommand.execute(ctx);
+    expect(updateBalance).toHaveBeenCalledWith('u1', expect.any(Number));
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('KẾT QUẢ BẦU CUA'));
+  });
+});
+
+describe('Games Plugin - ALTP (Ai La Trieu Phu)', () => {
+  let sm: SessionManager;
+
+  beforeEach(() => {
+    sm = new SessionManager(new InMemorySessionStore());
+  });
+
+  it('should show game rules with info argument', async () => {
+    const ctx = makeCtx({ commandName: 'altp', args: ['info'], sessionManager: sm });
+    await altpCommand.execute(ctx);
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('AI LÀ TRIỆU PHÚ - LUẬT CHƠI'));
+  });
+
+  it('should start a new session on !altp start', async () => {
+    const ctx = makeCtx({ commandName: 'altp', args: ['start'], sessionManager: sm });
+    await altpCommand.execute(ctx);
+
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('AI LÀ TRIỆU PHÚ'));
+    const session = await sm.get('c1', 'u1');
+    expect(session).not.toBeNull();
+    expect(session?.command).toBe('altp');
+    expect(session?.state.level).toBe(1);
+  });
+
+  it('should advance level when correct answer chosen', async () => {
+    const q = ALTP_QUESTION_BANK[0];
+    await sm.create('c1', 'u1', 'altp', { level: 1, question: q, startedAt: Date.now() }, 'playing', 300);
+
+    const ctx = makeCtx({ commandName: 'altp', args: [q.correct], sessionManager: sm });
+    await altpCommand.execute(ctx);
+
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('đúng! Vượt qua câu 1'));
+    const session = await sm.get('c1', 'u1');
+    expect(session?.state.level).toBe(2);
+  });
+
+  it('should award safe reward on wrong answer and delete session', async () => {
+    const q = ALTP_QUESTION_BANK[0];
+    const wrong = q.correct === 'A' ? 'B' : 'A';
+    await sm.create('c1', 'u1', 'altp', { level: 2, question: q, startedAt: Date.now() }, 'playing', 300);
+
+    const ctx = makeCtx({ commandName: 'altp', args: [wrong], sessionManager: sm });
+    await altpCommand.execute(ctx);
+
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('sai'));
+    const session = await sm.get('c1', 'u1');
+    expect(session).toBeNull();
+  });
+
+  it('should allow player to stop and take current prize', async () => {
+    const q = ALTP_QUESTION_BANK[0];
+    await sm.create('c1', 'u1', 'altp', { level: 3, question: q, startedAt: Date.now() }, 'playing', 300);
+    const updateBalance = vi.fn().mockResolvedValue(5400);
+
+    const ctx = makeCtx({
+      commandName: 'altp',
+      args: ['stop'],
+      sessionManager: sm,
+      repositories: { user: { updateBalance } },
+    });
+    await altpCommand.execute(ctx);
+
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('dừng cuộc chơi'));
+    expect(updateBalance).toHaveBeenCalledWith('u1', 400); // level 3 - 1 = level 2 prize = 400
+    const session = await sm.get('c1', 'u1');
+    expect(session).toBeNull();
+  });
+});
+
+describe('Games Plugin - Baicao', () => {
+  it('should reject invalid or too low bet', async () => {
+    const ctx = makeCtx({
+      commandName: 'baicao',
+      args: ['10'],
+      repositories: { user: { getBalance: vi.fn().mockResolvedValue(1000) } },
+    });
+    await baicaoCommand.execute(ctx);
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('tối thiểu là 50$'));
+  });
+
+  it('should reject when balance insufficient', async () => {
+    const ctx = makeCtx({
+      commandName: 'baicao',
+      args: ['500'],
+      repositories: { user: { getBalance: vi.fn().mockResolvedValue(100) } },
+    });
+    await baicaoCommand.execute(ctx);
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('không đủ tiền cược'));
+  });
+
+  it('should execute bet and update balance on valid game', async () => {
+    const updateBalance = vi.fn().mockResolvedValue(1100);
+    const ctx = makeCtx({
+      commandName: 'baicao',
+      args: ['100'],
+      repositories: { user: { getBalance: vi.fn().mockResolvedValue(1000), updateBalance } },
+    });
+    await baicaoCommand.execute(ctx);
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('BÀI CÀO 3 LÁ'));
+  });
+
+  it('evaluates Sap, Ba Tay, and Diem correctly', () => {
+    const sapCards = [
+      { value: '7', suit: 'hearts', suitIcon: '♥', weight: 7, rank: 7 },
+      { value: '7', suit: 'spades', suitIcon: '♠', weight: 7, rank: 7 },
+      { value: '7', suit: 'diamonds', suitIcon: '♦', weight: 7, rank: 7 },
+    ];
+    const sapRes = evaluateHand(sapCards);
+    expect(sapRes.type).toBe('SAP');
+    expect(sapRes.label).toBe('Sáp 7');
+
+    const batayCards = [
+      { value: 'J', suit: 'hearts', suitIcon: '♥', weight: 10, rank: 11 },
+      { value: 'Q', suit: 'spades', suitIcon: '♠', weight: 10, rank: 12 },
+      { value: 'K', suit: 'diamonds', suitIcon: '♦', weight: 10, rank: 13 },
+    ];
+    const batayRes = evaluateHand(batayCards);
+    expect(batayRes.type).toBe('BATAY');
+
+    const diemCards = [
+      { value: '3', suit: 'hearts', suitIcon: '♥', weight: 3, rank: 3 },
+      { value: '4', suit: 'spades', suitIcon: '♠', weight: 4, rank: 4 },
+      { value: '2', suit: 'diamonds', suitIcon: '♦', weight: 2, rank: 2 },
+    ];
+    const diemRes = evaluateHand(diemCards);
+    expect(diemRes.type).toBe('DIEM');
+    expect(diemRes.score).toBe(9);
+
+    // Sap beats Ba Tay, Ba Tay beats Diem
+    expect(compareHands(sapRes, batayRes)).toBe(1);
+    expect(compareHands(batayRes, diemRes)).toBe(1);
+    expect(compareHands(diemRes, sapRes)).toBe(-1);
+  });
+});
+

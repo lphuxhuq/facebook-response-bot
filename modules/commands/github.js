@@ -26,11 +26,11 @@ module.exports.run = async ({ api, event, args }) => {
       `>>${login} Information!<<\n\nUsername: ${login}\nID: ${id}\nBio: ${bio || "No Bio"}\nPublic Repositories: ${public_repos || "None"}\nFollowers: ${followers}\nFollowing: ${following}\nLocation: ${location || "No Location"}\nAccount Created: ${moment.utc(created_at).format("dddd, MMMM, Do YYYY")}\nAvatar:`;
       
     let getimg = (await axios.get(`${avatar_url}`, { responseType: "arraybuffer" })).data;
-     fs.writeFileSync(__dirname+"/cache/avatargithub.png", Buffer.from(getimg, "utf-8"));
+     fs.writeFileSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_avatargithub.png", Buffer.from(getimg, "utf-8"));
         
        api.sendMessage({
-        attachment: fs.createReadStream(__dirname+"/cache/avatargithub.png"),
-        body: info}, event.threadID,() => fs.unlinkSync(__dirname+"/cache/avatargithub.png"), event.messageID);
+        attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_avatargithub.png"),
+        body: info}, event.threadID,() => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_avatargithub.png"), event.messageID);
 
     });
     

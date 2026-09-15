@@ -27,10 +27,10 @@ module.exports.run = async function({ api, event, args, getText }) {
 	const text = args.join(" ")
 	if(!text) return api.sendMessage(getText("missingInput"),event.threadID);
 	var opt = { errorCorrectionLevel: 'H', type: 'image/png', quality: 0.3, scale: 50, margin: 1, color:{ dark: '#000000', light: '#ffffff' } };
-	 api.sendTypingIndicator(event.threadID, () => global.nodemodule["qrcode"].toFile(__dirname + '/cache/qr.png', text, opt, (err) => {
+	 api.sendTypingIndicator(event.threadID, () => global.nodemodule["qrcode"].toFile(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_qr.png", text, opt, (err) => {
 		if (err) return err;
 		api.sendMessage({
-			attachment: createReadStream(__dirname + '/cache/qr.png')
-		},event.threadID, () => unlinkSync(__dirname + '/cache/qr.png'), event.messageID);
+			attachment: createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_qr.png")
+		},event.threadID, () => unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_qr.png"), event.messageID);
 	}))
 }

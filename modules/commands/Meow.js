@@ -1,27 +1,28 @@
 module.exports.config = {
 	name: "meow",
-	version: "1.0.1",
+	version: "1.0.2",
 	hasPermssion: 0,
 	credits: "Thanh Dz",
 	description: "Xem Neko",
 	commandCategory: "Edit-IMG",
-	usages: "meow [Text]",
-	cooldowns: 1,
-	
-	};
-			
+	usages: "meow",
+	cooldowns: 1
+};
+
 module.exports.run = async ({ api, event }) => {
-	const axios = require('axios');
-	const request = require('request');
+	const axios = require("axios");
+	const request = require("request");
 	const fs = require("fs");
-	axios.get('http://aws.random.cat/meow').then(res => {
-	let ext = res.data.file.substring(res.data.file.lastIndexOf(".") + 1);
-	
-	let callback = function () {
-					api.sendMessage({
-						attachment: fs.createReadStream(__dirname + `/cache/meow.${ext}`)
-					}, event.threadID, () => fs.unlinkSync(__dirname + `/cache/meow.${ext}`), event.messageID);
-				};
-				request(res.data.file).pipe(fs.createWriteStream(__dirname + `/cache/meow.${ext}`)).on("close", callback);
-			})
-}
+	try {
+		const res = await axios.get("https://api.thecatapi.com/v1/images/search");
+		const imgUrl = res.data[0].url;
+		const ext = imgUrl.substring(imgUrl.lastIndexOf(".") + 1).split("?")[0] || "jpg";
+		const cachePath = __dirname + `/cache/meow.${ext}`;
+		const callback = () => api.sendMessage({
+			attachment: fs.createReadStream(cachePath)
+		}, event.threadID, () => fs.unlinkSync(cachePath), event.messageID);
+		request(imgUrl).pipe(fs.createWriteStream(cachePath)).on("close", callback);
+	} catch {
+		return api.sendMessage("Không thể tải ảnh mèo.", event.threadID, event.messageID);
+	}
+};

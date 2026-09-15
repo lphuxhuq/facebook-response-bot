@@ -5,6 +5,7 @@ import { MessageHistoryRepository } from '../../src/repositories/message-history
 import { InboundPipeline } from '../../src/pipeline/inbound-pipeline.js';
 import { BotCore } from '../../src/core/bot.js';
 import { Command, MessageContext } from '../../src/core/context.js';
+import { TokenBucketRateLimiter } from '../../src/core/cooldown-manager.js';
 
 function makeCtx(messageId: string, text = '!dedup-test'): MessageContext {
   return {
@@ -122,5 +123,23 @@ describe('Inbound Pipeline — DB-backed Deduplication', () => {
     expect(executeSpy2).toHaveBeenCalledTimes(1);
 
     botCore2.shutdown();
+  });
+
+  it('drops messages when rate limiter threshold is exceeded', async () => {
+    const rateLimiter = new TokenBucketRateLimiter({ capacity: 1, refillRate: 0.1 });
+    const botCore = new BotCore({ prefix: '!', ownerId: 'owner1', repositories: {} });
+    const pipelineWithRl = new InboundPipeline({
+      botCore,
+      processedEvents: new ProcessedEventRepository(db),
+      messageHistory: historyRepo,
+      rateLimiter,
+    });
+
+    const first = await pipelineWithRl.accept(makeCtx('mid_rl_1'));
+    const second = await pipelineWithRl.accept(makeCtx('mid_rl_2'));
+
+    expect(first).toBe(true);
+    expect(second).toBe(false); // throttled
+    botCore.shutdown();
   });
 });

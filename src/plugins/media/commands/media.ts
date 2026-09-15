@@ -1,5 +1,5 @@
 import { Command, CommandContext } from '../../../core/context.js';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -14,14 +14,25 @@ const FALLBACK_LINKS = [
   'https://i.imgur.com/dOZwgSd.jpg',
 ];
 
+let cachedLinks: string[] | null = null;
+let lastMtime = 0;
+
 function loadMediaLinks(): string[] {
   try {
-    if (!existsSync(MEDIA_CACHE_PATH)) return FALLBACK_LINKS;
+    if (!existsSync(MEDIA_CACHE_PATH)) return cachedLinks || FALLBACK_LINKS;
+    const stat = statSync(MEDIA_CACHE_PATH);
+    if (cachedLinks && stat.mtimeMs === lastMtime) {
+      return cachedLinks;
+    }
     const raw = JSON.parse(readFileSync(MEDIA_CACHE_PATH, 'utf8'));
-    if (Array.isArray(raw) && raw.length > 0) return raw;
-    return FALLBACK_LINKS;
+    if (Array.isArray(raw) && raw.length > 0) {
+      cachedLinks = raw;
+      lastMtime = stat.mtimeMs;
+      return cachedLinks;
+    }
+    return cachedLinks || FALLBACK_LINKS;
   } catch {
-    return FALLBACK_LINKS;
+    return cachedLinks || FALLBACK_LINKS;
   }
 }
 

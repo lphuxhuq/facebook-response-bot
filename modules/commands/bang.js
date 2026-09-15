@@ -48,7 +48,7 @@ module.exports.run = async function({ api, event, args }) {
 	const { loadImage, createCanvas } = require("canvas");
 	const fs = global.nodemodule["fs-extra"];
 	const axios = global.nodemodule["axios"];
-	let pathImg = __dirname + '/cache/bang.png';// đổi tên tệp tùy thích
+	let pathImg = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_bang.png";// đổi tên tệp tùy thích
 	var text = args.join(" ");
 	if (!text) return api.sendMessage("Nhập nội dung comment trên bảng", threadID, messageID);
 	let getPorn = (await axios.get(`https://i.imgur.com/Jl7sYMm.jpeg`, { responseType: 'arraybuffer' })).data; // link ảnh

@@ -29,7 +29,7 @@ try {
   const request = global.nodemodule["node-superfetch"];
   const jimp = global.nodemodule["jimp"];
   const fs = global.nodemodule["fs-extra"];
-  var path_hiepdam = __dirname+'/cache/hiepdam.png'; 
+  var path_hiepdam = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_hiepdam.png"; 
   var id = Object.keys(event.mentions)[0] || event.senderID;
   const canvas = Canvas.createCanvas(500, 500);
 	const ctx = canvas.getContext('2d');

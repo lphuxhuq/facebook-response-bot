@@ -44,7 +44,7 @@ module.exports.config = {
 		}
 	],
 	envConfig: {
-		"WOLFRAM": "T8J8YV-H265UQ762K"
+		"WOLFRAM": ""
 	}
 };
 module.exports.run = async function ({ api, event, args }) {
@@ -52,7 +52,7 @@ module.exports.run = async function ({ api, event, args }) {
 	var fs = global.nodemodule["fs-extra"];
 	var { threadID, messageID } = event;
 	var out = (msg) => api.sendMessage(msg, threadID, messageID);
-	var text = [], key = global.configModule.math.WOLFRAM;
+	var text = [], key = process.env.WOLFRAM_API_KEY || (global.configModule && global.configModule.math && global.configModule.math.WOLFRAM);
 	var content = (event.type == 'message_reply') ? event.messageReply.body : args.join(" ");
 	if (!content) return out("Vui lòng nhập phép tính");
 	else if (content.indexOf("-p") == 0) {

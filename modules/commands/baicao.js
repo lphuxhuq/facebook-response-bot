@@ -192,8 +192,8 @@ module.exports.run = async ({ api, event, args, Currencies }) => {
   const request = require("request")
     threadID = String(threadID);
     senderID = String(senderID);
-    if (!existsSync(__dirname + '/cache/3cay.png')) {
-        request('https://i.imgur.com/ixYeOs8.jpg').pipe(createWriteStream(__dirname + '/cache/3cay.png'));
+    if (!existsSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_3cay.png")) {
+        request('https://i.imgur.com/ixYeOs8.jpg').pipe(createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_3cay.png"));
       }
     if (!global.moduleData.baicao) global.moduleData.baicao = new Map();
     var values = global.moduleData.baicao.get(threadID) || {};
@@ -201,7 +201,7 @@ module.exports.run = async ({ api, event, args, Currencies }) => {
   var money = data.money     
     if(!args[0]) {
 var msg =  {body: `🃏====[ 𝐁𝐚̀𝐧 𝐁𝐚̀𝐢 𝐂𝐚̀𝐨 ]====🃏\n\n𝗖𝗵𝗮̀𝗼 𝗺𝘂̛̀𝗻𝗴 𝗯𝗮̣𝗻 𝘁𝗼̛́𝗶 𝘃𝗼̛́𝗶 𝘀𝗼̀𝗻𝗴 𝗯𝗮̣𝗰 𝗰𝘂̉𝗮 𝘁𝗵𝗮̂̀𝗻 𝗯𝗮̀𝗶 𝗗𝘂𝗯𝗮𝗶\n𝗡𝗲̂́𝘂 𝗺𝘂𝗼̂́𝗻 𝘁𝗵𝗮𝗺 𝗴𝗶𝗮 𝗯𝗮̣𝗻 𝗰𝗮̂̀𝗻 𝗻𝗵𝗮̣̂𝗽 𝗰𝗮́𝗰 𝗹𝗲̣̂𝗻𝗵 𝗻𝗵𝘂̛ 𝘀𝗮𝘂:\n» /𝗯𝗮𝗶𝗰𝗮𝗼 𝗰𝗿𝗲𝗮𝘁𝗲 [ Số Tiền Cược ]\n» /𝗯𝗮𝗶𝗰𝗮𝗼 𝘀𝘁𝗮𝗿𝘁 [ Bắt Đầu Bàn 3 Cây ]\n» /𝗯𝗮𝗶𝗰𝗮𝗼 𝗶𝗻𝗳𝗼 [ Xem Thông Tin Bàn Bài Cào ]\n» /𝗯𝗮𝗶𝗰𝗮𝗼 𝗷𝗼𝗶𝗻 [ Để Người Chơi Vào Game]\n» /𝗯𝗮𝗶𝗰𝗮𝗼 𝗹𝗲𝗮𝘃𝗲 [ Để Rời Bàn 3 Cây ]\n» 𝗖𝗵𝗶𝗮 𝗯𝗮̀𝗶 [ Để Chia Bài Cho Người Chơi Chỉ Có Chủ Bàn Mới Nhập Có Hiệu Lệnh ]\n» Đ𝗼̂̉𝗶 𝗕𝗮̀𝗶 [ Để Đổi Bài Mỗi Người Chơi Chỉ Có 2 Lượt Đổi Bài Tương Ứng ]\n» 𝗥𝗲𝗮𝗱𝘆 [ Sẵn Sàng Mở Bài ]\n» 𝗡𝗼𝗻𝗿𝗲𝗮𝗱𝘆 [ Xem Những Người Chưa Sẵn Sàng ]`, attachment : [
-      createReadStream(__dirname + "/cache/3cay.png")
+      createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_3cay.png")
     ]}
      return api.sendMessage(msg, threadID, messageID)    }
      switch (args[0]) {

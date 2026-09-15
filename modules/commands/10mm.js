@@ -24,11 +24,6 @@ var sub = res.data.mail_list[0].subject;
 var date = res.data.mail_list[0].datetime2;
 	return api.sendMessage(`» Tên mail: ${user}\n» Host: ${host}\n» Mail ${user}@${host} (.)com\n» Thời gian: ${time}\n» Thời gian ở server: ${stime}\n» Key: ${kmail}\n» Thời gian còn lại: ${ltime}s\n» Mail id: ${mid}\n» Nội dung ${sub}\n» Date: ${date}`, event.threadID, event.messageID)
 }
-else if (args[0] == "list") {
-	const res = await axios.get(`https://www.phamvandienofficial.xyz/mail10p/domain`);
-	var list = res.data.domain
-	return api.sendMessage(`List domain: \n${list}`, event.threadID, event.messageID)
-}
 else if (args[0] == "more") {
  const res = await axios.get(`https://10minutemail.net/address.api.php?more=1`);
 	var user = res.data.mail_get_user;

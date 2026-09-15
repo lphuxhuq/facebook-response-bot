@@ -50,10 +50,10 @@ module.exports.run = async function ({ api, event, args, Users }) {
   const { loadImage, createCanvas } = require("canvas");
   const fs = global.nodemodule["fs-extra"];
   const axios = global.nodemodule["axios"];
-  let pathImg = __dirname + "/cache/phub.png";
+  let pathImg = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_phub.png";
   var text = args.join(" ");
   var namee = (await Users.getData(senderID)).name
-  let pathAva = __dirname + "/cache/avt.png";
+  let pathAva = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_avt.png";
   let Avatar = (
     await axios.get(
       `https://graph.facebook.com/${senderID}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,

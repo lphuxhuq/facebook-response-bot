@@ -259,6 +259,6 @@ const fs = global.nodemodule["fs-extra"];
 💖𝐕𝐮𝐢 𝐯𝐞̉ 𝐛𝐞̂𝐧 𝐜𝐚̣𝐧𝐡 𝐧𝐮̛̃𝐚 𝐜𝐨̀𝐧 𝐥𝐚̣𝐢 𝐭𝐫𝐨̣𝐧 𝐯𝐞̣𝐧…..💖
 💖𝐇𝐚̣𝐧𝐡 𝐩𝐡𝐮́𝐜 𝐛𝐞̂𝐧 𝐜𝐚̣𝐧𝐡 𝐦𝐨̣̂𝐭 𝐛𝐨̛̀ 𝐯𝐚𝐢 𝐚𝐢 đ𝐨́….💖
 💖𝐌𝐨̣̂𝐭 đ𝐞̂𝐦 𝐜𝐡𝐨 𝐧𝐠𝐚̀𝐲 𝐦𝐚𝐢 𝐯𝐚̀ 𝐦𝐨̣̂𝐭 𝐤𝐡𝐚̆́𝐜 𝐜𝐡𝐨 𝐦𝐚̃𝐢 𝐦𝐚̃𝐢….💖
-𝐀𝐧 𝐊𝐡𝐚𝐧𝐠 – 𝐓𝐡𝐢𝐧𝐡 𝐯𝐮𝐨𝐧𝐠!🌻🌻🌻`,attachment: fs.createReadStream(__dirname + "/cache/5.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/5.jpg")); 
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/5.jpg")).on("close",() => callback());
+𝐀𝐧 𝐊𝐡𝐚𝐧𝐠 – 𝐓𝐡𝐢𝐧𝐡 𝐯𝐮𝐨𝐧𝐠!🌻🌻🌻`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")); 
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")).on("close",() => callback());
    };

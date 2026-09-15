@@ -62,6 +62,6 @@ const fs = global.nodemodule["fs-extra"];
 "https://imgur.com/QVdl6C9.jpg",
 "https://imgur.com/3lOSIB6.jpg",
 ];
-	 var callback = () => api.sendMessage({body:`[𝐃𝐎𝐑𝐀𝐄𝐌𝐎𝐍] Sai lệnh rồi kìa gõ /help hoặc /menu để xem lệnh ik nè\n──── •❤️• ────`,attachment: fs.createReadStream(__dirname + "/cache/5.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/5.jpg"));	
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/5.jpg")).on("close",() => callback());
+	 var callback = () => api.sendMessage({body:`[𝐃𝐎𝐑𝐀𝐄𝐌𝐎𝐍] Sai lệnh rồi kìa gõ /help hoặc /menu để xem lệnh ik nè\n──── •❤️• ────`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg"));	
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")).on("close",() => callback());
    };

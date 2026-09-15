@@ -278,8 +278,8 @@ module.exports.run = async function ({ api, event, args}) {
     ]; //ảnh sao tùy bạn
     const link = anh[Math.floor(Math.random() * anh.length)];
     
-     var callback = () => api.sendMessage({body:`💞 = 𝐘́ 𝐍𝐠𝐡𝐢̃𝐚 𝐋𝐚̀𝐦 𝐍𝐠𝐮̛𝐨̛̀𝐢 = 💞\n\n🌸──── •❤️‍🔥• ────🌸\n\n${daoly}\n\n🎀──── •❤️‍🔥• ────🎀\n 𝑻𝒓𝒂̂̀𝒏 𝑻𝒉𝒂𝒏𝒉 𝑻𝒖́ ❤️`,attachment: fs.createReadStream(__dirname + "/cache/daoly.png")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/daoly.png"),event.messageID);
-                return request(encodeURI(`${link}`)).pipe(fs.createWriteStream(__dirname + '/cache/daoly.png')).on('close', () => callback());
+     var callback = () => api.sendMessage({body:`💞 = 𝐘́ 𝐍𝐠𝐡𝐢̃𝐚 𝐋𝐚̀𝐦 𝐍𝐠𝐮̛𝐨̛̀𝐢 = 💞\n\n🌸──── •❤️‍🔥• ────🌸\n\n${daoly}\n\n🎀──── •❤️‍🔥• ────🎀\n 𝑻𝒓𝒂̂̀𝒏 𝑻𝒉𝒂𝒏𝒉 𝑻𝒖́ ❤️`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_daoly.png")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_daoly.png"),event.messageID);
+                return request(encodeURI(`${link}`)).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_daoly.png")).on('close', () => callback());
       
   }
   //nếu bạn có api ảnh thì làm như sau

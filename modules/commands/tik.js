@@ -28,7 +28,7 @@ module.exports.run = async ({ event, api, args }) => {
         if (type === "audio" || type === "music") {
             const musicUrl = data.music;
             const musicTitle = (data.music_info && data.music_info.title) || data.title || "TikTok Audio";
-            const filePath = __dirname + "/cache/toptop.mp3";
+            const filePath = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_toptop.mp3";
             const callback = () => api.sendMessage({
                 body: `🎵 Tên nhạc: ${musicTitle}\n👤 Tác giả: ${data.author ? data.author.nickname : 'Ẩn danh'}`,
                 attachment: fs.createReadStream(filePath)
@@ -38,7 +38,7 @@ module.exports.run = async ({ event, api, args }) => {
         } else {
             // Default: video
             const videoUrl = data.play;
-            const filePath = __dirname + "/cache/toptop.mp4";
+            const filePath = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_toptop.mp4";
             const callback = () => api.sendMessage({
                 body: `🎬 Tiêu đề: ${data.title}\n👤 Tác giả: ${data.author ? data.author.nickname : 'TikTok'}\n❤️ Tim: ${data.digg_count || 0} | 💬 Comment: ${data.comment_count || 0}`,
                 attachment: fs.createReadStream(filePath)

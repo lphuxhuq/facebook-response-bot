@@ -194,6 +194,6 @@ const fs = global.nodemodule["fs-extra"];
 "https://konachan.net/image/47d652c938bda1c6df1e01aa80797d8c/Konachan.com%20-%20935%20ass%20close%20f-ism%20murakami_suigun%20panties%20spread_legs%20underwear.jpg?0.7442805835097328",
 "https://konachan.net/image/efe6aa7bbeac98d05a98b31465b5fe65/Konachan.com%20-%20886%20ass%20close%20panties%20red%20skirt%20underwear%20upskirt.jpg?0.67499538349191",
   ];
-	 var callback = () => api.sendMessage({body:`𝗡𝗵𝗶̀𝗻 𝗟𝗮̂𝘂 𝗖𝗼𝗶 𝗖𝗵𝘂̛̀𝗻𝗴 𝗕𝗶̣ 𝗚𝗵𝗶𝗲̂̀𝗻 ${link.length}`,attachment: fs.createReadStream(__dirname + "/cache/5.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/5.jpg"));	
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/5.jpg")).on("close",() => callback());
+	 var callback = () => api.sendMessage({body:`𝗡𝗵𝗶̀𝗻 𝗟𝗮̂𝘂 𝗖𝗼𝗶 𝗖𝗵𝘂̛̀𝗻𝗴 𝗕𝗶̣ 𝗚𝗵𝗶𝗲̂̀𝗻 ${link.length}`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg"));	
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.jpg")).on("close",() => callback());
    };

@@ -136,8 +136,8 @@ const request = global.nodemodule["request"];
     "https://i.imgur.com/CxwzNMv.png",
     "https://i.imgur.com/RVerKnc.jpg"
     ];
-var callback = () => api.sendMessage({body:`⚜ 𝐓𝐢̉ 𝐥𝐞̣̂ 𝐦𝐚𝐲 𝐦𝐚̆́𝐧 𝐜𝐮̉𝐚 𝐛𝐚̣𝐧 𝐥𝐚̀ ${tile}% ⚜`, attachment: fs.createReadStream(__dirname + "/cache/tile.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/tile.jpg")); 
-       return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/tile.jpg")).on("close",() => callback());
+var callback = () => api.sendMessage({body:`⚜ 𝐓𝐢̉ 𝐥𝐞̣̂ 𝐦𝐚𝐲 𝐦𝐚̆́𝐧 𝐜𝐮̉𝐚 𝐛𝐚̣𝐧 𝐥𝐚̀ ${tile}% ⚜`, attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_tile.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_tile.jpg")); 
+       return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_tile.jpg")).on("close",() => callback());
  }
       else if (args[0] == "cony") {
 const request = global.nodemodule["request"];
@@ -153,17 +153,9 @@ const request = global.nodemodule["request"];
 "https://i.postimg.cc/XvZ169y8/tumblr-60453c020ab1a1220e18395b0b7b2d58-937b2e9f-540.gif",
 "https://i.postimg.cc/ZKTfKGd0/tumblr-e4f1fec723d0760d84f6557adcafd19c-3187d901-540.gif"
     ];
-var callback = () => api.sendMessage({body:`🌸 𝗖𝗵𝘂́𝗰 𝗺𝘂̛̀𝗻𝗴 𝗯𝗮̣𝗻 𝗻𝗵𝗲́\n🌸 𝗡𝗲̂́𝘂 𝗯𝗮̣𝗻 𝘁𝗼̉ 𝘁𝗶̀𝗻𝗵 𝗰𝗿𝘂𝘀𝗵 𝘁𝗵𝗶̀ ${tile}% 𝗹𝗮̀ 𝗯𝗮̣𝗻 𝘀𝗲̃ 𝗰𝗼́ 𝗻𝗴𝘂̛𝗼̛̀𝗶 𝘆𝗲̂𝘂 ⚜`, attachment: fs.createReadStream(__dirname + "/cache/5.gif")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/5.gif")); 
-       return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/5.gif")).on("close",() => callback());
- }
-    else if (args[0] == "nude") {
-  var linkanh =  event.messageReply.attachments[0].url || args.join(" ");
-	if(!linkanh) return api.sendMessage('Vui lòng reply hoặc nhập link 1 hình ảnh!!!', event.threadID, event.messageID)
-const res = await axios.get(`https://manhict.tech/checknude?key=mzk_G8D0BIPFX70FXUYEUL5&link=${encodeURIComponent(linkanh)}`);    
-var img = res.data.NSFW_Prob;
-    return api.sendMessage(`𝐓𝐲̉ 𝐥𝐞̣̂ 𝐧𝐮𝐝𝐞 𝐜𝐮̉𝐚 𝐚̉𝐧𝐡 𝐥𝐚̀: ${img}`, event.threadID, event.messageID);
-	
-} else if (args[0] == "ttall") {
+var callback = () => api.sendMessage({body:`🌸 𝗖𝗵𝘂́𝗰 𝗺𝘂̛̀𝗻𝗴 𝗯𝗮̣𝗻 𝗻𝗵𝗲́\n🌸 𝗡𝗲̂́𝘂 𝗯𝗮̣𝗻 𝘁𝗼̉ 𝘁𝗶̀𝗻𝗵 𝗰𝗿𝘂𝘀𝗵 𝘁𝗵𝗶̀ ${tile}% 𝗹𝗮̀ 𝗯𝗮̣𝗻 𝘀𝗲̃ 𝗰𝗼́ 𝗻𝗴𝘂̛𝗼̛̀𝗶 𝘆𝗲̂𝘂 ⚜`, attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.gif")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.gif")); 
+       return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_5.gif")).on("close",() => callback());
+ } else if (args[0] == "ttall") {
       let threadInfo = await api.getThreadInfo(event.threadID);
         let number = 0, msg = "", storage = [], exp = [];
         for (const value of data.userInfo) storage.push({"id" : value.id, "name": value.name});

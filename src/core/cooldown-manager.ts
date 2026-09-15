@@ -54,3 +54,48 @@ export class CooldownManager {
     this.cooldowns.clear();
   }
 }
+
+export interface RateLimiterOptions {
+  capacity: number;
+  refillRate: number;
+}
+
+export class TokenBucketRateLimiter {
+  private buckets = new Map<string, { tokens: number; lastRefill: number }>();
+  private readonly capacity: number;
+  private readonly refillRate: number;
+
+  constructor(options: RateLimiterOptions = { capacity: 10, refillRate: 2 }) {
+    this.capacity = options.capacity;
+    this.refillRate = options.refillRate;
+  }
+
+  consume(key: string, tokens = 1): boolean {
+    const now = Date.now();
+    let bucket = this.buckets.get(key);
+
+    if (!bucket) {
+      bucket = { tokens: this.capacity, lastRefill: now };
+      this.buckets.set(key, bucket);
+    } else {
+      const elapsedSec = (now - bucket.lastRefill) / 1000;
+      bucket.tokens = Math.min(this.capacity, bucket.tokens + elapsedSec * this.refillRate);
+      bucket.lastRefill = now;
+    }
+
+    if (bucket.tokens >= tokens) {
+      bucket.tokens -= tokens;
+      return true;
+    }
+    return false;
+  }
+
+  reset(key?: string): void {
+    if (key) {
+      this.buckets.delete(key);
+    } else {
+      this.buckets.clear();
+    }
+  }
+}
+

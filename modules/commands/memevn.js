@@ -56,6 +56,6 @@ const fs = global.nodemodule["fs-extra"];
 "https://i.imgur.com/DXbEYs5.jpg",
 "https://i.imgur.com/Kp4oBzH.jpg",
      ];
-     var callback = () => api.sendMessage({body:`𝐌𝐞𝐦𝐞 𝐜𝐮̛̣𝐜 𝐡𝐚̀𝐢 🤣`,attachment: fs.createReadStream(__dirname + "/cache/1.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.jpg"));  
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/1.jpg")).on("close",() => callback());
+     var callback = () => api.sendMessage({body:`𝐌𝐞𝐦𝐞 𝐜𝐮̛̣𝐜 𝐡𝐚̀𝐢 🤣`,attachment: fs.createReadStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_1.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_1.jpg"));  
+      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_1.jpg")).on("close",() => callback());
    };

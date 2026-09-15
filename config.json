@@ -57,13 +57,13 @@
         "cooldownTime": 3000000
     },
     "gif": {
-        "TENOR": "73YIAOY3ACT1"
+        "TENOR": ""
     },
     "instagram": {
-        "APIKEY": "81b0466275mshb5265735e50299cp1b01c5jsn3e7f93112fd3"
+        "APIKEY": ""
     },
     "math": {
-        "WOLFRAM": "T8J8YV-H265UQ762K"
+        "WOLFRAM": ""
     },
     "menu": {
         "autoUnsend": true,
@@ -92,7 +92,7 @@
         "delThread": ""
     },
     "weather": {
-        "OPEN_WEATHER": "c4ef85b93982d6627681b056e24bd438"
+        "OPEN_WEATHER": ""
     },
     "work": {
         "cooldownTime": 1200000
@@ -106,9 +106,6 @@
     "help": {
         "autoUnsend": true,
         "delayUnsend": 120
-    },
-    "pokemon": {
-        "APIKEY": ""
     },
     "adminUpdate": {
         "autoUnsend": true,
@@ -169,9 +166,6 @@
     },
     "video2": {
         "YOUTUBE_API": "AIzaSyC1HQ3HHQSzgXdvlm5vZ2gWX0Ubk8GYD-c"
-    },
-    "teach": {
-        "APIKEY": ""
     },
     "baolixi": {
         "cooldownTime": 1200000

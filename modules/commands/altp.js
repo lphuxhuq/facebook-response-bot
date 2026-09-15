@@ -86,7 +86,7 @@ module.exports.run = async function ({ api, event, args, Currencies, Users}) {
   if (type !== "-r" && type !== "-p" && type !== "-i" && type !== "-s") return api.sendMessage(msg, threadID, messageID);
   
   if (type == "-r") {
-    const path1 = __dirname + '/cache/intro.png';
+    const path1 = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_intro.png";
     if (!fs.existsSync(path1)) {
       var down = (await axios.get("https://i.postimg.cc/1txB8Z3v/intro.png", { responseType: "arraybuffer" })).data;
       fs.writeFileSync(path1, Buffer.from(down, "utf-8"));
@@ -110,7 +110,7 @@ module.exports.run = async function ({ api, event, args, Currencies, Users}) {
   };
   
   if (type == "-i") {
-    const path2 = __dirname + '/cache/info.png';
+    const path2 = __dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_info.png";
     if (!fs.existsSync(path2)) {
       var down = (await axios.get("https://i.postimg.cc/D0nccdss/info.png", { responseType: "arraybuffer" })).data;
       fs.writeFileSync(path2, Buffer.from(down, "utf-8"));
@@ -145,7 +145,7 @@ module.exports.run = async function ({ api, event, args, Currencies, Users}) {
           level: level,
           messageID: info.messageID
         })
-        fs.unlinkSync(__dirname + "/cache/question.png")
+        fs.unlinkSync(__dirname + "/cache/" + ((typeof event !== 'undefined' && event) ? (event._tempId || (event._tempId = Date.now() + '_' + Math.random().toString(36).substring(2, 6))) : Date.now()) + "_question.png")
       })
       return request(linkanh).pipe(fs.createWriteStream(__dirname + `/cache/question.png`)).on("close",() => callback());
     }
