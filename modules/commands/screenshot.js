@@ -15,20 +15,17 @@ module.exports.config = {
 };
 
 module.exports.onLoad = async () => {
-    const { existsSync } = global.nodemodule["fs-extra"];
-    const { resolve } = global.nodemodule["path"];
-
-    const path = resolve(__dirname, "cache", "pornlist.txt");
-
-    if (!existsSync(path)) return await global.utils.downloadFile("https://raw.githubusercontent.com/blocklistproject/Lists/master/porn.txt", path);
-    else return;
-}
+    // ponytail: skip downloading 67MB blocklist on load. Add minimal list if required.
+};
 
 module.exports.run = async ({ event, api, args, }) => {
-    const { readFileSync, createReadStream, unlinkSync } = global.nodemodule["fs-extra"];
+    const { existsSync, readFileSync, createReadStream, unlinkSync } = global.nodemodule["fs-extra"];
     const url = global.nodemodule["url"];
 
-    if (!global.moduleData.pornList) global.moduleData.pornList = readFileSync(__dirname + "/cache/pornlist.txt", "utf-8").split('\n').filter(site => site && !site.startsWith('#')).map(site => site.replace(/^(0.0.0.0 )/, ''));
+    if (!global.moduleData.pornList) {
+        const p = __dirname + "/cache/pornlist.txt";
+        global.moduleData.pornList = existsSync(p) ? readFileSync(p, "utf-8").split('\n').filter(site => site && !site.startsWith('#')).map(site => site.replace(/^(0.0.0.0 )/, '')) : [];
+    }
     const urlParsed = url.parse(args[0]);
 
     if (global.moduleData.pornList.some(pornURL => urlParsed.host == pornURL)) return api.sendMessage("Trang web bạn nhập không an toàn!!(NSFW PAGE)", event.threadID, event.messageID);

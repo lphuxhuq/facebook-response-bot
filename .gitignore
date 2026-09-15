@@ -35,4 +35,7 @@ Thumbs.db
 
 # CI workflows (restricted by PAT workflow scope)
 .github/
+*.temp
+pornlist.txt
+
 
